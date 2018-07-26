@@ -1,27 +1,23 @@
-[![Build Status](https://travis-ci.org/thomaskrause/graphANNIS.svg?branch=develop)](https://travis-ci.org/thomaskrause/graphANNIS)
 
-graphANNIS
-==========
+graphANNIS Java Bindings
+========================
 
-This is a prototype for a new backend implementation of the ANNIS linguistic search and visualization system (http://github.com/korpling/ANNIS/). 
-
-It is part of my ongoing thesis and while there are test cases it is **highly experimental code and it is not ready to be used by end-users yet**!
+GraphANNIS is a library for corpus linguistic queries.
+This are the Java bindings to its API and some additional utility tools to e.g. convert AQL to its JSON representation.
 
 How to compile
 ---------------
 
-graphANNIS is written in the Rust programming language (https://www.rust-lang.org).
-You can install Rust from https://www.rust-lang.org/en-US/install.html.
-After you have installed Rust, you can can build the complete project with
+This project uses Maven as build system. In order to build the packages, type
 
 ```
-cargo build --release
+mvn install
 ```
 
 3rd party dependencies
 ----------------------
 
-This software depends on several 3rd party libraries. These are documented in the BOM.txt file in this folder.
+This software depends on several 3rd party libraries. These are documented in the THIRD-PARTY.txt file in this folder.
 
 Author(s)
 ---------
