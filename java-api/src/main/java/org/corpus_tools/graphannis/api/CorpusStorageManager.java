@@ -245,7 +245,8 @@ public class CorpusStorageManager {
                         tuple[c] = CAPI.annis_freqtable_str_get(orig, new NativeLong(i), new NativeLong(c));
                     }
                     result.addEntry(new FrequencyTable.Entry(tuple, count.longValue()));
-                }    
+                }
+                return result;
             }
         }
         return null;
