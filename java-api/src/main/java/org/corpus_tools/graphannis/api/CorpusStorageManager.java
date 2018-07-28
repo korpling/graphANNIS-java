@@ -32,6 +32,9 @@ import org.corpus_tools.salt.common.SDocumentGraph;
 import com.sun.jna.NativeLong;
 
 import annis.model.Annotation;
+import annis.service.objects.FrequencyTable;
+import annis.service.objects.FrequencyTableEntry;
+import annis.service.objects.FrequencyTableQuery;
 
 /**
  * An API for managing corpora stored in a common location on the file system.
@@ -80,12 +83,12 @@ public class CorpusStorageManager {
                     Annotation anno = new Annotation();
                     String ns = CAPI.annis_matrix_str_get(orig, new NativeLong(i), new NativeLong(0));
                     String name = CAPI.annis_matrix_str_get(orig, new NativeLong(i), new NativeLong(1));
-                    
-                    if(!"".equals(ns)) {
+
+                    if (!"".equals(ns)) {
                         anno.setNamespace(ns);
                     }
                     anno.setName(name);
-                    if(listValues) {
+                    if (listValues) {
                         String val = CAPI.annis_matrix_str_get(orig, new NativeLong(i), new NativeLong(2));
                         anno.setValue(val);
                     }
@@ -221,6 +224,29 @@ public class CorpusStorageManager {
                 graph.dispose();
             }
             return result;
+        }
+        return null;
+    }
+
+    public FrequencyTable frequency(String corpusName, String aql, FrequencyTableQuery freqQueryDef) {
+        if (instance != null) {
+            String freqQueryDefString = freqQueryDef.toString();
+            CAPI.AnnisFrequencyTable_AnnisCString orig = CAPI.annis_cs_cs_frequency(instance, corpusName,
+                    QueryToJSON.aqlToJSON(aql), freqQueryDefString);
+            if(orig != null) {
+                FrequencyTable result = new FrequencyTable();
+                
+                final int nrows = CAPI.annis_freqtable_str_nrows(orig).intValue();
+                final int ncols = CAPI.annis_freqtable_str_ncols(orig).intValue();
+                for(int i=0; i < nrows; i++) {
+                    NativeLong count = CAPI.annis_freqtable_str_count(orig, new NativeLong(i));
+                    String[] tuple = new String[ncols];
+                    for(int c=0; c < ncols; c++) {
+                        tuple[c] = CAPI.annis_freqtable_str_get(orig, new NativeLong(i), new NativeLong(c));
+                    }
+                    result.addEntry(new FrequencyTable.Entry(tuple, count.longValue()));
+                }    
+            }
         }
         return null;
     }

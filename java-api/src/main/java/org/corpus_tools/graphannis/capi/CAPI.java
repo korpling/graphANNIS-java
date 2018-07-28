@@ -60,6 +60,9 @@ public class CAPI implements Library {
     
     public static class AnnisMatrix_AnnisCString extends AnnisPtr {
     }
+    
+    public static class AnnisFrequencyTable_AnnisCString extends AnnisPtr {
+    }
 
     // general functions
 
@@ -98,6 +101,11 @@ public class CAPI implements Library {
     public static native String annis_matrix_str_get(AnnisMatrix_AnnisCString ptr, NativeLong row, NativeLong col);
     public static native NativeLong annis_matrix_str_ncols(AnnisMatrix_AnnisCString ptr);
     public static native NativeLong annis_matrix_str_nrows(AnnisMatrix_AnnisCString ptr);
+    
+    public static native NativeLong annis_freqtable_str_count(AnnisFrequencyTable_AnnisCString ptr, NativeLong row);
+    public static native String annis_freqtable_str_get(AnnisFrequencyTable_AnnisCString ptr, NativeLong row, NativeLong col);
+    public static native NativeLong annis_freqtable_str_ncols(AnnisFrequencyTable_AnnisCString ptr);
+    public static native NativeLong annis_freqtable_str_nrows(AnnisFrequencyTable_AnnisCString ptr);
 
     // corpus storage class
 
@@ -123,6 +131,9 @@ public class CAPI implements Library {
 
     public static native AnnisGraphDB annis_cs_subgraph_for_query(AnnisCorpusStorage cs, String corpusName,
             String queryAsJSON);
+    
+    public static native AnnisFrequencyTable_AnnisCString annis_cs_cs_frequency(AnnisCorpusStorage cs, String corpusName,
+            String queryAsJSON, String frequencyQueryDefinition);
 
     public static native AnnisVec_AnnisComponent annis_cs_all_components_by_type(AnnisCorpusStorage cs,
             String corpusName, int ctype);
