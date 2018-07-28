@@ -228,11 +228,11 @@ public class CorpusStorageManager {
         return null;
     }
 
-    public FrequencyTable frequency(String corpusName, String aql, FrequencyTableQuery freqQueryDef) {
+    public FrequencyTable frequency(String corpusName, String queryAsJSON, FrequencyTableQuery freqQueryDef) {
         if (instance != null) {
             String freqQueryDefString = freqQueryDef.toString();
             CAPI.AnnisFrequencyTable_AnnisCString orig = CAPI.annis_cs_cs_frequency(instance, corpusName,
-                    QueryToJSON.aqlToJSON(aql), freqQueryDefString);
+                    queryAsJSON, freqQueryDefString);
             if(orig != null) {
                 FrequencyTable result = new FrequencyTable();
                 
