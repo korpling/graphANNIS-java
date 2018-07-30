@@ -161,7 +161,7 @@ public class SaltExport {
         int copyID = nID.getValue();
         Map<Pair<String, String>, String> labels = getNodeLabels(orig, copyID);
 
-        if (labels.containsKey(new ImmutablePair<>("annis", "tok")) && !hasCoverageEdge(nID)) {
+        if (labels.containsKey(new ImmutablePair<>("annis", "tok"))) {
             newNode = SaltFactory.createSToken();
         } else if (hasDominanceEdge(nID)) {
             newNode = SaltFactory.createSStructure();
