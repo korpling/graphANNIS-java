@@ -119,7 +119,7 @@ public class CAPI implements Library {
             String queryAsJSON);
 
     public static native AnnisVec_AnnisCString annis_cs_find(AnnisCorpusStorage cs, String corpusName,
-            String queryAsJSON, long offset, long limit);
+            String queryAsJSON, long offset, long limit, int order);
 
     public static native AnnisGraphDB annis_cs_subgraph(AnnisCorpusStorage cs, String corpusName,
             AnnisVec_AnnisCString node_ids, NativeLong ctx_left, NativeLong ctx_right);

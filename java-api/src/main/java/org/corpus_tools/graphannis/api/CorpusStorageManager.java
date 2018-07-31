@@ -19,10 +19,13 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.naming.spi.DirStateFactory.Result;
+
 import org.corpus_tools.graphannis.QueryToJSON;
 import org.corpus_tools.graphannis.SaltExport;
 import org.corpus_tools.graphannis.capi.AnnisComponentType;
 import org.corpus_tools.graphannis.capi.AnnisCountExtra;
+import org.corpus_tools.graphannis.capi.AnnisResultOrder;
 import org.corpus_tools.graphannis.capi.AnnisString;
 import org.corpus_tools.graphannis.capi.CAPI;
 import org.corpus_tools.graphannis.capi.CAPI.AnnisComponentConst;
@@ -35,6 +38,7 @@ import annis.model.Annotation;
 import annis.service.objects.FrequencyTable;
 import annis.service.objects.FrequencyTableEntry;
 import annis.service.objects.FrequencyTableQuery;
+import annis.service.objects.OrderType;
 
 /**
  * An API for managing corpora stored in a common location on the file system.
@@ -137,11 +141,32 @@ public class CorpusStorageManager {
         }
         return result;
     }
-
+    
     public String[] find(List<String> corpora, String queryAsJSON, long offset, long limit) {
+        return find(corpora, queryAsJSON, offset, limit, OrderType.ascending);
+    }
+
+    public String[] find(List<String> corpora, String queryAsJSON, long offset, long limit, OrderType order) {
+
+        int orderC;
+        switch (order) {
+        case ascending:
+            orderC = AnnisResultOrder.Normal;
+            break;
+        case descending:
+            orderC = AnnisResultOrder.Inverted;
+            break;
+        case random:
+            orderC = AnnisResultOrder.Random;
+            break;
+        default:
+            orderC = AnnisResultOrder.Normal;
+        }
+
         ArrayList<String> result = new ArrayList<>();
         for (String corpusName : corpora) {
-            CAPI.AnnisVec_AnnisCString vec = CAPI.annis_cs_find(instance, corpusName, queryAsJSON, offset, limit);
+            CAPI.AnnisVec_AnnisCString vec = CAPI.annis_cs_find(instance, corpusName, queryAsJSON, offset, limit,
+                    orderC);
             final int vecSize = CAPI.annis_vec_str_size(vec).intValue();
             for (int i = 0; i < vecSize; i++) {
                 result.add(CAPI.annis_vec_str_get(vec, new NativeLong(i)));
@@ -231,17 +256,17 @@ public class CorpusStorageManager {
     public FrequencyTable frequency(String corpusName, String queryAsJSON, FrequencyTableQuery freqQueryDef) {
         if (instance != null) {
             String freqQueryDefString = freqQueryDef.toString();
-            CAPI.AnnisFrequencyTable_AnnisCString orig = CAPI.annis_cs_cs_frequency(instance, corpusName,
-                    queryAsJSON, freqQueryDefString);
-            if(orig != null) {
+            CAPI.AnnisFrequencyTable_AnnisCString orig = CAPI.annis_cs_cs_frequency(instance, corpusName, queryAsJSON,
+                    freqQueryDefString);
+            if (orig != null) {
                 FrequencyTable result = new FrequencyTable();
-                
+
                 final int nrows = CAPI.annis_freqtable_str_nrows(orig).intValue();
                 final int ncols = CAPI.annis_freqtable_str_ncols(orig).intValue();
-                for(int i=0; i < nrows; i++) {
+                for (int i = 0; i < nrows; i++) {
                     NativeLong count = CAPI.annis_freqtable_str_count(orig, new NativeLong(i));
                     String[] tuple = new String[ncols];
-                    for(int c=0; c < ncols; c++) {
+                    for (int c = 0; c < ncols; c++) {
                         tuple[c] = CAPI.annis_freqtable_str_get(orig, new NativeLong(i), new NativeLong(c));
                     }
                     result.addEntry(new FrequencyTable.Entry(tuple, count.longValue()));
