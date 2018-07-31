@@ -161,7 +161,7 @@ public class SaltExport {
         int copyID = nID.getValue();
         Map<Pair<String, String>, String> labels = getNodeLabels(orig, copyID);
 
-        if (labels.containsKey(new ImmutablePair<>("annis", "tok"))) {
+        if (labels.containsKey(new ImmutablePair<>("annis", "tok")) && !hasCoverageEdge(nID)) {
             newNode = SaltFactory.createSToken();
         } else if (hasDominanceEdge(nID)) {
             newNode = SaltFactory.createSStructure();
@@ -411,6 +411,41 @@ public class SaltExport {
         }
     }
     
+    private void addTextToSegmentation(final String name, List<SNode> rootNodes) {
+
+        // traverse the token chain using the order relations
+        docGraph.traverse(rootNodes, SGraph.GRAPH_TRAVERSE_TYPE.TOP_DOWN_DEPTH_FIRST, "ORDERING_" + name,
+                new GraphTraverseHandler() {
+                    @Override
+                    public void nodeReached(SGraph.GRAPH_TRAVERSE_TYPE traversalType, String traversalId,
+                            SNode currNode, SRelation<SNode, SNode> relation, SNode fromNode, long order) {
+
+                        SFeature featTok = currNode.getFeature("annis::tok");
+                        if (featTok != null && currNode instanceof SSpan) {
+                            currNode.createAnnotation(null, name, featTok.getValue().toString());
+                        }
+                    }
+
+                    @Override
+                    public void nodeLeft(SGraph.GRAPH_TRAVERSE_TYPE traversalType, String traversalId, SNode currNode,
+                            SRelation<SNode, SNode> relation, SNode fromNode, long order) {
+                    }
+
+                    @Override
+                    public boolean checkConstraint(SGraph.GRAPH_TRAVERSE_TYPE traversalType, String traversalId,
+                            SRelation relation, SNode currNode, long order) {
+                        if (relation == null) {
+                            // TODO: check if this is ever true
+                            return true;
+                        } else if (relation instanceof SOrderRelation && Objects.equal(name, relation.getType())) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                });
+    }
+    
 
     public static SDocumentGraph map(CAPI.AnnisGraphDB orig) {
         if (orig == null) {
@@ -440,7 +475,7 @@ public class SaltExport {
         AnnisVec_AnnisComponent components = CAPI.annis_graph_all_components(orig);
         final int component_size = CAPI.annis_vec_component_size(components).intValue();
         
-        mapTimeline(components, false);
+        //mapTimeline(components, false);
 
         // add nodes to the graph
         nodesByID.values().stream().forEach(n -> docGraph.addNode(n));
@@ -468,7 +503,13 @@ public class SaltExport {
             if (SaltUtil.SALT_NULL_VALUE.equals(name)) {
                 name = null;
             }
-            recreateText(name, roots);
+            if (name == null || "".equals(name)) {
+            // only re-create text if this is the default (possible virtual) tokenization
+               recreateText(name, roots);
+           } else {
+               // add the text as label to the spans
+               addTextToSegmentation(name, roots);
+           }
         });
 
         addNodeLayers();
