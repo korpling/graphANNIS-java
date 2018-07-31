@@ -377,20 +377,32 @@ public class SaltExport {
                 for (SToken tok : token2Range.keySet()) {
                     Integer tokID = nodesByID.inverse().get(tok);
                     if (tokID != null) {
-                        AnnisVec_AnnisEdge edges = CAPI.annis_graph_outgoing_edges(orig, new NodeID(tokID),
-                                covComponent);
-                        final int edges_size = CAPI.annis_vec_edge_size(edges).intValue();
-                        for(int i=0; i < edges_size; i++) {
-                            AnnisEdge e = CAPI.annis_vec_edge_get(edges, new NativeLong(i));
-                            
-                            Integer pot = this.node2timelinePOT.get(e.target.intValue());
-                            if(pot != null) {
-                                STimelineRelation rel = SaltFactory.createSTimelineRelation();
-                                rel.setSource(tok);
-                                rel.setTarget(docGraph.getTimeline());
-                                rel.setStart(pot);
-                                rel.setEnd(pot);
-                                docGraph.addRelation(rel);
+                        Integer tokPOT = this.node2timelinePOT.get(tokID);
+                        if(tokPOT != null)  {
+                            // directly map the relation of the token to its POT
+                            STimelineRelation rel = SaltFactory.createSTimelineRelation();
+                            rel.setSource(tok);
+                            rel.setTarget(docGraph.getTimeline());
+                            rel.setStart(tokPOT);
+                            rel.setEnd(tokPOT);
+                            docGraph.addRelation(rel);
+                        } else {
+                            // find the coverage edges from this node to a token which has a POT
+                            AnnisVec_AnnisEdge edges = CAPI.annis_graph_outgoing_edges(orig, new NodeID(tokID),
+                                    covComponent);
+                            final int edges_size = CAPI.annis_vec_edge_size(edges).intValue();
+                            for(int i=0; i < edges_size; i++) {
+                                AnnisEdge e = CAPI.annis_vec_edge_get(edges, new NativeLong(i));
+                                
+                                Integer pot = this.node2timelinePOT.get(e.target.intValue());
+                                if(pot != null) {
+                                    STimelineRelation rel = SaltFactory.createSTimelineRelation();
+                                    rel.setSource(tok);
+                                    rel.setTarget(docGraph.getTimeline());
+                                    rel.setStart(pot);
+                                    rel.setEnd(pot);
+                                    docGraph.addRelation(rel);
+                                }
                             }
                         }
                     }
