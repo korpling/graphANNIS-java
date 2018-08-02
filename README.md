@@ -13,7 +13,8 @@ You will need to build and install the graphANNIS library (Rust version) with ca
 - Install the latest version (at least 1.28.0) of Rust:
 - Clone the graphANNIS library (Rust version is in the **rust/develop** branch!) from https://github.com/thomaskrause/graphANNIS/tree/rust/develop 
 - Execute `cargo build --release` in the cloned repository
-- Copy the resulting  shared library file `target/release/libgraphannis_capi.so` (`libgraphannis_capi.dylib` under MacOS X and `graphannis_capi.dll` under Windows) to `java-api/src/main/resources/<platform>/` where the platform is one of the following:
+- Change to a clone of this graphANNIS Java bindings repository
+- Copy the resulting  shared library file `<graphANNIS-repo>/target/release/libgraphannis_capi.so` (`libgraphannis_capi.dylib` under MacOS X and `graphannis_capi.dll` under Windows) to `java-api/src/main/resources/<platform>/` where the platform is one of the following:
 
 | Operating system       | `<platform>`  |
 |------------------------|---------------|
