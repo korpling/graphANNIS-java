@@ -8,8 +8,12 @@ This are the Java bindings to its API and some additional utility tools to e.g. 
 How to compile
 ---------------
 
-First, you need to build and install the graphANNIS library with cargo for your system.
-Copy the resulting libgraphannis\_capi.so/.dll/.dylib file to `java-api/src/main/resources/<platform>/` where the platform is one of the following:
+You will need to build and install the graphANNIS library (Rust version) with cargo for your system before you can build the Java project with Maven.
+
+- Install the latest version (at least 1.28.0) of Rust:
+- Clone the graphANNIS library (Rust version is in the **rust/develop** branch!) from https://github.com/thomaskrause/graphANNIS/tree/rust/develop 
+- Execute `cargo build --release` in the cloned repository
+- Copy the resulting  shared library file `target/release/libgraphannis_capi.so` (`libgraphannis_capi.dylib` under MacOS X and `graphannis_capi.dll` under Windows) to `java-api/src/main/resources/<platform>/` where the platform is one of the following:
 
 | Operating system       | `<platform>`  |
 |------------------------|---------------|
@@ -17,13 +21,11 @@ Copy the resulting libgraphannis\_capi.so/.dll/.dylib file to `java-api/src/main
 | MacOS X (64 bit)       | darwin-x86-64 |
 | Windows (64 bit)       | win32-x86-64  |
 
-This project uses Maven as build system. In order to build the packages, type
-
+- Now compile the Java project with Maven (http://maven.apache.org/)
 ```
 mvn install
 ```
 
-after you copied the shared library.
 
 3rd party dependencies
 ----------------------
