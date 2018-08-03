@@ -8,12 +8,12 @@
   <name>graphannis-root</name>
   
   <description>This is a prototype for a new backend implementation of the ANNIS linguistic search and visualization system.</description>
-  <url>https://github.com/thomaskrause/graphANNIS</url>
+  <url>https://github.com/corpus-tools/graphANNIS</url>
   
   <scm>
-    <connection>scm:git:https://github.com/thomaskrause/graphANNIS</connection>
-    <developerConnection>scm:git:ssh://git@github.com/thomaskrause/graphANNIS.git</developerConnection>
-    <url>https://github.com/thomaskrause/graphANNIS</url>
+    <connection>scm:git:https://github.com/corpus-tools/graphANNIS</connection>
+    <developerConnection>scm:git:ssh://git@github.com/corpus-tools/graphANNIS.git</developerConnection>
+    <url>https://github.com/corpus-tools/graphANNIS</url>
   </scm>
 
   <licenses>
