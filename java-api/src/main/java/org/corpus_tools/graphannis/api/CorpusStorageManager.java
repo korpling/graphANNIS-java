@@ -29,6 +29,7 @@ import org.corpus_tools.graphannis.capi.AnnisResultOrder;
 import org.corpus_tools.graphannis.capi.AnnisString;
 import org.corpus_tools.graphannis.capi.CAPI;
 import org.corpus_tools.graphannis.capi.CAPI.AnnisComponentConst;
+import org.corpus_tools.graphannis.capi.CAPI.AnnisVec_AnnisComponent;
 import org.corpus_tools.salt.common.SCorpusGraph;
 import org.corpus_tools.salt.common.SDocumentGraph;
 
@@ -104,12 +105,12 @@ public class CorpusStorageManager {
         }
         return result;
     }
-
-    public List<String> getAllOrderRelationNames(String corpusName) {
+    
+    private List<String> getAllComponentNames(String corpusName, int ctype) {
         List<String> result = new LinkedList<>();
         if (instance != null) {
             CAPI.AnnisVec_AnnisComponent orig = CAPI.annis_cs_all_components_by_type(instance, corpusName,
-                    AnnisComponentType.Ordering);
+                    ctype);
 
             for (int i = 0; i < CAPI.annis_vec_component_size(orig).intValue(); i++) {
                 AnnisComponentConst c = CAPI.annis_vec_component_get(orig, new NativeLong(i));
@@ -120,6 +121,18 @@ public class CorpusStorageManager {
             }
         }
         return result;
+    }
+    
+    public List<String> getAllDominanceRelationNames(String corpusName) {
+        return getAllComponentNames(corpusName, AnnisComponentType.Dominance);
+    }
+    
+    public List<String> getAllPointingRelationNames(String corpusName) {
+        return getAllComponentNames(corpusName, AnnisComponentType.Pointing);
+    }
+
+    public List<String> getAllOrderRelationNames(String corpusName) {
+        return getAllComponentNames(corpusName, AnnisComponentType.Ordering);
     }
 
     public long count(List<String> corpora, String queryAsJSON) {
