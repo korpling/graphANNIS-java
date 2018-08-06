@@ -22,7 +22,7 @@ before_install:
 cache: 
   directories:
   - $HOME/.cargo
-  - $TRAVIS_BUILD_DIR/ext/graphANNIS/target/
+  - $HOME/.m2
 
 
 
