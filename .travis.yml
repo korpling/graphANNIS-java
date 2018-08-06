@@ -7,7 +7,8 @@ before_install:
   - "curl -sSf https://build.travis-ci.org/files/rustup-init.sh | sh -s -- --default-toolchain=$RUST_VERSION -y"
   # checkout latest development version of graphANNIS
   - "git clone https://github.com/corpus-tools/graphANNIS"
-
+  - export PATH=$HOME/.cargo/bin:$PATH
+  
 cache: cargo
 
 
