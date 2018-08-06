@@ -1,26 +1,18 @@
 language: java
 
 env:
+  # if explicitly set, instead of compiling graphANNIS, the released version will be used 
+  #- GRAPHANNIS_VERSION=v0.7.1
   - RUST_VERSION=1.28.0
 
 before_install:
   - "curl -sSf https://build.travis-ci.org/files/rustup-init.sh | sh -s -- --default-toolchain=$RUST_VERSION -y"
-  # checkout latest development version of graphANNIS
-  - "git clone https://github.com/corpus-tools/graphANNIS"
   - export PATH=$HOME/.cargo/bin:$PATH
-  
+  # checkout latest development version of graphANNIS
+  - ./package/get-graphannis.sh
+
 cache: cargo
 
-
-install:
-  # compile graphANNIS dependency
-  - cd graphANNIS
-  - cargo build --release
-  # copy artifact
-  - cp target/release/libgraphannis_capi.so ../java-api/src/main/resources/linux-x86-64/
-  - cd ..
-  # compile java
-  - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V 
 
 
 script:
