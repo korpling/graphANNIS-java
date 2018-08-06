@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/corpus-tools/graphANNIS-java.svg?branch=develop)](https://travis-ci.org/corpus-tools/graphANNIS-java)
 
 graphANNIS Java Bindings
 ========================
