@@ -2,7 +2,7 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
 if [ -z "$GRAPHANNIS_VERSION" ]; then
-  # travis not set, but TRAVIS_TAG might be
+  # GRAPHANNIS_VERSION not set, but TRAVIS_TAG might be
   if [ -z "$TRAVIS_TAG" ]; then
     # also not set
     echo "Not a Travis deploy build"
