@@ -17,7 +17,7 @@ if [ -z "$GRAPHANNIS_VERSION" ]; then
   mkdir "$DIR"/../ext/
   git clone https://github.com/corpus-tools/graphANNIS "$DIR"/../ext/graphANNIS
   cd "$DIR"/../ext/graphANNIS
-  cargo build --release
+  cargo build --release -p graphannis-capi
   cp target/release/libgraphannis_capi.so "$DIR"/../java-api/src/main/resources/linux-x86-64/
   cd "$DIR"/..
 else
