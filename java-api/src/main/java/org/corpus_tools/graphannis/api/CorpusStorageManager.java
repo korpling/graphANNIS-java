@@ -29,6 +29,7 @@ import org.corpus_tools.graphannis.capi.AnnisResultOrder;
 import org.corpus_tools.graphannis.capi.AnnisString;
 import org.corpus_tools.graphannis.capi.CAPI;
 import org.corpus_tools.graphannis.capi.CAPI.AnnisComponentConst;
+import org.corpus_tools.graphannis.capi.CAPI.AnnisVec_AnnisComponent;
 import org.corpus_tools.salt.common.SCorpusGraph;
 import org.corpus_tools.salt.common.SDocumentGraph;
 
@@ -104,24 +105,65 @@ public class CorpusStorageManager {
         }
         return result;
     }
+    
+    public List<Annotation> listEdgeAnnotations(String corpusName, 
+            int component_type, String component_name, String component_layer,
+            boolean listValues, boolean onlyMostFrequentValues) {
+        List<Annotation> result = new LinkedList<>();
+        if (instance != null) {
+            CAPI.AnnisMatrix_AnnisCString orig = CAPI.annis_cs_list_edge_annotations(instance, corpusName, 
+                    component_type, component_name, component_layer,
+                    listValues,
+                    onlyMostFrequentValues);
 
-    public List<String> getAllOrderRelationNames(String corpusName) {
-        List<String> result = new LinkedList<>();
+            final int nrows = CAPI.annis_matrix_str_nrows(orig).intValue();
+            final int ncols = CAPI.annis_matrix_str_ncols(orig).intValue();
+            if (ncols >= (listValues ? 3 : 2)) {
+                for (int i = 0; i < nrows; i++) {
+                    Annotation anno = new Annotation();
+                    String ns = CAPI.annis_matrix_str_get(orig, new NativeLong(i), new NativeLong(0));
+                    String name = CAPI.annis_matrix_str_get(orig, new NativeLong(i), new NativeLong(1));
+
+                    if (!"".equals(ns)) {
+                        anno.setNamespace(ns);
+                    }
+                    anno.setName(name);
+                    if (listValues) {
+                        String val = CAPI.annis_matrix_str_get(orig, new NativeLong(i), new NativeLong(2));
+                        anno.setValue(val);
+                    }
+                    result.add(anno);
+                }
+            }
+
+            orig.dispose();
+        }
+        return result;
+    }
+    
+    public List<Component> getAllComponentsByType(String corpusName, int ctype) {
+        List<Component> result = new LinkedList<>();
         if (instance != null) {
             CAPI.AnnisVec_AnnisComponent orig = CAPI.annis_cs_all_components_by_type(instance, corpusName,
-                    AnnisComponentType.Ordering);
+                    ctype);
 
             for (int i = 0; i < CAPI.annis_vec_component_size(orig).intValue(); i++) {
-                AnnisComponentConst c = CAPI.annis_vec_component_get(orig, new NativeLong(i));
-                AnnisString cname = CAPI.annis_component_name(c);
-                if (cname != null) {
-                    result.add(cname.toString());
-                }
+                AnnisComponentConst cOrig = CAPI.annis_vec_component_get(orig, new NativeLong(i));
+                Component c = new Component();
+                c.setType(ctype);
+                
+                AnnisString cname = CAPI.annis_component_name(cOrig);
+                c.setName(cname == null ? "" : cname.toString());
+                
+                AnnisString clayer = CAPI.annis_component_layer(cOrig);
+                c.setLayer(clayer == null ? "" : clayer.toString());
+                
+                result.add(c);
             }
         }
         return result;
     }
-
+    
     public long count(List<String> corpora, String queryAsJSON) {
         long result = 0l;
         for (String corpusName : corpora) {

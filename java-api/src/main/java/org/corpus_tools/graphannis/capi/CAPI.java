@@ -57,10 +57,10 @@ public class CAPI implements Library {
 
     public static class AnnisVec_AnnisEdge extends AnnisPtr {
     }
-    
+
     public static class AnnisMatrix_AnnisCString extends AnnisPtr {
     }
-    
+
     public static class AnnisFrequencyTable_AnnisCString extends AnnisPtr {
     }
 
@@ -97,14 +97,20 @@ public class CAPI implements Library {
     public static native AnnisEdge annis_vec_edge_get(AnnisVec_AnnisEdge ptr, NativeLong i);
 
     public static native NodeIDByRef annis_iter_nodeid_next(AnnisIterPtr_AnnisNodeID ptr);
-    
+
     public static native String annis_matrix_str_get(AnnisMatrix_AnnisCString ptr, NativeLong row, NativeLong col);
+
     public static native NativeLong annis_matrix_str_ncols(AnnisMatrix_AnnisCString ptr);
+
     public static native NativeLong annis_matrix_str_nrows(AnnisMatrix_AnnisCString ptr);
-    
+
     public static native NativeLong annis_freqtable_str_count(AnnisFrequencyTable_AnnisCString ptr, NativeLong row);
-    public static native String annis_freqtable_str_get(AnnisFrequencyTable_AnnisCString ptr, NativeLong row, NativeLong col);
+
+    public static native String annis_freqtable_str_get(AnnisFrequencyTable_AnnisCString ptr, NativeLong row,
+            NativeLong col);
+
     public static native NativeLong annis_freqtable_str_ncols(AnnisFrequencyTable_AnnisCString ptr);
+
     public static native NativeLong annis_freqtable_str_nrows(AnnisFrequencyTable_AnnisCString ptr);
 
     // corpus storage class
@@ -131,15 +137,19 @@ public class CAPI implements Library {
 
     public static native AnnisGraphDB annis_cs_subgraph_for_query(AnnisCorpusStorage cs, String corpusName,
             String queryAsJSON);
-    
-    public static native AnnisFrequencyTable_AnnisCString annis_cs_cs_frequency(AnnisCorpusStorage cs, String corpusName,
-            String queryAsJSON, String frequencyQueryDefinition);
+
+    public static native AnnisFrequencyTable_AnnisCString annis_cs_cs_frequency(AnnisCorpusStorage cs,
+            String corpusName, String queryAsJSON, String frequencyQueryDefinition);
 
     public static native AnnisVec_AnnisComponent annis_cs_all_components_by_type(AnnisCorpusStorage cs,
             String corpusName, int ctype);
-    
+
     public static native AnnisMatrix_AnnisCString annis_cs_list_node_annotations(AnnisCorpusStorage cs,
             String corpusName, boolean listValues, boolean onlyMostFrequentValues);
+
+    public static native AnnisMatrix_AnnisCString annis_cs_list_edge_annotations(AnnisCorpusStorage cs,
+            String corpusName, int component_type,  String component_name, String component_layer,
+            boolean listValues, boolean onlyMostFrequentValues);
 
     public static native AnnisError annis_cs_apply_update(AnnisCorpusStorage cs, String corpusName,
             AnnisGraphUpdate update);

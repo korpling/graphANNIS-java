@@ -10,7 +10,7 @@
   <parent>
     <groupId>org.corpus-tools</groupId>
     <artifactId>graphannis-root</artifactId>
-    <version>0.7.0-SNAPSHOT</version>
+    <version>0.7.1</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -20,14 +20,14 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     
-    <native-libs-linux>${jna-platform-name}/libgraphannis_capi.so; 
+    <native-libs-linux>linux-x86-64/libgraphannis_capi.so; 
       osname=Linux;processor=x86-64</native-libs-linux>
 
-    <native-libs-windows>${jna-platform-name}/libgraphannis_capi.dll; 
+    <native-libs-windows>win32-x86-64/graphannis_capi.dll; 
       osname=Win32;processor=x86-64
     </native-libs-windows>
 
-    <native-libs-macosx>${jna-platform-name}/libgraphannis_capi.dylib; 
+    <native-libs-macosx>darwin-x86-64/libgraphannis_capi.dylib; 
       osname=MacOSX;processor=x86-64
     </native-libs-macosx>
     
@@ -43,7 +43,6 @@
       </activation>
       <properties>
         <bundle-native-libs>${native-libs-linux}</bundle-native-libs>
-        <jna-platform-name>linux-x86-64</jna-platform-name>
       </properties>
     </profile>
     <profile>
@@ -55,7 +54,6 @@
       </activation>
       <properties>
         <bundle-native-libs>${native-libs-macosx}</bundle-native-libs>
-        <jna-platform-name>darwin-x86-64</jna-platform-name>
       </properties>
     </profile>
     <profile>
@@ -67,7 +65,6 @@
       </activation>
       <properties>
         <bundle-native-libs>${native-libs-windows}</bundle-native-libs>
-        <jna-platform-name>win32-x86-64</jna-platform-name>
       </properties>
     </profile>
     
@@ -158,33 +155,6 @@
     </resources>
 
     <plugins>
-      
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>3.0.2</version>
-        <executions>
-          <execution>
-            <id>copy-resources</id>
-            <!-- here the phase you need -->
-            <phase>validate</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.basedir}/src/main/resources/${jna-platform-name}/</outputDirectory>
-              <resources>          
-                <resource>
-                  <directory>${project.basedir}/../target/release/</directory>
-                  <includes>                    
-                    <include>libgraphannis_capi.so</include>
-                  </includes>                  
-                </resource>
-              </resources>              
-            </configuration>            
-          </execution>
-        </executions>
-      </plugin>
-      
       <plugin>
         <artifactId>maven-source-plugin</artifactId>
         <version>3.0.1</version>
