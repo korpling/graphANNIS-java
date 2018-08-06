@@ -19,7 +19,10 @@ before_install:
   # checkout latest development version of graphANNIS
   - ./misc/get-graphannis.sh
 
-cache: cargo
+cache: 
+  directories:
+  - $HOME/.cargo
+  - $TRAVIS_BUILD_DIR/ext/graphANNIS/target/
 
 
 
