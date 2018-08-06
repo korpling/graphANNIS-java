@@ -5,15 +5,22 @@ env:
 
 before_install:
   - "curl -sSf https://build.travis-ci.org/files/rustup-init.sh | sh -s -- --default-toolchain=$RUST_VERSION -y"
-  # checkout and compile latest development version of graphANNIS
+  # checkout latest development version of graphANNIS
   - "git clone https://github.com/corpus-tools/graphANNIS"
-  - cd graphANNIS
-  - cargo build --release
-  # copy artefact
-  - cp target/release/libgraphannis_capi.so ../java-api/src/main/resources/linux-x86-64/
-  - cd ..
 
 cache: cargo
+
+
+install:
+  # compile graphANNIS dependency
+  - cd graphANNIS
+  - cargo build --release
+  # copy artifact
+  - cp target/release/libgraphannis_capi.so ../java-api/src/main/resources/linux-x86-64/
+  - cd ..
+  # compile java
+  - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V 
+
 
 script:
   - mvn test -B
