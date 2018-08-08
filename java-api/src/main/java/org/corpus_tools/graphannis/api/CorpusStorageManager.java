@@ -333,7 +333,13 @@ public class CorpusStorageManager {
 
     public void deleteCorpus(String corpusName) {
         if (instance != null) {
-            CAPI.annis_cs_delete(instance, corpusName);
+            CAPI.AnnisError result = CAPI.annis_cs_delete(instance, corpusName);
+            if (result != null) {
+                String msg = CAPI.annis_error_get_msg(result);
+                result.dispose();
+
+                throw new RuntimeException(msg);
+            }
         }
     }
 
