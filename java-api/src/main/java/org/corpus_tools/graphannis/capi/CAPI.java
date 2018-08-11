@@ -25,7 +25,7 @@ import com.sun.jna.PointerType;
 public class CAPI implements Library {
 
     static {
-        Native.register(CAPI.class, "graphannis_capi");
+        Native.register(CAPI.class, "graphannis");
     }
 
     public static class AnnisCorpusStorage extends AnnisPtr {
