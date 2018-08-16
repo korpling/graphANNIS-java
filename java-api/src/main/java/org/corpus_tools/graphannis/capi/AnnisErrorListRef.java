@@ -11,12 +11,14 @@ import annis.exceptions.AnnisException;
 
 public class AnnisErrorListRef extends PointerType {
     
+    private final Memory memPtr = new Memory(Pointer.SIZE);
+    
     public AnnisErrorListRef() {
         this(null);
     }
     
     public AnnisErrorListRef(Pointer value) {
-        super(new Memory(Pointer.SIZE));
+        setPointer(memPtr);
         setValue(value);
     }
 
@@ -53,18 +55,18 @@ public class AnnisErrorListRef extends PointerType {
     }
     
     public Pointer getValue() {
-        Pointer ptr = getPointer();
-        if(ptr != Pointer.NULL) {
-            return ptr.getPointer(0);
+        if(memPtr.valid()) {
+            return memPtr.getPointer(0);
         }
         return null;
     }
 
     public synchronized void dispose() {
-        //Pointer val = getValue();
-        //if (val != Pointer.NULL) {
-        //    //CAPI.annis_free(val);
-        //}   
+        Pointer val = getValue();
+        if (val != Pointer.NULL) {
+            CAPI.annis_free(val);
+            setValue(null);
+        }   
     }
 
     @Override
