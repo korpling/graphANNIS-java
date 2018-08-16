@@ -64,7 +64,7 @@ public class CAPITest
 
       CAPI.AnnisCorpusStorage cs = CAPI.annis_cs_new(tmpDir.getAbsolutePath(), false);
       
-      CAPI.AnnisVec_AnnisCString list = CAPI.annis_cs_list(cs);
+      CAPI.AnnisVec_AnnisCString list = CAPI.annis_cs_list(cs, null);
       
       // dispose in "wrong" order
       cs.dispose();

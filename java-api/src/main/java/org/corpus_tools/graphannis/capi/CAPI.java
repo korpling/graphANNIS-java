@@ -58,7 +58,11 @@ public class CAPI implements Library {
     public static class AnnisVec_AnnisAnnotation extends AnnisPtr {
     }
 
-    public static class AnnisError extends AnnisPtr {
+    public static class AnnisVec_AnnisError extends AnnisPtr {
+    }
+    
+    public static class AnnisErrorListArg extends PointerType {
+        
     }
 
     public static class AnnisIterPtr_AnnisNodeID extends AnnisPtr {
@@ -85,9 +89,11 @@ public class CAPI implements Library {
 
     public static native void annis_str_free(Pointer ptr);
 
-    public static native String annis_error_get_msg(AnnisError ptr);
+    public static native NativeLong annis_error_size(AnnisVec_AnnisError ptr);
+    public static native String annis_error_get_msg(AnnisVec_AnnisError ptr, NativeLong i);
+    public static native String annis_error_get_kind(AnnisVec_AnnisError ptr, NativeLong i);
 
-    public static native AnnisError annis_init_logging(String logfile, int level);
+    public static native void annis_init_logging(String logfile, int level, AnnisErrorListArg err);
 
     // vector and iterator functions
     public static native NativeLong annis_vec_str_size(AnnisVec_AnnisCString ptr);
@@ -133,29 +139,31 @@ public class CAPI implements Library {
     public static native AnnisCorpusStorage annis_cs_new(String db_dir, boolean use_parallel);
     protected static native void annis_cs_free(Pointer ptr);
 
-    public static native AnnisVec_AnnisCString annis_cs_list(AnnisCorpusStorage cs);
+    public static native AnnisVec_AnnisCString annis_cs_list(AnnisCorpusStorage cs, AnnisErrorListArg err);
 
-    public static native long annis_cs_count(AnnisCorpusStorage cs, String corpusName, String queryAsJSON);
+    public static native long annis_cs_count(AnnisCorpusStorage cs, String corpusName, String queryAsJSON,
+            AnnisErrorListArg err);
 
     public static native AnnisCountExtra.ByValue annis_cs_count_extra(AnnisCorpusStorage cs, String corpusName,
-            String queryAsJSON);
+            String queryAsJSON, AnnisErrorListArg err);
 
     public static native AnnisVec_AnnisCString annis_cs_find(AnnisCorpusStorage cs, String corpusName,
-            String queryAsJSON, long offset, long limit, int order);
+            String queryAsJSON, long offset, long limit, int order, AnnisErrorListArg err);
 
     public static native AnnisGraphDB annis_cs_subgraph(AnnisCorpusStorage cs, String corpusName,
-            AnnisVec_AnnisCString node_ids, NativeLong ctx_left, NativeLong ctx_right);
+            AnnisVec_AnnisCString node_ids, NativeLong ctx_left, NativeLong ctx_right, AnnisErrorListArg err);
 
     public static native AnnisGraphDB annis_cs_subcorpus_graph(AnnisCorpusStorage cs, String corpusName,
-            AnnisVec_AnnisCString corpus_ids);
+            AnnisVec_AnnisCString corpus_ids, AnnisErrorListArg err);
 
-    public static native AnnisGraphDB annis_cs_corpus_graph(AnnisCorpusStorage cs, String corpusName);
+    public static native AnnisGraphDB annis_cs_corpus_graph(AnnisCorpusStorage cs, String corpusName,
+            AnnisErrorListArg err);
 
     public static native AnnisGraphDB annis_cs_subgraph_for_query(AnnisCorpusStorage cs, String corpusName,
-            String queryAsJSON);
+            String queryAsJSON, AnnisErrorListArg err);
 
-    public static native AnnisFrequencyTable_AnnisCString annis_cs_cs_frequency(AnnisCorpusStorage cs,
-            String corpusName, String queryAsJSON, String frequencyQueryDefinition);
+    public static native AnnisFrequencyTable_AnnisCString annis_cs_frequency(AnnisCorpusStorage cs,
+            String corpusName, String queryAsJSON, String frequencyQueryDefinition, AnnisErrorListArg err);
 
     public static native AnnisVec_AnnisComponent annis_cs_all_components_by_type(AnnisCorpusStorage cs,
             String corpusName, int ctype);
@@ -167,12 +175,13 @@ public class CAPI implements Library {
             String corpusName, int component_type, String component_name, String component_layer, boolean listValues,
             boolean onlyMostFrequentValues);
 
-    public static native AnnisError annis_cs_apply_update(AnnisCorpusStorage cs, String corpusName,
-            AnnisGraphUpdate update);
+    public static native void annis_cs_apply_update(AnnisCorpusStorage cs, String corpusName,
+            AnnisGraphUpdate update, AnnisErrorListArg err);
 
-    public static native AnnisError annis_cs_import_relannis(AnnisCorpusStorage cs, String corpusName, String path);
+    public static native void annis_cs_import_relannis(AnnisCorpusStorage cs, String corpusName, 
+            String path, AnnisErrorListArg err);
 
-    public static native AnnisError annis_cs_delete(AnnisCorpusStorage cs, String corpusName);
+    public static native void annis_cs_delete(AnnisCorpusStorage cs, String corpusName, AnnisErrorListArg err);
 
     // graph update class
 
