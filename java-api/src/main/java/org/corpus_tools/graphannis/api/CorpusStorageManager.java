@@ -29,6 +29,8 @@ import org.corpus_tools.graphannis.capi.CAPI;
 import org.corpus_tools.graphannis.capi.CAPI.AnnisComponentConst;
 import org.corpus_tools.salt.common.SCorpusGraph;
 import org.corpus_tools.salt.common.SDocumentGraph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sun.jna.NativeLong;
 
@@ -44,6 +46,8 @@ import annis.service.objects.OrderType;
  */
 public class CorpusStorageManager {
     private final CAPI.AnnisCorpusStorage instance;
+    
+    private final Logger log = LoggerFactory.getLogger(CorpusStorageManager.class);
 
     public static class CountResult {
         public long matchCount;
@@ -57,8 +61,12 @@ public class CorpusStorageManager {
     public CorpusStorageManager(String dbDir, String logfile, boolean useParallel, LogLevel level) {
         AnnisErrorListRef err = new AnnisErrorListRef();
         CAPI.annis_init_logging(logfile, level.getRaw(), err);
-        err.checkErrors();
-        
+        try {
+            err.checkErrors();
+        } catch(SetLoggerError ex) {
+            // only warn about this
+            log.warn("Could not initialize graphANNIS logger", ex);
+        }
         this.instance = CAPI.annis_cs_new(dbDir, useParallel);
     }
 

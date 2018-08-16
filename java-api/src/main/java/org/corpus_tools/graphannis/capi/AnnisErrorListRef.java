@@ -1,5 +1,7 @@
 package org.corpus_tools.graphannis.capi;
 
+import org.corpus_tools.graphannis.api.SetLoggerError;
+
 import com.sun.jna.Memory;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
@@ -8,7 +10,7 @@ import com.sun.jna.PointerType;
 import annis.exceptions.AnnisException;
 
 public class AnnisErrorListRef extends PointerType {
-
+    
     public AnnisErrorListRef() {
         this(null);
     }
@@ -30,11 +32,14 @@ public class AnnisErrorListRef extends PointerType {
                     String msg = CAPI.annis_error_get_msg(getValue(), new NativeLong(i));
 
                     // TODO: map known kinds to more specialized exceptions
-                    // String kind = CAPI.annis_error_get_kind(getPointer(), new
-                    // NativeLong(0));
+                    String kind = CAPI.annis_error_get_kind(getValue(), new NativeLong(i));
+                    
+                    if("SetLoggerError".equals(kind)) {
+                        cause = new SetLoggerError(msg, cause);
+                    } else {
+                        cause = new AnnisException(msg, cause);
+                    }
 
-                    AnnisException ex = new AnnisException(msg, cause);
-                    cause = ex;
                 }
                 if (cause != null) {
                     throw (cause);
@@ -48,14 +53,18 @@ public class AnnisErrorListRef extends PointerType {
     }
     
     public Pointer getValue() {
-        return getPointer().getPointer(0);
+        Pointer ptr = getPointer();
+        if(ptr != Pointer.NULL) {
+            return ptr.getPointer(0);
+        }
+        return null;
     }
 
     public synchronized void dispose() {
-        Pointer val = getValue();
-        if (val != Pointer.NULL) {
-            CAPI.annis_free(val);
-        }   
+        //Pointer val = getValue();
+        //if (val != Pointer.NULL) {
+        //    //CAPI.annis_free(val);
+        //}   
     }
 
     @Override
