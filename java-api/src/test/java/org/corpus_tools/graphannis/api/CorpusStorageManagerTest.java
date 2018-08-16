@@ -15,14 +15,12 @@
  */
 package org.corpus_tools.graphannis.api;
 
-import com.google.common.io.Files;
 import java.io.File;
 import java.util.Arrays;
-import java.util.List;
+
 import org.corpus_tools.graphannis.SaltImport;
 import org.corpus_tools.salt.common.SDocument;
 import org.corpus_tools.salt.common.SDocumentGraph;
-import org.corpus_tools.salt.common.SToken;
 import org.corpus_tools.salt.common.SaltProject;
 import org.corpus_tools.salt.samples.SampleGenerator;
 import org.junit.After;
@@ -30,7 +28,10 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.google.common.io.Files;
+
+import annis.exceptions.AnnisException;
 
 /**
  *
@@ -62,7 +63,7 @@ public class CorpusStorageManagerTest
     File logfile =  new File(tmpDir, "graphannis.log");
     System.out.println("logging to " + logfile.getAbsolutePath());
     storage = new CorpusStorageManager(tmpDir.getAbsolutePath(), 
-    logfile.getAbsolutePath(), false, LogLevel.Trace);
+    logfile.getAbsolutePath(), false, LogLevel.Debug);
   }
   
   @After
@@ -107,6 +108,12 @@ public class CorpusStorageManagerTest
        docCreated = null;
        System.gc();
     }
+  }
+  
+  @Test(expected=AnnisException.class)
+  public void testDeleteThrowsException() {
+      System.out.println("deleteThrowsException");
+      storage.deleteCorpus("nonexistingcorpus");
   }
 
   
