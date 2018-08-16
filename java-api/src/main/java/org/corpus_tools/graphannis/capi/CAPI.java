@@ -25,10 +25,25 @@ import com.sun.jna.PointerType;
 public class CAPI implements Library {
 
     static {
-        Native.register(CAPI.class, "graphannis_capi");
+        Native.register(CAPI.class, "graphannis");
     }
 
-    public static class AnnisCorpusStorage extends AnnisPtr {
+    public static class AnnisCorpusStorage extends PointerType {
+        public synchronized void dispose() {
+            try {
+                if (this.getPointer() != Pointer.NULL) {
+                    CAPI.annis_cs_free(this.getPointer());
+                }
+            } finally {
+                this.setPointer(Pointer.NULL);
+            }
+        }
+
+        @Override
+        protected void finalize() throws Throwable {
+            this.dispose();
+            super.finalize();
+        }
     }
 
     public static class AnnisGraphUpdate extends AnnisPtr {
@@ -116,6 +131,7 @@ public class CAPI implements Library {
     // corpus storage class
 
     public static native AnnisCorpusStorage annis_cs_new(String db_dir, boolean use_parallel);
+    protected static native void annis_cs_free(Pointer ptr);
 
     public static native AnnisVec_AnnisCString annis_cs_list(AnnisCorpusStorage cs);
 
@@ -148,8 +164,8 @@ public class CAPI implements Library {
             String corpusName, boolean listValues, boolean onlyMostFrequentValues);
 
     public static native AnnisMatrix_AnnisCString annis_cs_list_edge_annotations(AnnisCorpusStorage cs,
-            String corpusName, int component_type,  String component_name, String component_layer,
-            boolean listValues, boolean onlyMostFrequentValues);
+            String corpusName, int component_type, String component_name, String component_layer, boolean listValues,
+            boolean onlyMostFrequentValues);
 
     public static native AnnisError annis_cs_apply_update(AnnisCorpusStorage cs, String corpusName,
             AnnisGraphUpdate update);

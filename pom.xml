@@ -3,17 +3,17 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.corpus-tools</groupId>
   <artifactId>graphannis-root</artifactId>
-  <version>0.7.1</version>
+  <version>0.8.1</version>
   <packaging>pom</packaging>
   <name>graphannis-root</name>
   
   <description>This is a prototype for a new backend implementation of the ANNIS linguistic search and visualization system.</description>
-  <url>https://github.com/thomaskrause/graphANNIS</url>
+  <url>https://github.com/corpus-tools/graphANNIS</url>
   
   <scm>
-    <connection>scm:git:https://github.com/thomaskrause/graphANNIS</connection>
-    <developerConnection>scm:git:ssh://git@github.com/thomaskrause/graphANNIS.git</developerConnection>
-    <url>https://github.com/thomaskrause/graphANNIS</url>
+    <connection>scm:git:https://github.com/corpus-tools/graphANNIS</connection>
+    <developerConnection>scm:git:ssh://git@github.com/corpus-tools/graphANNIS.git</developerConnection>
+    <url>https://github.com/corpus-tools/graphANNIS</url>
   </scm>
 
   <licenses>

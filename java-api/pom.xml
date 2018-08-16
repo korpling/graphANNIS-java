@@ -10,7 +10,7 @@
   <parent>
     <groupId>org.corpus-tools</groupId>
     <artifactId>graphannis-root</artifactId>
-    <version>0.7.1</version>
+    <version>0.8.1</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -20,14 +20,14 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     
-    <native-libs-linux>linux-x86-64/libgraphannis_capi.so; 
+    <native-libs-linux>linux-x86-64/libgraphannis.so; 
       osname=Linux;processor=x86-64</native-libs-linux>
 
-    <native-libs-windows>win32-x86-64/graphannis_capi.dll; 
+    <native-libs-windows>win32-x86-64/graphannis.dll; 
       osname=Win32;processor=x86-64
     </native-libs-windows>
 
-    <native-libs-macosx>darwin-x86-64/libgraphannis_capi.dylib; 
+    <native-libs-macosx>darwin-x86-64/libgraphannis.dylib; 
       osname=MacOSX;processor=x86-64
     </native-libs-macosx>
     
@@ -88,7 +88,7 @@
     <dependency>
       <groupId>de.hu-berlin.german.korpling.annis</groupId>
       <artifactId>annis-interfaces</artifactId>
-      <version>3.5.0-preview1</version>
+      <version>3.5.0-preview6</version>
     </dependency>
     <dependency>
       <groupId>org.corpus-tools</groupId>
