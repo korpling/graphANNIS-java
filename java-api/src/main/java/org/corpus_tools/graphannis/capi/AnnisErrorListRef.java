@@ -1,6 +1,7 @@
 package org.corpus_tools.graphannis.capi;
 
-import org.corpus_tools.graphannis.api.SetLoggerError;
+import org.corpus_tools.graphannis.errors.GraphANNISException;
+import org.corpus_tools.graphannis.errors.SetLoggerError;
 
 import com.sun.jna.Memory;
 import com.sun.jna.NativeLong;
@@ -22,14 +23,14 @@ public class AnnisErrorListRef extends PointerType {
         setValue(value);
     }
 
-    public void checkErrors() throws AnnisException {
+    public void checkErrors() throws GraphANNISException {
         if (getValue() != Pointer.NULL) {
             long num_of_errors = CAPI.annis_error_size(getValue()).longValue();
             if (num_of_errors > 0) {
                 // iterate of the list of all causes, rewinding the causes and
                 // getting to the first exception that
                 // is the main exception
-                AnnisException cause = null;
+                GraphANNISException cause = null;
                 for (long i = num_of_errors - 1; i >= 0; i--) {
                     String msg = CAPI.annis_error_get_msg(getValue(), new NativeLong(i));
 
@@ -39,7 +40,7 @@ public class AnnisErrorListRef extends PointerType {
                     if("SetLoggerError".equals(kind)) {
                         cause = new SetLoggerError(msg, cause);
                     } else {
-                        cause = new AnnisException(msg, cause);
+                        cause = new GraphANNISException(msg, cause);
                     }
 
                 }

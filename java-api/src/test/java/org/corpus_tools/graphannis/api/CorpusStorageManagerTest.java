@@ -19,6 +19,7 @@ import java.io.File;
 import java.util.Arrays;
 
 import org.corpus_tools.graphannis.SaltImport;
+import org.corpus_tools.graphannis.errors.GraphANNISException;
 import org.corpus_tools.salt.common.SDocument;
 import org.corpus_tools.salt.common.SDocumentGraph;
 import org.corpus_tools.salt.common.SaltProject;
@@ -30,8 +31,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.google.common.io.Files;
-
-import annis.exceptions.AnnisException;
 
 /**
  *
@@ -56,7 +55,7 @@ public class CorpusStorageManagerTest
   }
   
   @Before
-  public void setUp()
+  public void setUp() throws GraphANNISException
   {
     File tmpDir = Files.createTempDir();
     
@@ -80,7 +79,7 @@ public class CorpusStorageManagerTest
    * Test of subcorpusGraph method, of class CorpusStorageManager.
    */
   @Test
-  public void testSubcorpusGraph()
+  public void testSubcorpusGraph() throws GraphANNISException
   {
     System.out.println("subcorpusGraph");
     
@@ -110,8 +109,8 @@ public class CorpusStorageManagerTest
     }
   }
   
-  @Test(expected=AnnisException.class)
-  public void testDeleteThrowsException() {
+  @Test(expected=GraphANNISException.class)
+  public void testDeleteThrowsException() throws GraphANNISException {
       System.out.println("deleteThrowsException");
       storage.deleteCorpus("nonexistingcorpus");
   }

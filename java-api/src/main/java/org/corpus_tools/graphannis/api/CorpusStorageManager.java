@@ -27,6 +27,8 @@ import org.corpus_tools.graphannis.capi.AnnisErrorListRef;
 import org.corpus_tools.graphannis.capi.AnnisResultOrder;
 import org.corpus_tools.graphannis.capi.CAPI;
 import org.corpus_tools.graphannis.capi.CAPI.AnnisComponentConst;
+import org.corpus_tools.graphannis.errors.GraphANNISException;
+import org.corpus_tools.graphannis.errors.SetLoggerError;
 import org.corpus_tools.salt.common.SCorpusGraph;
 import org.corpus_tools.salt.common.SDocumentGraph;
 import org.slf4j.Logger;
@@ -54,11 +56,12 @@ public class CorpusStorageManager {
         public long documentCount;
     }
 
-    public CorpusStorageManager(String dbDir) {
+    public CorpusStorageManager(String dbDir) throws GraphANNISException {
         this(dbDir, null, false, LogLevel.Off);
     }
 
-    public CorpusStorageManager(String dbDir, String logfile, boolean useParallel, LogLevel level) {
+    public CorpusStorageManager(String dbDir, String logfile, boolean useParallel, 
+            LogLevel level) throws GraphANNISException {
         AnnisErrorListRef err = new AnnisErrorListRef();
         CAPI.annis_init_logging(logfile, level.getRaw(), err);
         try {
@@ -70,7 +73,7 @@ public class CorpusStorageManager {
         this.instance = CAPI.annis_cs_new(dbDir, useParallel);
     }
 
-    public String[] list() {
+    public String[] list() throws GraphANNISException {
         AnnisErrorListRef err = new AnnisErrorListRef();
         CAPI.AnnisVec_AnnisCString orig = CAPI.annis_cs_list(instance, err);
         err.checkErrors();
@@ -174,7 +177,7 @@ public class CorpusStorageManager {
         return result;
     }
     
-    public boolean validateQuery(List<String> corpora, String queryAsAQL) {
+    public boolean validateQuery(List<String> corpora, String queryAsAQL) throws GraphANNISException {
         boolean result = true;
         for(String corpusName : corpora) {
             AnnisErrorListRef err = new AnnisErrorListRef();
@@ -186,7 +189,7 @@ public class CorpusStorageManager {
         return result;
     }
     
-    public List<NodeDesc> getNodeDescriptions(String queryAsAQL) {
+    public List<NodeDesc> getNodeDescriptions(String queryAsAQL) throws GraphANNISException {
         AnnisErrorListRef err = new AnnisErrorListRef();
         NodeDescCollection desc = CAPI.annis_cs_node_descriptions(instance, queryAsAQL, err);
         err.checkErrors();
@@ -195,7 +198,7 @@ public class CorpusStorageManager {
     
     }
     
-    public long count(List<String> corpora, String queryAsAQL) {
+    public long count(List<String> corpora, String queryAsAQL) throws GraphANNISException {
         long result = 0l;
         for (String corpusName : corpora) {
             AnnisErrorListRef err = new AnnisErrorListRef();
@@ -205,7 +208,7 @@ public class CorpusStorageManager {
         return result;
     }
 
-    public CountResult countExtra(List<String> corpora, String queryAsAQL) {
+    public CountResult countExtra(List<String> corpora, String queryAsAQL) throws GraphANNISException {
         CountResult result = new CountResult();
         result.documentCount = 0;
         result.matchCount = 0;
@@ -220,11 +223,13 @@ public class CorpusStorageManager {
         return result;
     }
     
-    public String[] find(List<String> corpora, String queryAsAQL, long offset, long limit) {
+    public String[] find(List<String> corpora, String queryAsAQL, long offset, long limit) 
+            throws GraphANNISException {
         return find(corpora, queryAsAQL, offset, limit, OrderType.ascending);
     }
 
-    public String[] find(List<String> corpora, String queryAsAQL, long offset, long limit, OrderType order) {
+    public String[] find(List<String> corpora, String queryAsAQL, long offset, 
+            long limit, OrderType order) throws GraphANNISException {
 
         int orderC;
         switch (order) {
@@ -258,7 +263,8 @@ public class CorpusStorageManager {
         return result.toArray(new String[0]);
     }
 
-    public SDocumentGraph subgraph(String corpusName, List<String> node_ids, long ctx_left, long ctx_right) {
+    public SDocumentGraph subgraph(String corpusName, List<String> node_ids, 
+            long ctx_left, long ctx_right) throws GraphANNISException {
         CAPI.AnnisVec_AnnisCString c_node_ids = CAPI.annis_vec_str_new();
         for (String id : node_ids) {
             CAPI.annis_vec_str_push(c_node_ids, id);
@@ -276,7 +282,7 @@ public class CorpusStorageManager {
         return result;
     }
 
-    public SDocumentGraph subcorpusGraph(String corpusName, List<String> document_ids) {
+    public SDocumentGraph subcorpusGraph(String corpusName, List<String> document_ids) throws GraphANNISException {
         CAPI.AnnisVec_AnnisCString c_document_ids = CAPI.annis_vec_str_new();
         for (String id : document_ids) {
             CAPI.annis_vec_str_push(c_document_ids, id);
@@ -298,7 +304,7 @@ public class CorpusStorageManager {
         return result;
     }
 
-    public SCorpusGraph corpusGraph(String corpusName) {
+    public SCorpusGraph corpusGraph(String corpusName) throws GraphANNISException {
         if (instance != null) {
             AnnisErrorListRef err = new AnnisErrorListRef();
             CAPI.AnnisGraphDB graph = CAPI.annis_cs_corpus_graph(instance, corpusName, err);
@@ -313,7 +319,7 @@ public class CorpusStorageManager {
         return null;
     }
 
-    public SCorpusGraph corpusGraphForQuery(String corpusName, String aql) {
+    public SCorpusGraph corpusGraphForQuery(String corpusName, String aql) throws GraphANNISException {
         if (instance != null) {
             AnnisErrorListRef err = new AnnisErrorListRef();
             CAPI.AnnisGraphDB graph = CAPI.annis_cs_subgraph_for_query(instance, corpusName, aql, err);
@@ -328,7 +334,7 @@ public class CorpusStorageManager {
         return null;
     }
 
-    public SDocumentGraph subGraphForQuery(String corpusName, String aql) {
+    public SDocumentGraph subGraphForQuery(String corpusName, String aql) throws GraphANNISException {
         if (instance != null) {
             AnnisErrorListRef err = new AnnisErrorListRef();
             CAPI.AnnisGraphDB graph = CAPI.annis_cs_subgraph_for_query(instance, corpusName,
@@ -344,7 +350,7 @@ public class CorpusStorageManager {
         return null;
     }
 
-    public FrequencyTable frequency(String corpusName, String queryAsAQL, FrequencyTableQuery freqQueryDef) {
+    public FrequencyTable frequency(String corpusName, String queryAsAQL, FrequencyTableQuery freqQueryDef) throws GraphANNISException {
         if (instance != null) {
             String freqQueryDefString = freqQueryDef.toString();
             AnnisErrorListRef err = new AnnisErrorListRef();
@@ -371,14 +377,14 @@ public class CorpusStorageManager {
         return null;
     }
 
-    public void importRelANNIS(String corpusName, String path) {
+    public void importRelANNIS(String corpusName, String path) throws GraphANNISException {
         if (instance != null) {
             AnnisErrorListRef err = new AnnisErrorListRef();
             CAPI.annis_cs_import_relannis(instance, corpusName, path, err);
             err.checkErrors();       }
     }
 
-    public void deleteCorpus(String corpusName) {
+    public void deleteCorpus(String corpusName) throws GraphANNISException {
         if (instance != null) {
             AnnisErrorListRef err = new AnnisErrorListRef();
             CAPI.annis_cs_delete(instance, corpusName, err);
@@ -386,7 +392,7 @@ public class CorpusStorageManager {
         }
     }
 
-    public void applyUpdate(String corpusName, GraphUpdate update) {
+    public void applyUpdate(String corpusName, GraphUpdate update) throws GraphANNISException {
         AnnisErrorListRef err = new AnnisErrorListRef();
         CAPI.annis_cs_apply_update(instance, corpusName, update.getInstance(), err);
         err.checkErrors();

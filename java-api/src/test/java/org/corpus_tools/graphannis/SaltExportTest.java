@@ -25,6 +25,7 @@ import org.corpus_tools.graphannis.api.CorpusStorageManager;
 import org.corpus_tools.graphannis.api.GraphUpdate;
 
 import org.corpus_tools.graphannis.api.LogLevel;
+import org.corpus_tools.graphannis.errors.GraphANNISException;
 import org.corpus_tools.salt.SALT_TYPE;
 import org.corpus_tools.salt.SaltFactory;
 import org.corpus_tools.salt.common.SCorpus;
@@ -62,7 +63,7 @@ public class SaltExportTest {
   }
 
   @Before
-  public void setUp() {
+  public void setUp() throws GraphANNISException {
     File tmpDir = Files.createTempDir();
     
     File logfile =  new File(tmpDir, "graphannis.log");
@@ -76,7 +77,7 @@ public class SaltExportTest {
   }
 
   @Test
-  public void testMapComplexExample() throws IOException, XMLStreamException {
+  public void testMapComplexExample() throws IOException, XMLStreamException, GraphANNISException {
  
 
     SDocument doc = SaltFactory.createSDocument();
@@ -133,7 +134,7 @@ public class SaltExportTest {
   }
   
   @Test
-  public void testMapComplexExampleDoc() throws IOException, XMLStreamException {
+  public void testMapComplexExampleDoc() throws IOException, XMLStreamException, GraphANNISException {
  
     
     SCorpusGraph corpusGraph = SaltFactory.createSCorpusGraph();

@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 import org.corpus_tools.graphannis.api.CorpusStorageManager;
 import org.corpus_tools.graphannis.api.GraphUpdate;
+import org.corpus_tools.graphannis.errors.GraphANNISException;
 import org.corpus_tools.salt.SaltFactory;
 import org.corpus_tools.salt.common.SCorpus;
 import org.corpus_tools.salt.common.SCorpusGraph;
@@ -62,7 +63,7 @@ public class SaltImportTest {
     }
 
     @Before
-    public void setUp() {
+    public void setUp() throws GraphANNISException {
         File tmpDir = Files.createTempDir();
 
         storage = new CorpusStorageManager(tmpDir.getAbsolutePath());
@@ -76,7 +77,7 @@ public class SaltImportTest {
      * Test of map method, of class SaltImport.
      */
     @Test
-    public void testMapComplexExample() {
+    public void testMapComplexExample() throws GraphANNISException {
 
         SDocument doc = SaltFactory.createSDocument();
 
@@ -153,7 +154,7 @@ public class SaltImportTest {
     }
 
     @Test
-    public void testTwoDocumentsSameNodeName() {
+    public void testTwoDocumentsSameNodeName() throws GraphANNISException {
 
         SaltProject project = SaltFactory.createSaltProject();
         SCorpusGraph corpusGraph = project.createCorpusGraph();
