@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.corpus_tools.graphannis.QueryToJSON;
 import org.corpus_tools.graphannis.SaltExport;
 import org.corpus_tools.graphannis.capi.AnnisCountExtra;
 import org.corpus_tools.graphannis.capi.AnnisErrorListRef;
@@ -294,9 +293,8 @@ public class CorpusStorageManager {
 
     public SCorpusGraph corpusGraphForQuery(String corpusName, String aql) {
         if (instance != null) {
-            String json = QueryToJSON.aqlToJSON(aql);
             AnnisErrorListRef err = new AnnisErrorListRef();
-            CAPI.AnnisGraphDB graph = CAPI.annis_cs_subgraph_for_query(instance, corpusName, json, err);
+            CAPI.AnnisGraphDB graph = CAPI.annis_cs_subgraph_for_query(instance, corpusName, aql, err);
             err.checkErrors();
 
             SCorpusGraph result = SaltExport.mapCorpusGraph(graph);
@@ -312,7 +310,7 @@ public class CorpusStorageManager {
         if (instance != null) {
             AnnisErrorListRef err = new AnnisErrorListRef();
             CAPI.AnnisGraphDB graph = CAPI.annis_cs_subgraph_for_query(instance, corpusName,
-                    QueryToJSON.aqlToJSON(aql), err);
+                    aql, err);
             err.checkErrors();
 
             SDocumentGraph result = SaltExport.map(graph);
