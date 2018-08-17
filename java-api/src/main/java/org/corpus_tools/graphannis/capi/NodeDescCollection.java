@@ -24,7 +24,7 @@ public class NodeDescCollection extends PointerType {
             newNodeDesc.setComponentNr(CAPI.annis_vec_nodedesc_get_component_nr(this, new NativeLong(i)).longValue());
             newNodeDesc.setAqlFragment(CAPI.annis_vec_nodedesc_get_aql_fragment(this, new NativeLong(i)).toString());
             newNodeDesc.setVariable(CAPI.annis_vec_nodedesc_get_variable(this, new NativeLong(i)).toString());
-            
+            result.add(newNodeDesc);
         }
         return result;
     }
