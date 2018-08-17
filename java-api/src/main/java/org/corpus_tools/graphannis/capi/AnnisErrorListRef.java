@@ -8,7 +8,6 @@ import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 
-import annis.exceptions.AnnisException;
 
 public class AnnisErrorListRef extends PointerType {
     
