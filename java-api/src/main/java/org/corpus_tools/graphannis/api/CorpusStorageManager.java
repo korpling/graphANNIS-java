@@ -20,10 +20,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.corpus_tools.graphannis.SaltExport;
+import org.corpus_tools.graphannis.capi.CharPointer;
 import org.corpus_tools.graphannis.capi.AnnisCountExtra;
 import org.corpus_tools.graphannis.capi.AnnisErrorListRef;
 import org.corpus_tools.graphannis.capi.AnnisResultOrder;
-import org.corpus_tools.graphannis.capi.AnnisString;
 import org.corpus_tools.graphannis.capi.CAPI;
 import org.corpus_tools.graphannis.capi.CAPI.AnnisComponentConst;
 import org.corpus_tools.salt.common.SCorpusGraph;
@@ -161,10 +161,10 @@ public class CorpusStorageManager {
                 Component c = new Component();
                 c.setType(ctype);
                 
-                AnnisString cname = CAPI.annis_component_name(cOrig);
+                CharPointer cname = CAPI.annis_component_name(cOrig);
                 c.setName(cname == null ? "" : cname.toString());
                 
-                AnnisString clayer = CAPI.annis_component_layer(cOrig);
+                CharPointer clayer = CAPI.annis_component_layer(cOrig);
                 c.setLayer(clayer == null ? "" : clayer.toString());
                 
                 result.add(c);

@@ -208,9 +208,9 @@ public class CAPI implements Library {
 
     // GraphDB classes
 
-    public static native AnnisString annis_component_layer(AnnisComponentConst component);
+    public static native CharPointer annis_component_layer(AnnisComponentConst component);
 
-    public static native AnnisString annis_component_name(AnnisComponentConst component);
+    public static native CharPointer annis_component_name(AnnisComponentConst component);
 
     public static native int annis_component_type(AnnisComponentConst component);
 
@@ -228,5 +228,5 @@ public class CAPI implements Library {
     public static native AnnisVec_AnnisAnnotation annis_graph_edge_labels(AnnisGraphDB g, AnnisEdge.ByValue edge,
             AnnisComponentConst component);
 
-    public static native AnnisString annis_graph_str(AnnisGraphDB g, StringID str_id);
+    public static native CharPointer annis_graph_str(AnnisGraphDB g, StringID str_id);
 }

@@ -22,7 +22,7 @@ import com.sun.jna.PointerType;
  *
  * @author thomas
  */
-public class AnnisString extends PointerType implements CharSequence {
+public class CharPointer extends PointerType implements CharSequence {
   
   public synchronized void dispose()
   {

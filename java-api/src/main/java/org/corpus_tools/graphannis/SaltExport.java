@@ -29,9 +29,9 @@ import java.util.TreeMap;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.corpus_tools.graphannis.capi.AnnisAnnotation;
+import org.corpus_tools.graphannis.capi.CharPointer;
 import org.corpus_tools.graphannis.capi.AnnisComponentType;
 import org.corpus_tools.graphannis.capi.AnnisEdge;
-import org.corpus_tools.graphannis.capi.AnnisString;
 import org.corpus_tools.graphannis.capi.CAPI;
 import org.corpus_tools.graphannis.capi.CAPI.AnnisComponentConst;
 import org.corpus_tools.graphannis.capi.CAPI.AnnisGraphDB;
@@ -192,7 +192,7 @@ public class SaltExport {
 
         String edgeType = null;
         if (source != null && target != null && source != target) {
-            AnnisString cName = CAPI.annis_component_name(component);
+            CharPointer cName = CAPI.annis_component_name(component);
             if (cName != null) {
                 edgeType = cName.toString();
             }
@@ -265,7 +265,7 @@ public class SaltExport {
                 annos.dispose();
                 mapLabels(rel, labels, false);
 
-                AnnisString layerNameRaw = CAPI.annis_component_layer(component);
+                CharPointer layerNameRaw = CAPI.annis_component_layer(component);
                 String layerName = layerNameRaw == null ? null : layerNameRaw.toString();
                 if (layerName != null && !layerName.isEmpty()) {
                     List<SLayer> layer = docGraph.getLayerByName(layerName);
@@ -363,8 +363,8 @@ public class SaltExport {
             AnnisComponentConst covComponent = null;
             for (int i = 0; i < coverageComponents_size; i++) {
                 AnnisComponentConst c = CAPI.annis_vec_component_get(coverageComponents, new NativeLong(i));
-                AnnisString cName = CAPI.annis_component_name(c);
-                AnnisString cLayer = CAPI.annis_component_layer(c);
+                CharPointer cName = CAPI.annis_component_name(c);
+                CharPointer cLayer = CAPI.annis_component_layer(c);
                 if ((cName == null || cName.toString().isEmpty()) && "annis".equals(cLayer.toString())) {
                     covComponent = c;
                     break;
@@ -524,7 +524,7 @@ public class SaltExport {
         for (int i = 0; i < component_size; i++) {
             AnnisComponentConst c = CAPI.annis_vec_component_get(components, new NativeLong(i));
             if (CAPI.annis_component_type(c) == AnnisComponentType.Ordering) {
-                AnnisString t = CAPI.annis_component_name(c);
+                CharPointer t = CAPI.annis_component_name(c);
                 types.put(t == null ? "" : t.toString(), c);
             }
         }
