@@ -24,7 +24,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import static org.corpus_tools.graphannis.QueryToJSON.aqlToJSON;
 import org.corpus_tools.graphannis.api.CorpusStorageManager;
 import org.corpus_tools.graphannis.api.GraphUpdate;
 import org.corpus_tools.salt.SaltFactory;
@@ -96,61 +95,61 @@ public class SaltImportTest {
 
         List<String> corpus = Arrays.asList("testCorpus");
 
-        assertEquals(26, storage.count(corpus, aqlToJSON("node")));
+        assertEquals(26, storage.count(corpus, "node"));
 
         // test that the token are present and have the correct span values
-        assertEquals(11, storage.count(corpus, aqlToJSON("tok")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("tok=\"Is\"")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("tok=\"this\"")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("tok=\"example\"")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("tok=\"more\"")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("tok=\"complicated\"")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("tok=\"than\"")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("tok=\"it\"")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("tok=\"appears\"")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("tok=\"to\"")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("tok=\"be\"")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("tok=\"?\"")));
+        assertEquals(11, storage.count(corpus, "tok"));
+        assertEquals(1, storage.count(corpus, "tok=\"Is\""));
+        assertEquals(1, storage.count(corpus, "tok=\"this\""));
+        assertEquals(1, storage.count(corpus, "tok=\"example\""));
+        assertEquals(1, storage.count(corpus, "tok=\"more\""));
+        assertEquals(1, storage.count(corpus, "tok=\"complicated\""));
+        assertEquals(1, storage.count(corpus, "tok=\"than\""));
+        assertEquals(1, storage.count(corpus, "tok=\"it\""));
+        assertEquals(1, storage.count(corpus, "tok=\"appears\""));
+        assertEquals(1, storage.count(corpus, "tok=\"to\""));
+        assertEquals(1, storage.count(corpus, "tok=\"be\""));
+        assertEquals(1, storage.count(corpus, "tok=\"?\""));
 
         // test that the token annotations have been added
-        assertEquals(1, storage.count(corpus, aqlToJSON("pos=\"VBZ\" _=_ \"Is\"")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("pos=\"DT\" _=_ \"this\"")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("pos=\"NN\" _=_ \"example\"")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("pos=\"RBR\" _=_ \"more\"")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("pos=\"JJ\" _=_ \"complicated\"")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("pos=\"IN\" _=_ \"than\"")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("pos=\"PRP\" _=_ \"it\"")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("pos=\"VBZ\" _=_ \"appears\"")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("pos=\"TO\" _=_ \"to\"")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("pos=\"VB\" _=_ \"be\"")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("pos=\".\" _=_ \"?\"")));
+        assertEquals(1, storage.count(corpus, "pos=\"VBZ\" _=_ \"Is\""));
+        assertEquals(1, storage.count(corpus, "pos=\"DT\" _=_ \"this\""));
+        assertEquals(1, storage.count(corpus, "pos=\"NN\" _=_ \"example\""));
+        assertEquals(1, storage.count(corpus, "pos=\"RBR\" _=_ \"more\""));
+        assertEquals(1, storage.count(corpus, "pos=\"JJ\" _=_ \"complicated\""));
+        assertEquals(1, storage.count(corpus, "pos=\"IN\" _=_ \"than\""));
+        assertEquals(1, storage.count(corpus, "pos=\"PRP\" _=_ \"it\""));
+        assertEquals(1, storage.count(corpus, "pos=\"VBZ\" _=_ \"appears\""));
+        assertEquals(1, storage.count(corpus, "pos=\"TO\" _=_ \"to\""));
+        assertEquals(1, storage.count(corpus, "pos=\"VB\" _=_ \"be\""));
+        assertEquals(1, storage.count(corpus, "pos=\".\" _=_ \"?\""));
 
         // test that the precedence works for the token
-        assertEquals(1, storage.count(corpus, aqlToJSON(
+        assertEquals(1, storage.count(corpus, 
                 "\"Is\" . \"this\" . \"example\" . \"more\" . \"complicated\" . \"than\" . \"it\" . \"appears\" . "
-                        + "\"to\" . \"be\" . \"?\"")));
+                        + "\"to\" . \"be\" . \"?\""));
 
         // test that coverage works
-        assertEquals(1, storage.count(corpus, aqlToJSON("Inf-Struct=\"contrast-focus\" _o_ \"Is\"")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("Inf-Struct=\"topic\" _o_ \"this\"")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("Inf-Struct=\"topic\" _o_ \"example\"")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("Inf-Struct=\"topic\" _o_ \"more\"")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("Inf-Struct=\"topic\" _o_ \"complicated\"")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("Inf-Struct=\"topic\" _o_ \"than\"")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("Inf-Struct=\"topic\" _o_ \"it\"")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("Inf-Struct=\"topic\" _o_ \"appears\"")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("Inf-Struct=\"topic\" _o_ \"to\"")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("Inf-Struct=\"topic\" _o_ \"be\"")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("Inf-Struct=\"topic\" _o_ \"?\"")));
+        assertEquals(1, storage.count(corpus, "Inf-Struct=\"contrast-focus\" _o_ \"Is\""));
+        assertEquals(1, storage.count(corpus, "Inf-Struct=\"topic\" _o_ \"this\""));
+        assertEquals(1, storage.count(corpus, "Inf-Struct=\"topic\" _o_ \"example\""));
+        assertEquals(1, storage.count(corpus, "Inf-Struct=\"topic\" _o_ \"more\""));
+        assertEquals(1, storage.count(corpus, "Inf-Struct=\"topic\" _o_ \"complicated\""));
+        assertEquals(1, storage.count(corpus, "Inf-Struct=\"topic\" _o_ \"than\""));
+        assertEquals(1, storage.count(corpus, "Inf-Struct=\"topic\" _o_ \"it\""));
+        assertEquals(1, storage.count(corpus, "Inf-Struct=\"topic\" _o_ \"appears\""));
+        assertEquals(1, storage.count(corpus, "Inf-Struct=\"topic\" _o_ \"to\""));
+        assertEquals(1, storage.count(corpus, "Inf-Struct=\"topic\" _o_ \"be\""));
+        assertEquals(1, storage.count(corpus, "Inf-Struct=\"topic\" _o_ \"?\""));
 
         // test some of the dominance edges
-        assertEquals(1, storage.count(corpus, aqlToJSON("const=\"ROOT\" > const=\"SQ\" > \"Is\"")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("const=\"SQ\" >* \"this\"")));
+        assertEquals(1, storage.count(corpus, "const=\"ROOT\" > const=\"SQ\" > \"Is\""));
+        assertEquals(1, storage.count(corpus, "const=\"SQ\" >* \"this\""));
 
         // test some of the pointing relations
-        assertEquals(1, storage.count(corpus, aqlToJSON("\"it\" ->anaphoric node _o_ \"example\"")));
-        assertEquals(9, storage.count(corpus, aqlToJSON("tok ->null tok")));
-        assertEquals(1, storage.count(corpus, aqlToJSON("\"complicated\" ->null[dependency=\"cop\"] \"Is\"")));
+        assertEquals(1, storage.count(corpus, "\"it\" ->anaphoric node _o_ \"example\""));
+        assertEquals(9, storage.count(corpus, "tok ->null tok"));
+        assertEquals(1, storage.count(corpus, "\"complicated\" ->null[dependency=\"cop\"] \"Is\""));
     }
 
     @Test
@@ -202,7 +201,7 @@ public class SaltImportTest {
 
         Set<String> matches = new HashSet<>();
 
-        String[] result = storage.find(Arrays.asList("root"), QueryToJSON.aqlToJSON("tok"), 0, Long.MAX_VALUE,
+        String[] result = storage.find(Arrays.asList("root"), "tok", 0, Long.MAX_VALUE,
                 OrderType.ascending);
         assertEquals(2, result.length);
         for (int i = 0; i < 2; i++) {
