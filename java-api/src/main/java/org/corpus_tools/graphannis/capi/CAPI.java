@@ -128,7 +128,13 @@ public class CAPI implements Library {
     public static native NativeLong annis_freqtable_str_ncols(AnnisFrequencyTable_AnnisCString ptr);
 
     public static native NativeLong annis_freqtable_str_nrows(AnnisFrequencyTable_AnnisCString ptr);
+    
+    public static native NativeLong annis_vec_nodedesc_size(NodeDescCollection ptr);
+    public static native NativeLong annis_vec_nodedesc_get_component_nr(NodeDescCollection ptr, NativeLong i);
+    public static native CharPointer annis_vec_nodedesc_get_aql_fragment(NodeDescCollection ptr, NativeLong i);
+    public static native CharPointer annis_vec_nodedesc_get_variable(NodeDescCollection ptr, NativeLong i);
 
+            
     // corpus storage class
 
     public static native AnnisCorpusStorage annis_cs_new(String db_dir, boolean use_parallel);
