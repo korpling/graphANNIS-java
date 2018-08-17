@@ -174,23 +174,23 @@ public class CorpusStorageManager {
         return result;
     }
     
-    public long count(List<String> corpora, String queryAsJSON) {
+    public long count(List<String> corpora, String queryAsAQL) {
         long result = 0l;
         for (String corpusName : corpora) {
             AnnisErrorListRef err = new AnnisErrorListRef();
-            result += CAPI.annis_cs_count(instance, corpusName, queryAsJSON, err);
+            result += CAPI.annis_cs_count(instance, corpusName, queryAsAQL, err);
             err.checkErrors();
         }
         return result;
     }
 
-    public CountResult countExtra(List<String> corpora, String queryAsJSON) {
+    public CountResult countExtra(List<String> corpora, String queryAsAQL) {
         CountResult result = new CountResult();
         result.documentCount = 0;
         result.matchCount = 0;
         for (String corpusName : corpora) {
             AnnisErrorListRef err = new AnnisErrorListRef();
-            AnnisCountExtra resultForCorpus = CAPI.annis_cs_count_extra(instance, corpusName, queryAsJSON, err);
+            AnnisCountExtra resultForCorpus = CAPI.annis_cs_count_extra(instance, corpusName, queryAsAQL, err);
             err.checkErrors();
             
             result.matchCount += resultForCorpus.matchCount;
@@ -199,11 +199,11 @@ public class CorpusStorageManager {
         return result;
     }
     
-    public String[] find(List<String> corpora, String queryAsJSON, long offset, long limit) {
-        return find(corpora, queryAsJSON, offset, limit, OrderType.ascending);
+    public String[] find(List<String> corpora, String queryAsAQL, long offset, long limit) {
+        return find(corpora, queryAsAQL, offset, limit, OrderType.ascending);
     }
 
-    public String[] find(List<String> corpora, String queryAsJSON, long offset, long limit, OrderType order) {
+    public String[] find(List<String> corpora, String queryAsAQL, long offset, long limit, OrderType order) {
 
         int orderC;
         switch (order) {
@@ -223,7 +223,7 @@ public class CorpusStorageManager {
         ArrayList<String> result = new ArrayList<>();
         for (String corpusName : corpora) {
             AnnisErrorListRef err = new AnnisErrorListRef();
-            CAPI.AnnisVec_AnnisCString vec = CAPI.annis_cs_find(instance, corpusName, queryAsJSON, offset, limit,
+            CAPI.AnnisVec_AnnisCString vec = CAPI.annis_cs_find(instance, corpusName, queryAsAQL, offset, limit,
                     orderC, err);
             err.checkErrors();
             
@@ -324,11 +324,11 @@ public class CorpusStorageManager {
         return null;
     }
 
-    public FrequencyTable frequency(String corpusName, String queryAsJSON, FrequencyTableQuery freqQueryDef) {
+    public FrequencyTable frequency(String corpusName, String queryAsAQL, FrequencyTableQuery freqQueryDef) {
         if (instance != null) {
             String freqQueryDefString = freqQueryDef.toString();
             AnnisErrorListRef err = new AnnisErrorListRef();
-            CAPI.AnnisFrequencyTable_AnnisCString orig = CAPI.annis_cs_frequency(instance, corpusName, queryAsJSON,
+            CAPI.AnnisFrequencyTable_AnnisCString orig = CAPI.annis_cs_frequency(instance, corpusName, queryAsAQL,
                     freqQueryDefString, err);
             err.checkErrors();
             

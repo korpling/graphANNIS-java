@@ -136,14 +136,14 @@ public class CAPI implements Library {
 
     public static native AnnisVec_AnnisCString annis_cs_list(AnnisCorpusStorage cs, AnnisErrorListRef err);
 
-    public static native long annis_cs_count(AnnisCorpusStorage cs, String corpusName, String queryAsJSON,
+    public static native long annis_cs_count(AnnisCorpusStorage cs, String corpusName, String queryAsAQL,
             AnnisErrorListRef err);
 
     public static native AnnisCountExtra.ByValue annis_cs_count_extra(AnnisCorpusStorage cs, String corpusName,
-            String queryAsJSON, AnnisErrorListRef err);
+            String queryAsAQL, AnnisErrorListRef err);
 
     public static native AnnisVec_AnnisCString annis_cs_find(AnnisCorpusStorage cs, String corpusName,
-            String queryAsJSON, long offset, long limit, int order, AnnisErrorListRef err);
+            String queryAsAQL, long offset, long limit, int order, AnnisErrorListRef err);
 
     public static native AnnisGraphDB annis_cs_subgraph(AnnisCorpusStorage cs, String corpusName,
             AnnisVec_AnnisCString node_ids, NativeLong ctx_left, NativeLong ctx_right, AnnisErrorListRef err);
@@ -155,10 +155,10 @@ public class CAPI implements Library {
             AnnisErrorListRef err);
 
     public static native AnnisGraphDB annis_cs_subgraph_for_query(AnnisCorpusStorage cs, String corpusName,
-            String queryAsJSON, AnnisErrorListRef err);
+            String queryAsAQL, AnnisErrorListRef err);
 
     public static native AnnisFrequencyTable_AnnisCString annis_cs_frequency(AnnisCorpusStorage cs,
-            String corpusName, String queryAsJSON, String frequencyQueryDefinition, AnnisErrorListRef err);
+            String corpusName, String queryAsAQL, String frequencyQueryDefinition, AnnisErrorListRef err);
 
     public static native AnnisVec_AnnisComponent annis_cs_all_components_by_type(AnnisCorpusStorage cs,
             String corpusName, int ctype);
