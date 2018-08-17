@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.corpus_tools.graphannis.SaltExport;
 import org.corpus_tools.graphannis.capi.CharPointer;
+import org.corpus_tools.graphannis.capi.NodeDescCollection;
 import org.corpus_tools.graphannis.capi.AnnisCountExtra;
 import org.corpus_tools.graphannis.capi.AnnisErrorListRef;
 import org.corpus_tools.graphannis.capi.AnnisResultOrder;
@@ -171,6 +172,27 @@ public class CorpusStorageManager {
             }
         }
         return result;
+    }
+    
+    public boolean validateQuery(List<String> corpora, String queryAsAQL) {
+        boolean result = true;
+        for(String corpusName : corpora) {
+            AnnisErrorListRef err = new AnnisErrorListRef();
+            if(CAPI.annis_cs_validate_query(instance, corpusName, queryAsAQL, err) == false) {
+                result = false;
+            }
+            err.checkErrors();
+        }
+        return result;
+    }
+    
+    public List<NodeDesc> getNodeDescriptions(String queryAsAQL) {
+        AnnisErrorListRef err = new AnnisErrorListRef();
+        NodeDescCollection desc = CAPI.annis_cs_node_descriptions(instance, queryAsAQL, err);
+        err.checkErrors();
+        
+        return desc.getList();
+    
     }
     
     public long count(List<String> corpora, String queryAsAQL) {
