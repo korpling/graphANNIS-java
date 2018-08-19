@@ -24,8 +24,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.corpus_tools.graphannis.api.CorpusStorageManager;
-import org.corpus_tools.graphannis.api.GraphUpdate;
+
 import org.corpus_tools.graphannis.errors.GraphANNISException;
 import org.corpus_tools.salt.SaltFactory;
 import org.corpus_tools.salt.common.SCorpus;

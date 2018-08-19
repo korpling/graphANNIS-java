@@ -21,10 +21,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import javax.xml.stream.XMLStreamException;
-import org.corpus_tools.graphannis.api.CorpusStorageManager;
-import org.corpus_tools.graphannis.api.GraphUpdate;
 
-import org.corpus_tools.graphannis.api.LogLevel;
 import org.corpus_tools.graphannis.errors.GraphANNISException;
 import org.corpus_tools.salt.SALT_TYPE;
 import org.corpus_tools.salt.SaltFactory;

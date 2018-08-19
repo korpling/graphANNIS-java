@@ -18,6 +18,8 @@ package org.corpus_tools.graphannis.api;
 import java.io.File;
 import java.util.Arrays;
 
+import org.corpus_tools.graphannis.CorpusStorageManager;
+import org.corpus_tools.graphannis.LogLevel;
 import org.corpus_tools.graphannis.SaltImport;
 import org.corpus_tools.graphannis.errors.GraphANNISException;
 import org.corpus_tools.salt.common.SDocument;

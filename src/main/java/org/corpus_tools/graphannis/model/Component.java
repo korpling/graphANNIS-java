@@ -1,4 +1,4 @@
-package org.corpus_tools.graphannis.api;
+package org.corpus_tools.graphannis.model;
 
 public class Component {
     

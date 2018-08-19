@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.corpus_tools.graphannis.api;
+package org.corpus_tools.graphannis;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.corpus_tools.graphannis.SaltExport;
 import org.corpus_tools.graphannis.capi.CharPointer;
 import org.corpus_tools.graphannis.capi.NodeDescCollection;
 import org.corpus_tools.graphannis.capi.AnnisCountExtra;
@@ -29,6 +28,8 @@ import org.corpus_tools.graphannis.capi.CAPI;
 import org.corpus_tools.graphannis.capi.CAPI.AnnisComponentConst;
 import org.corpus_tools.graphannis.errors.GraphANNISException;
 import org.corpus_tools.graphannis.errors.SetLoggerError;
+import org.corpus_tools.graphannis.model.Component;
+import org.corpus_tools.graphannis.model.NodeDesc;
 import org.corpus_tools.salt.common.SCorpusGraph;
 import org.corpus_tools.salt.common.SDocumentGraph;
 import org.slf4j.Logger;

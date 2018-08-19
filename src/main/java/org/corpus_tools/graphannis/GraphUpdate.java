@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.corpus_tools.graphannis.api;
+package org.corpus_tools.graphannis;
 
 import org.corpus_tools.graphannis.capi.CAPI;
 

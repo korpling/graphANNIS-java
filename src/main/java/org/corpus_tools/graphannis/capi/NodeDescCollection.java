@@ -3,7 +3,7 @@ package org.corpus_tools.graphannis.capi;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.corpus_tools.graphannis.api.NodeDesc;
+import org.corpus_tools.graphannis.model.NodeDesc;
 
 import com.sun.jna.NativeLong;
 import com.sun.jna.PointerType;
