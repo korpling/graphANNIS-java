@@ -133,6 +133,7 @@ public class CAPI implements Library {
     public static native NativeLong annis_vec_nodedesc_get_component_nr(NodeDescCollection ptr, NativeLong i);
     public static native CharPointer annis_vec_nodedesc_get_aql_fragment(NodeDescCollection ptr, NativeLong i);
     public static native CharPointer annis_vec_nodedesc_get_variable(NodeDescCollection ptr, NativeLong i);
+    public static native CharPointer annis_vec_nodedesc_get_anno_name(NodeDescCollection ptr, NativeLong i);
 
             
     // corpus storage class
