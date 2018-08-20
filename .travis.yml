@@ -9,9 +9,7 @@ branches:
   only:
   - "/^v\\d+\\.\\d+\\.\\d+.*$/"
   - test-release-tag-please-ignore
-  - master
   - develop
-  - feature/travis
 
 before_install:
   - "curl -sSf https://build.travis-ci.org/files/rustup-init.sh | sh -s -- --default-toolchain=$RUST_VERSION -y"
