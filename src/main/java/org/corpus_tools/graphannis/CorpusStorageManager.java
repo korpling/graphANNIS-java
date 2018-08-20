@@ -381,12 +381,14 @@ public class CorpusStorageManager {
         }
     }
 
-    public void deleteCorpus(String corpusName) throws GraphANNISException {
+    public boolean deleteCorpus(String corpusName) throws GraphANNISException {
+        boolean result = false;
         if (instance != null) {
             AnnisErrorListRef err = new AnnisErrorListRef();
-            CAPI.annis_cs_delete(instance, corpusName, err);
+            result = CAPI.annis_cs_delete(instance, corpusName, err);
             err.checkErrors();
         }
+        return result;
     }
 
     public void applyUpdate(String corpusName, GraphUpdate update) throws GraphANNISException {
