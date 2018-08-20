@@ -176,7 +176,7 @@ public class CAPI implements Library {
     public static native void annis_cs_import_relannis(AnnisCorpusStorage cs, String corpusName, 
             String path, AnnisErrorListRef err);
 
-    public static native void annis_cs_delete(AnnisCorpusStorage cs, String corpusName, AnnisErrorListRef err);
+    public static native boolean annis_cs_delete(AnnisCorpusStorage cs, String corpusName, AnnisErrorListRef err);
 
     // graph update class
 
