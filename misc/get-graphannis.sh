@@ -18,7 +18,7 @@ if [ -z "$GRAPHANNIS_VERSION" ]; then
   git clone https://github.com/corpus-tools/graphANNIS "$DIR"/../ext/graphANNIS
   cd "$DIR"/../ext/graphANNIS
   cargo build --release --features "c-api"
-  cp target/release/libgraphannis.so "$DIR"/../java-api/src/main/resources/linux-x86-64/
+  cp target/release/libgraphannis.so "$DIR"/../src/main/resources/linux-x86-64/
   cd "$DIR"/..
 else
   # get released version
