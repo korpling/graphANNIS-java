@@ -15,6 +15,8 @@
  */
 package org.corpus_tools.graphannis.api;
 
+import static org.junit.Assert.assertFalse;
+
 import java.io.File;
 import java.util.Arrays;
 
@@ -111,10 +113,10 @@ public class CorpusStorageManagerTest
     }
   }
   
-  @Test(expected=GraphANNISException.class)
+  @Test()
   public void testDeleteThrowsException() throws GraphANNISException {
       System.out.println("deleteThrowsException");
-      storage.deleteCorpus("nonexistingcorpus");
+      assertFalse(storage.deleteCorpus("nonexistingcorpus"));
   }
 
   
