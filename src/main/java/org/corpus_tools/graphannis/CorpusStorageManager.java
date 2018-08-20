@@ -15,17 +15,18 @@
  */
 package org.corpus_tools.graphannis;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.corpus_tools.graphannis.capi.CharPointer;
-import org.corpus_tools.graphannis.capi.NodeDescCollection;
 import org.corpus_tools.graphannis.capi.AnnisCountExtra;
 import org.corpus_tools.graphannis.capi.AnnisErrorListRef;
 import org.corpus_tools.graphannis.capi.AnnisResultOrder;
 import org.corpus_tools.graphannis.capi.CAPI;
 import org.corpus_tools.graphannis.capi.CAPI.AnnisComponentConst;
+import org.corpus_tools.graphannis.capi.CharPointer;
+import org.corpus_tools.graphannis.capi.NodeDescCollection;
 import org.corpus_tools.graphannis.errors.GraphANNISException;
 import org.corpus_tools.graphannis.errors.SetLoggerError;
 import org.corpus_tools.graphannis.model.Component;
@@ -63,7 +64,13 @@ public class CorpusStorageManager {
 
     public CorpusStorageManager(String dbDir, String logfile, boolean useParallel, LogLevel level)
             throws GraphANNISException {
-        AnnisErrorListRef err = new AnnisErrorListRef();
+    	
+    	// create the parent directories of the output directory
+    	File dbDirFile = new File(dbDir);
+    	if(dbDirFile.mkdirs()) {
+    		log.info("Created directory {} for CorpusStorageManager", dbDir);
+    	}
+    	AnnisErrorListRef err = new AnnisErrorListRef();
         CAPI.annis_init_logging(logfile, level.getRaw(), err);
         try {
             err.checkErrors();
