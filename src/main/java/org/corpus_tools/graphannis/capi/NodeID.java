@@ -23,7 +23,7 @@ import com.sun.jna.IntegerType;
  */
 public class NodeID extends IntegerType {
   
-  public static final int SIZE = 4;
+  public static final int SIZE = 8;
 
   public NodeID()
   {

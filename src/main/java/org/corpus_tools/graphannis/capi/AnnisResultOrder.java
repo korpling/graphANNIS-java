@@ -17,7 +17,7 @@ package org.corpus_tools.graphannis.capi;
 
 /**
  *
- * @author thomas
+ * @author Thomas Krause <thomaskrause@posteo.de>
  */
 public interface AnnisResultOrder {
 

@@ -1,10 +1,8 @@
-[![Build Status](https://travis-ci.org/corpus-tools/graphANNIS-java.svg?branch=develop)](https://travis-ci.org/corpus-tools/graphANNIS-java)
-
 graphANNIS Java Bindings
 ========================
 
 GraphANNIS is a library for corpus linguistic queries.
-This are the Java bindings to its API and some additional utility tools to e.g. convert AQL to its JSON representation.
+This are the Java bindings to its API.
 
 How to compile
 ---------------
