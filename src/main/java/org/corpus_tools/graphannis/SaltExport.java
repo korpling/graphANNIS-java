@@ -28,15 +28,15 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.corpus_tools.graphannis.capi.AnnisAnnotation;
-import org.corpus_tools.graphannis.capi.CharPointer;
 import org.corpus_tools.graphannis.capi.AnnisComponentType;
 import org.corpus_tools.graphannis.capi.AnnisEdge;
 import org.corpus_tools.graphannis.capi.CAPI;
+import org.corpus_tools.graphannis.capi.CAPI.AnnisAnnotation;
 import org.corpus_tools.graphannis.capi.CAPI.AnnisComponentConst;
-import org.corpus_tools.graphannis.capi.CAPI.AnnisGraphDB;
+import org.corpus_tools.graphannis.capi.CAPI.AnnisGraph;
 import org.corpus_tools.graphannis.capi.CAPI.AnnisVec_AnnisComponent;
 import org.corpus_tools.graphannis.capi.CAPI.AnnisVec_AnnisEdge;
+import org.corpus_tools.graphannis.capi.CharPointer;
 import org.corpus_tools.graphannis.capi.NodeID;
 import org.corpus_tools.graphannis.capi.NodeIDByRef;
 import org.corpus_tools.salt.SALT_TYPE;
@@ -76,12 +76,12 @@ import com.sun.jna.NativeLong;
  */
 public class SaltExport {
 
-    private final CAPI.AnnisGraphDB orig;
+    private final CAPI.AnnisGraph orig;
     private final SDocumentGraph docGraph;
     private final BiMap<Integer, SNode> nodesByID;
     private final Map<Integer, Integer> node2timelinePOT;
 
-    protected SaltExport(AnnisGraphDB orig) {
+    protected SaltExport(AnnisGraph orig) {
         this.orig = orig;
 
         this.docGraph = SaltFactory.createSDocumentGraph();
@@ -131,15 +131,15 @@ public class SaltExport {
         return false;
     }
 
-    private static Map<Pair<String, String>, String> getNodeLabels(CAPI.AnnisGraphDB g, int nID) {
+    private static Map<Pair<String, String>, String> getNodeLabels(CAPI.AnnisGraph g, int nID) {
         Map<Pair<String, String>, String> labels = new LinkedHashMap<>();
-        CAPI.AnnisVec_AnnisAnnotation annos = CAPI.annis_graph_node_labels(g, new NodeID(nID));
+        CAPI.AnnisVec_AnnisAnnotation annos = CAPI.annis_graph_annotations_for_node(g, new NodeID(nID));
         for (long i = 0; i < CAPI.annis_vec_annotation_size(annos).longValue(); i++) {
-            AnnisAnnotation.ByReference a = CAPI.annis_vec_annotation_get(annos, new NativeLong(i));
+            AnnisAnnotation a = CAPI.annis_vec_annotation_get(annos, new NativeLong(i));
 
-            String ns = CAPI.annis_graph_str(g, a.key.ns).toString();
-            String name = CAPI.annis_graph_str(g, a.key.name).toString();
-            String value = CAPI.annis_graph_str(g, a.value).toString();
+            String ns = CAPI.annis_annotation_ns(a).toString();
+            String name = CAPI.annis_annotation_name(a).toString();
+            String value = CAPI.annis_annotation_val(a).toString();
 
             if (name != null && value != null) {
                 if (ns == null) {
@@ -246,13 +246,13 @@ public class SaltExport {
                 AnnisEdge.ByValue copyEdge = new AnnisEdge.ByValue();
                 copyEdge.source = origEdge.source;
                 copyEdge.target = origEdge.target;
-                CAPI.AnnisVec_AnnisAnnotation annos = CAPI.annis_graph_edge_labels(orig, copyEdge, component);
+                CAPI.AnnisVec_AnnisAnnotation annos = CAPI.annis_graph_annotations_for_edge(orig, copyEdge, component);
                 for (long i = 0; i < CAPI.annis_vec_annotation_size(annos).longValue(); i++) {
-                    AnnisAnnotation.ByReference a = CAPI.annis_vec_annotation_get(annos, new NativeLong(i));
+                    AnnisAnnotation a = CAPI.annis_vec_annotation_get(annos, new NativeLong(i));
 
-                    String ns = CAPI.annis_graph_str(orig, a.key.ns).toString();
-                    String name = CAPI.annis_graph_str(orig, a.key.name).toString();
-                    String value = CAPI.annis_graph_str(orig, a.value).toString();
+                    String ns = CAPI.annis_annotation_ns(a).toString();
+                    String name = CAPI.annis_annotation_name(a).toString();
+                    String value = CAPI.annis_annotation_val(a).toString();
 
                     if (name != null && value != null) {
                         if (ns == null) {
@@ -447,7 +447,7 @@ public class SaltExport {
     }
     
 
-    public static SDocumentGraph map(CAPI.AnnisGraphDB orig) {
+    public static SDocumentGraph map(CAPI.AnnisGraph orig) {
         if (orig == null) {
             return null;
         }
@@ -617,7 +617,7 @@ public class SaltExport {
 
     }
 
-    public static SCorpusGraph mapCorpusGraph(CAPI.AnnisGraphDB orig) {
+    public static SCorpusGraph mapCorpusGraph(CAPI.AnnisGraph orig) {
         if (orig == null) {
             return null;
         }

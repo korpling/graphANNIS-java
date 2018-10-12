@@ -20,7 +20,7 @@ import com.sun.jna.PointerType;
 
 /**
  *
- * @author thomas
+ * @author Thomas Krause <thomaskrause@posteo.de>
  */
 public class CharPointer extends PointerType implements CharSequence {
   

@@ -15,32 +15,12 @@
  */
 package org.corpus_tools.graphannis.capi;
 
-import com.sun.jna.Structure;
-import java.util.Arrays;
-import java.util.List;
-
 /**
  *
- * @author thomas
+ * @author Thomas Krause <thomaskrause@posteo.de>
  */
-public class AnnisAnnotation extends Structure {
-  
-  public AnnisAnnoKey key;
+public interface AnnisQueryLanguage {
 
-  public StringID value;
-
-  @Override
-  protected List<String> getFieldOrder()
-  {
-    return Arrays.asList("key", "value");
-  }
-
-  public static class ByReference extends AnnisAnnotation implements Structure.ByReference
-  {
-  }
-
-  public static class ByValue extends AnnisAnnotation implements Structure.ByValue
-  {
-  }
+    public static final int AQL = 0;
   
 }
