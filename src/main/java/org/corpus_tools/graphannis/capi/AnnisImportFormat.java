@@ -19,10 +19,8 @@ package org.corpus_tools.graphannis.capi;
  *
  * @author Thomas Krause <thomaskrause@posteo.de>
  */
-public interface AnnisQueryLanguage {
-
-	public static final int AQL = 0;
-	/** Emulates the (sometimes problematic) behavior of AQL used in ANNIS 3 */
-	public static final int AQLQuirksV3 = 1;
+public interface AnnisImportFormat {
+	/** Legacy relANNIS import file format */
+	public static final int RelANNIS = 0;
 
 }
