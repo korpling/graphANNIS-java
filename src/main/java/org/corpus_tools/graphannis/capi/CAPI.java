@@ -200,11 +200,11 @@ public class CAPI implements Library {
 	public static native void annis_cs_import_from_fs(AnnisCorpusStorage cs, String path, int format, String corpusName,
 			AnnisErrorListRef err);
 
-	public static native boolean annis_cs_validate_query(AnnisCorpusStorage cs, String corpusName, String queryAsAQL,
-			AnnisErrorListRef err);
+	public static native boolean annis_cs_validate_query(AnnisCorpusStorage cs, String corpusName, String query,
+			int queryLanguage, AnnisErrorListRef err);
 
-	public static native QueryAttributeDescription annis_cs_node_descriptions(AnnisCorpusStorage cs, String queryAsAQL,
-			AnnisErrorListRef err);
+	public static native QueryAttributeDescription annis_cs_node_descriptions(AnnisCorpusStorage cs, String query,
+			int queryLanguage, AnnisErrorListRef err);
 
 	public static native boolean annis_cs_delete(AnnisCorpusStorage cs, String corpusName, AnnisErrorListRef err);
 
