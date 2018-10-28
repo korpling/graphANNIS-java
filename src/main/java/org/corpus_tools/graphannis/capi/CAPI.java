@@ -24,236 +24,237 @@ import com.sun.jna.PointerType;
 
 public class CAPI implements Library {
 
-    static {
-        Native.register(CAPI.class, "graphannis");
-    }
+	static {
+		Native.register(CAPI.class, "graphannis");
+	}
 
-    public static class AnnisCorpusStorage extends PointerType {
-        public synchronized void dispose() {
-            try {
-                if (this.getPointer() != Pointer.NULL) {
-                    CAPI.annis_cs_free(this.getPointer());
-                }
-            } finally {
-                this.setPointer(Pointer.NULL);
-            }
-        }
+	public static class AnnisCorpusStorage extends PointerType {
+		public synchronized void dispose() {
+			try {
+				if (this.getPointer() != Pointer.NULL) {
+					CAPI.annis_cs_free(this.getPointer());
+				}
+			} finally {
+				this.setPointer(Pointer.NULL);
+			}
+		}
 
-        @Override
-        protected void finalize() throws Throwable {
-            this.dispose();
-            super.finalize();
-        }
-    }
+		@Override
+		protected void finalize() throws Throwable {
+			this.dispose();
+			super.finalize();
+		}
+	}
 
-    public static class AnnisGraphUpdate extends AnnisPtr {
-    }
+	public static class AnnisGraphUpdate extends AnnisPtr {
+	}
 
-    public static class AnnisGraph extends AnnisPtr {
-    }
+	public static class AnnisGraph extends AnnisPtr {
+	}
 
-    public static class AnnisVec_AnnisCString extends AnnisPtr {
-    }
+	public static class AnnisVec_AnnisCString extends AnnisPtr {
+	}
 
-    public static class AnnisAnnotation extends PointerType {
-        
-    }
-    
-    public static class AnnisVec_AnnisAnnotation extends AnnisPtr {
-    	
-    }
+	public static class AnnisAnnotation extends PointerType {
 
+	}
 
-    public static class AnnisIterPtr_AnnisNodeID extends AnnisPtr {
-    }
+	public static class AnnisVec_AnnisAnnotation extends AnnisPtr {
 
-    public static class AnnisComponentConst extends PointerType {
-    }
+	}
 
-    public static class AnnisVec_AnnisComponent extends AnnisPtr {
-    }
+	public static class AnnisIterPtr_AnnisNodeID extends AnnisPtr {
+	}
 
-    public static class AnnisVec_AnnisEdge extends AnnisPtr {
-    }
+	public static class AnnisComponentConst extends PointerType {
+	}
 
-    public static class AnnisMatrix_AnnisCString extends AnnisPtr {
-    }
+	public static class AnnisVec_AnnisComponent extends AnnisPtr {
+	}
 
-    public static class AnnisFrequencyTable_AnnisCString extends AnnisPtr {
-    }
+	public static class AnnisVec_AnnisEdge extends AnnisPtr {
+	}
 
-    // general functions
+	public static class AnnisMatrix_AnnisCString extends AnnisPtr {
+	}
 
-    protected static native void annis_free(Pointer ptr);
+	public static class AnnisFrequencyTable_AnnisCString extends AnnisPtr {
+	}
 
-    public static native void annis_str_free(Pointer ptr);
-    
-    public static native NativeLong annis_error_size(Pointer ptr);
-    public static native String annis_error_get_msg(Pointer ptr, NativeLong i);
-    public static native String annis_error_get_kind(Pointer ptr, NativeLong i);
+	// general functions
 
-    public static native void annis_init_logging(String logfile, int level, AnnisErrorListRef err);
+	protected static native void annis_free(Pointer ptr);
 
-    // vector and iterator functions
-    public static native NativeLong annis_vec_str_size(AnnisVec_AnnisCString ptr);
+	public static native void annis_str_free(Pointer ptr);
 
-    public static native String annis_vec_str_get(AnnisVec_AnnisCString ptr, NativeLong i);
+	public static native NativeLong annis_error_size(Pointer ptr);
 
-    public static native AnnisVec_AnnisCString annis_vec_str_new();
+	public static native String annis_error_get_msg(Pointer ptr, NativeLong i);
 
-    public static native void annis_vec_str_push(AnnisVec_AnnisCString ptr, String v);
-    
-    public static native CharPointer annis_annotation_ns(AnnisAnnotation ptr);
-    public static native CharPointer annis_annotation_name(AnnisAnnotation ptr);
-    public static native CharPointer annis_annotation_val(AnnisAnnotation ptr);
+	public static native String annis_error_get_kind(Pointer ptr, NativeLong i);
 
-    public static native NativeLong annis_vec_annotation_size(AnnisVec_AnnisAnnotation ptr);
+	public static native void annis_init_logging(String logfile, int level, AnnisErrorListRef err);
 
-    public static native AnnisAnnotation annis_vec_annotation_get(AnnisVec_AnnisAnnotation ptr,
-            NativeLong i);
+	// vector and iterator functions
+	public static native NativeLong annis_vec_str_size(AnnisVec_AnnisCString ptr);
 
-    public static native NativeLong annis_vec_component_size(AnnisVec_AnnisComponent ptr);
+	public static native String annis_vec_str_get(AnnisVec_AnnisCString ptr, NativeLong i);
 
-    public static native AnnisComponentConst annis_vec_component_get(AnnisVec_AnnisComponent ptr, NativeLong i);
+	public static native AnnisVec_AnnisCString annis_vec_str_new();
 
-    public static native NativeLong annis_vec_edge_size(AnnisVec_AnnisEdge ptr);
+	public static native void annis_vec_str_push(AnnisVec_AnnisCString ptr, String v);
 
-    public static native AnnisEdge annis_vec_edge_get(AnnisVec_AnnisEdge ptr, NativeLong i);
+	public static native CharPointer annis_annotation_ns(AnnisAnnotation ptr);
 
-    public static native NodeIDByRef annis_iter_nodeid_next(AnnisIterPtr_AnnisNodeID ptr);
+	public static native CharPointer annis_annotation_name(AnnisAnnotation ptr);
 
-    public static native String annis_matrix_str_get(AnnisMatrix_AnnisCString ptr, NativeLong row, NativeLong col);
+	public static native CharPointer annis_annotation_val(AnnisAnnotation ptr);
 
-    public static native NativeLong annis_matrix_str_ncols(AnnisMatrix_AnnisCString ptr);
+	public static native NativeLong annis_vec_annotation_size(AnnisVec_AnnisAnnotation ptr);
 
-    public static native NativeLong annis_matrix_str_nrows(AnnisMatrix_AnnisCString ptr);
+	public static native AnnisAnnotation annis_vec_annotation_get(AnnisVec_AnnisAnnotation ptr, NativeLong i);
 
-    public static native NativeLong annis_freqtable_str_count(AnnisFrequencyTable_AnnisCString ptr, NativeLong row);
+	public static native NativeLong annis_vec_component_size(AnnisVec_AnnisComponent ptr);
 
-    public static native String annis_freqtable_str_get(AnnisFrequencyTable_AnnisCString ptr, NativeLong row,
-            NativeLong col);
+	public static native AnnisComponentConst annis_vec_component_get(AnnisVec_AnnisComponent ptr, NativeLong i);
 
-    public static native NativeLong annis_freqtable_str_ncols(AnnisFrequencyTable_AnnisCString ptr);
+	public static native NativeLong annis_vec_edge_size(AnnisVec_AnnisEdge ptr);
 
-    public static native NativeLong annis_freqtable_str_nrows(AnnisFrequencyTable_AnnisCString ptr);
-    
-    public static native NativeLong annis_vec_qattdesc_size(QueryAttributeDescription ptr);
-    public static native NativeLong annis_vec_qattdesc_get_component_nr(QueryAttributeDescription ptr, NativeLong i);
-    public static native CharPointer annis_vec_qattdesc_get_aql_fragment(QueryAttributeDescription ptr, NativeLong i);
-    public static native CharPointer annis_vec_qattdesc_get_variable(QueryAttributeDescription ptr, NativeLong i);
-    public static native CharPointer annis_vec_qattdesc_get_anno_name(QueryAttributeDescription ptr, NativeLong i);
+	public static native AnnisEdge annis_vec_edge_get(AnnisVec_AnnisEdge ptr, NativeLong i);
 
-            
-    // corpus storage class
+	public static native NodeIDByRef annis_iter_nodeid_next(AnnisIterPtr_AnnisNodeID ptr);
 
-    public static native AnnisCorpusStorage annis_cs_with_auto_cache_size(String db_dir, boolean use_parallel);
-    public static native AnnisCorpusStorage annis_cs_with_max_cache_size(String db_dir, long max_cache_size,  
-    		boolean use_parallel);
-    
-    protected static native void annis_cs_free(Pointer ptr);
+	public static native String annis_matrix_str_get(AnnisMatrix_AnnisCString ptr, NativeLong row, NativeLong col);
 
-    public static native AnnisVec_AnnisCString annis_cs_list(AnnisCorpusStorage cs, AnnisErrorListRef err);
+	public static native NativeLong annis_matrix_str_ncols(AnnisMatrix_AnnisCString ptr);
 
-    public static native long annis_cs_count(AnnisCorpusStorage cs, String corpusName, 
-    		String query, int queryLanguage,
-            AnnisErrorListRef err);
+	public static native NativeLong annis_matrix_str_nrows(AnnisMatrix_AnnisCString ptr);
 
-    public static native AnnisCountExtra.ByValue annis_cs_count_extra(AnnisCorpusStorage cs, 
-    		String corpusName,
-            String query, int queryLanguage, 
-            AnnisErrorListRef err);
+	public static native NativeLong annis_freqtable_str_count(AnnisFrequencyTable_AnnisCString ptr, NativeLong row);
 
-    public static native AnnisVec_AnnisCString annis_cs_find(AnnisCorpusStorage cs, String corpusName,
-            String query, int query_language,
-            long offset, long limit, int order, AnnisErrorListRef err);
+	public static native String annis_freqtable_str_get(AnnisFrequencyTable_AnnisCString ptr, NativeLong row,
+			NativeLong col);
 
-    public static native AnnisGraph annis_cs_subgraph(AnnisCorpusStorage cs, String corpusName,
-            AnnisVec_AnnisCString node_ids, NativeLong ctx_left, NativeLong ctx_right, AnnisErrorListRef err);
+	public static native NativeLong annis_freqtable_str_ncols(AnnisFrequencyTable_AnnisCString ptr);
 
-    public static native AnnisGraph annis_cs_subcorpus_graph(AnnisCorpusStorage cs, String corpusName,
-            AnnisVec_AnnisCString corpus_ids, AnnisErrorListRef err);
+	public static native NativeLong annis_freqtable_str_nrows(AnnisFrequencyTable_AnnisCString ptr);
 
-    public static native AnnisGraph annis_cs_corpus_graph(AnnisCorpusStorage cs, String corpusName,
-            AnnisErrorListRef err);
+	public static native NativeLong annis_vec_qattdesc_size(QueryAttributeDescription ptr);
 
-    public static native AnnisGraph annis_cs_subgraph_for_query(AnnisCorpusStorage cs, String corpusName,
-            String query, int queryLanguage, 
-            AnnisErrorListRef err);
+	public static native NativeLong annis_vec_qattdesc_get_component_nr(QueryAttributeDescription ptr, NativeLong i);
 
-    public static native AnnisFrequencyTable_AnnisCString annis_cs_frequency(AnnisCorpusStorage cs,
-            String corpusName, 
-            String query, int queryLanguage,
-            String frequencyQueryDefinition, AnnisErrorListRef err);
+	public static native CharPointer annis_vec_qattdesc_get_aql_fragment(QueryAttributeDescription ptr, NativeLong i);
 
-    public static native AnnisVec_AnnisComponent annis_cs_list_components_by_type(AnnisCorpusStorage cs,
-            String corpusName, int ctype);
+	public static native CharPointer annis_vec_qattdesc_get_variable(QueryAttributeDescription ptr, NativeLong i);
 
-    public static native AnnisMatrix_AnnisCString annis_cs_list_node_annotations(AnnisCorpusStorage cs,
-            String corpusName, boolean listValues, boolean onlyMostFrequentValues);
+	public static native CharPointer annis_vec_qattdesc_get_anno_name(QueryAttributeDescription ptr, NativeLong i);
 
-    public static native AnnisMatrix_AnnisCString annis_cs_list_edge_annotations(AnnisCorpusStorage cs,
-            String corpusName, int component_type, String component_name, String component_layer, boolean listValues,
-            boolean onlyMostFrequentValues);
+	// corpus storage class
 
-    public static native void annis_cs_apply_update(AnnisCorpusStorage cs, String corpusName,
-            AnnisGraphUpdate update, AnnisErrorListRef err);
+	public static native AnnisCorpusStorage annis_cs_with_auto_cache_size(String db_dir, boolean use_parallel);
 
-    public static native void annis_cs_import_relannis(AnnisCorpusStorage cs, String corpusName, 
-            String path, AnnisErrorListRef err);
+	public static native AnnisCorpusStorage annis_cs_with_max_cache_size(String db_dir, long max_cache_size,
+			boolean use_parallel);
 
-    public static native boolean annis_cs_validate_query(AnnisCorpusStorage cs, String corpusName, String queryAsAQL, 
-            AnnisErrorListRef err);
-    public static native QueryAttributeDescription annis_cs_node_descriptions(AnnisCorpusStorage cs, String queryAsAQL, 
-            AnnisErrorListRef err);
-    public static native boolean annis_cs_delete(AnnisCorpusStorage cs, String corpusName, AnnisErrorListRef err);
+	protected static native void annis_cs_free(Pointer ptr);
 
-    // graph update class
+	public static native AnnisVec_AnnisCString annis_cs_list(AnnisCorpusStorage cs, AnnisErrorListRef err);
 
-    public static native AnnisGraphUpdate annis_graphupdate_new();
+	public static native long annis_cs_count(AnnisCorpusStorage cs, String corpusName, String query, int queryLanguage,
+			AnnisErrorListRef err);
 
-    public static native void annis_graphupdate_add_node(AnnisGraphUpdate ptr, String node_name, String node_type);
+	public static native AnnisCountExtra.ByValue annis_cs_count_extra(AnnisCorpusStorage cs, String corpusName,
+			String query, int queryLanguage, AnnisErrorListRef err);
 
-    public static native void annis_graphupdate_delete_node(AnnisGraphUpdate ptr, String node_name);
+	public static native AnnisVec_AnnisCString annis_cs_find(AnnisCorpusStorage cs, String corpusName, String query,
+			int query_language, long offset, long limit, int order, AnnisErrorListRef err);
 
-    public static native void annis_graphupdate_add_node_label(AnnisGraphUpdate ptr, String node_name, String anno_ns,
-            String anno_name, String anno_value);
+	public static native AnnisGraph annis_cs_subgraph(AnnisCorpusStorage cs, String corpusName,
+			AnnisVec_AnnisCString node_ids, NativeLong ctx_left, NativeLong ctx_right, AnnisErrorListRef err);
 
-    public static native void annis_graphupdate_delete_node_label(AnnisGraphUpdate ptr, String node_name,
-            String anno_ns, String anno_name);
+	public static native AnnisGraph annis_cs_subcorpus_graph(AnnisCorpusStorage cs, String corpusName,
+			AnnisVec_AnnisCString corpus_ids, AnnisErrorListRef err);
 
-    public static native void annis_graphupdate_add_edge(AnnisGraphUpdate ptr, String source_node, String target_node,
-            String layer, String component_type, String component_name);
+	public static native AnnisGraph annis_cs_corpus_graph(AnnisCorpusStorage cs, String corpusName,
+			AnnisErrorListRef err);
 
-    public static native void annis_graphupdate_delete_edge(AnnisGraphUpdate ptr, String source_node,
-            String target_node, String layer, String component_type, String component_name);
+	public static native AnnisGraph annis_cs_subgraph_for_query(AnnisCorpusStorage cs, String corpusName, String query,
+			int queryLanguage, AnnisErrorListRef err);
 
-    public static native void annis_graphupdate_add_edge_label(AnnisGraphUpdate ptr, String source_node,
-            String target_node, String layer, String component_type, String component_name, String anno_ns,
-            String anno_name, String anno_value);
+	public static native AnnisFrequencyTable_AnnisCString annis_cs_frequency(AnnisCorpusStorage cs, String corpusName,
+			String query, int queryLanguage, String frequencyQueryDefinition, AnnisErrorListRef err);
 
-    public static native void annis_graphupdate_delete_edge_label(AnnisGraphUpdate ptr, String source_node,
-            String target_node, String layer, String component_type, String component_name, String anno_ns,
-            String anno_name);
+	public static native AnnisVec_AnnisComponent annis_cs_list_components_by_type(AnnisCorpusStorage cs,
+			String corpusName, int ctype);
 
-    // GraphDB classes
+	public static native AnnisMatrix_AnnisCString annis_cs_list_node_annotations(AnnisCorpusStorage cs,
+			String corpusName, boolean listValues, boolean onlyMostFrequentValues);
 
-    public static native CharPointer annis_component_layer(AnnisComponentConst component);
+	public static native AnnisMatrix_AnnisCString annis_cs_list_edge_annotations(AnnisCorpusStorage cs,
+			String corpusName, int component_type, String component_name, String component_layer, boolean listValues,
+			boolean onlyMostFrequentValues);
 
-    public static native CharPointer annis_component_name(AnnisComponentConst component);
+	public static native void annis_cs_apply_update(AnnisCorpusStorage cs, String corpusName, AnnisGraphUpdate update,
+			AnnisErrorListRef err);
 
-    public static native int annis_component_type(AnnisComponentConst component);
+	public static native void annis_cs_import_from_fs(AnnisCorpusStorage cs, String path, int format, String corpusName,
+			AnnisErrorListRef err);
 
-    public static native AnnisVec_AnnisAnnotation annis_graph_annotations_for_node(AnnisGraph g, NodeID nodeID);
+	public static native boolean annis_cs_validate_query(AnnisCorpusStorage cs, String corpusName, String queryAsAQL,
+			AnnisErrorListRef err);
 
-    public static native AnnisIterPtr_AnnisNodeID annis_graph_nodes_by_type(AnnisGraph g, String node_type);
+	public static native QueryAttributeDescription annis_cs_node_descriptions(AnnisCorpusStorage cs, String queryAsAQL,
+			AnnisErrorListRef err);
 
-    public static native AnnisVec_AnnisComponent annis_graph_all_components(AnnisGraph g);
+	public static native boolean annis_cs_delete(AnnisCorpusStorage cs, String corpusName, AnnisErrorListRef err);
 
-    public static native AnnisVec_AnnisComponent annis_graph_all_components_by_type(AnnisGraph g, int ctype);
+	// graph update class
 
-    public static native AnnisVec_AnnisEdge annis_graph_outgoing_edges(AnnisGraph g, NodeID source,
-            AnnisComponentConst component);
+	public static native AnnisGraphUpdate annis_graphupdate_new();
 
-    public static native AnnisVec_AnnisAnnotation annis_graph_annotations_for_edge(AnnisGraph g, AnnisEdge.ByValue edge,
-            AnnisComponentConst component);
+	public static native void annis_graphupdate_add_node(AnnisGraphUpdate ptr, String node_name, String node_type);
+
+	public static native void annis_graphupdate_delete_node(AnnisGraphUpdate ptr, String node_name);
+
+	public static native void annis_graphupdate_add_node_label(AnnisGraphUpdate ptr, String node_name, String anno_ns,
+			String anno_name, String anno_value);
+
+	public static native void annis_graphupdate_delete_node_label(AnnisGraphUpdate ptr, String node_name,
+			String anno_ns, String anno_name);
+
+	public static native void annis_graphupdate_add_edge(AnnisGraphUpdate ptr, String source_node, String target_node,
+			String layer, String component_type, String component_name);
+
+	public static native void annis_graphupdate_delete_edge(AnnisGraphUpdate ptr, String source_node,
+			String target_node, String layer, String component_type, String component_name);
+
+	public static native void annis_graphupdate_add_edge_label(AnnisGraphUpdate ptr, String source_node,
+			String target_node, String layer, String component_type, String component_name, String anno_ns,
+			String anno_name, String anno_value);
+
+	public static native void annis_graphupdate_delete_edge_label(AnnisGraphUpdate ptr, String source_node,
+			String target_node, String layer, String component_type, String component_name, String anno_ns,
+			String anno_name);
+
+	// GraphDB classes
+
+	public static native CharPointer annis_component_layer(AnnisComponentConst component);
+
+	public static native CharPointer annis_component_name(AnnisComponentConst component);
+
+	public static native int annis_component_type(AnnisComponentConst component);
+
+	public static native AnnisVec_AnnisAnnotation annis_graph_annotations_for_node(AnnisGraph g, NodeID nodeID);
+
+	public static native AnnisIterPtr_AnnisNodeID annis_graph_nodes_by_type(AnnisGraph g, String node_type);
+
+	public static native AnnisVec_AnnisComponent annis_graph_all_components(AnnisGraph g);
+
+	public static native AnnisVec_AnnisComponent annis_graph_all_components_by_type(AnnisGraph g, int ctype);
+
+	public static native AnnisVec_AnnisEdge annis_graph_outgoing_edges(AnnisGraph g, NodeID source,
+			AnnisComponentConst component);
+
+	public static native AnnisVec_AnnisAnnotation annis_graph_annotations_for_edge(AnnisGraph g, AnnisEdge.ByValue edge,
+			AnnisComponentConst component);
 }
