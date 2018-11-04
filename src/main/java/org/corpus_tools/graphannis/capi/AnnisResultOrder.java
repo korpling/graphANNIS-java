@@ -25,6 +25,8 @@ public interface AnnisResultOrder {
 
     public static final int Inverted = 1;
 
-    public static final int Random = 2;  
+    public static final int Randomized = 2;  
+    
+    public static final int NotSorted = 3;
   
 }
