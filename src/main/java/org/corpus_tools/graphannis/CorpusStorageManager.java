@@ -43,8 +43,7 @@ import com.sun.jna.NativeLong;
 import annis.model.Annotation;
 import annis.service.objects.FrequencyTable;
 import annis.service.objects.FrequencyTableQuery;
-import annis.service.objects.OrderType;
-
+	
 /**
  * An API for managing corpora stored in a common location on the file system.
  * 
@@ -67,6 +66,18 @@ public class CorpusStorageManager {
 		protected final int capiVal;
 
 		private QueryLanguage(int capiVal) {
+			this.capiVal = capiVal;
+		}
+	}
+
+	public static enum ResultOrder {
+
+		Normal(AnnisResultOrder.Normal), Inverted(AnnisResultOrder.Inverted), Randomized(AnnisResultOrder.Randomized),
+		NotSorted(AnnisResultOrder.NotSorted);
+
+		protected final int capiVal;
+
+		private ResultOrder(int capiVal) {
 			this.capiVal = capiVal;
 		}
 	}
@@ -279,38 +290,23 @@ public class CorpusStorageManager {
 
 	public String[] find(List<String> corpora, String query, long offset, long limit, QueryLanguage queryLanguage)
 			throws GraphANNISException {
-		return find(corpora, query, offset, limit, OrderType.ascending, queryLanguage);
+		return find(corpora, query, offset, limit, ResultOrder.Normal, queryLanguage);
 	}
 
-	public String[] find(List<String> corpora, String query, long offset, long limit, OrderType order)
+	public String[] find(List<String> corpora, String query, long offset, long limit, ResultOrder order)
 			throws GraphANNISException {
 		return find(corpora, query, offset, limit, order, QueryLanguage.AQL);
 
 	}
 
-	public String[] find(List<String> corpora, String query, long offset, long limit, OrderType order,
+	public String[] find(List<String> corpora, String query, long offset, long limit, ResultOrder order,
 			QueryLanguage queryLanguage) throws GraphANNISException {
-
-		int orderC;
-		switch (order) {
-		case ascending:
-			orderC = AnnisResultOrder.Normal;
-			break;
-		case descending:
-			orderC = AnnisResultOrder.Inverted;
-			break;
-		case random:
-			orderC = AnnisResultOrder.Random;
-			break;
-		default:
-			orderC = AnnisResultOrder.Normal;
-		}
 
 		ArrayList<String> result = new ArrayList<>();
 		for (String corpusName : corpora) {
 			AnnisErrorListRef err = new AnnisErrorListRef();
 			CAPI.AnnisVec_AnnisCString vec = CAPI.annis_cs_find(instance, corpusName, query, queryLanguage.capiVal,
-					offset, limit, orderC, err);
+					offset, limit, order.capiVal, err);
 			err.checkErrors();
 
 			final int vecSize = CAPI.annis_vec_str_size(vec).intValue();
