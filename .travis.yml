@@ -2,7 +2,7 @@ language: java
 
 env:
   # if explicitly set, instead of compiling graphANNIS, the released version will be used 
-  - GRAPHANNIS_VERSION=v0.11.1 RUST_VERSION=1.30.0
+  - GRAPHANNIS_VERSION=v0.12.0 RUST_VERSION=1.30.0
   #- RUST_VERSION=1.30.0
 
 branches:
