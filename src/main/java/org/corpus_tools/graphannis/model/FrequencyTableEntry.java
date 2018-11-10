@@ -7,15 +7,29 @@ import java.util.List;
  */
 public class FrequencyTableEntry<T> {
 
-    private long size;
+    private long count;
     private T[] tuple;
 
     public FrequencyTableEntry() {
 
     }
 
-    public FrequencyTableEntry(T[] tuple, long size) {
-        this.size = size;
+    /**
+     * @return the count
+     */
+    public long getCount() {
+        return count;
+    }
+
+    /**
+     * @param count the count to set
+     */
+    public void setCount(long count) {
+        this.count = count;
+    }
+
+    public FrequencyTableEntry(T[] tuple, long count) {
+        this.setCount(count);
         this.tuple = tuple;
     }
 
@@ -33,18 +47,5 @@ public class FrequencyTableEntry<T> {
         this.tuple = tuple;
     }
 
-    /**
-     * @return the size
-     */
-    public long getSize() {
-        return size;
-    }
-
-    /**
-     * @param size the size to set
-     */
-    public void setSize(long size) {
-        this.size = size;
-    }
 
 }
