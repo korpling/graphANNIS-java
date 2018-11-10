@@ -17,8 +17,6 @@ package org.corpus_tools.graphannis;
 
 import com.google.common.io.Files;
 
-import annis.service.objects.OrderType;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;

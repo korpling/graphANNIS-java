@@ -17,6 +17,7 @@ package org.corpus_tools.graphannis;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -31,7 +32,11 @@ import org.corpus_tools.graphannis.capi.CharPointer;
 import org.corpus_tools.graphannis.capi.QueryAttributeDescription;
 import org.corpus_tools.graphannis.errors.GraphANNISException;
 import org.corpus_tools.graphannis.errors.SetLoggerError;
+import org.corpus_tools.graphannis.model.AnnoKey;
+import org.corpus_tools.graphannis.model.Annotation;
 import org.corpus_tools.graphannis.model.Component;
+import org.corpus_tools.graphannis.model.FrequencyDefEntry;
+import org.corpus_tools.graphannis.model.FrequencyTableEntry;
 import org.corpus_tools.graphannis.model.NodeDesc;
 import org.corpus_tools.salt.common.SCorpusGraph;
 import org.corpus_tools.salt.common.SDocumentGraph;
@@ -40,9 +45,6 @@ import org.slf4j.LoggerFactory;
 
 import com.sun.jna.NativeLong;
 
-import annis.model.Annotation;
-import annis.service.objects.FrequencyTable;
-import annis.service.objects.FrequencyTableQuery;
 	
 /**
  * An API for managing corpora stored in a common location on the file system.
@@ -161,17 +163,21 @@ public class CorpusStorageManager {
 			if (ncols >= (listValues ? 3 : 2)) {
 				for (int i = 0; i < nrows; i++) {
 					Annotation anno = new Annotation();
+					AnnoKey key = new AnnoKey();
 					String ns = CAPI.annis_matrix_str_get(orig, new NativeLong(i), new NativeLong(0));
 					String name = CAPI.annis_matrix_str_get(orig, new NativeLong(i), new NativeLong(1));
 
 					if (!"".equals(ns)) {
-						anno.setNamespace(ns);
+						key.setNs(ns);
 					}
-					anno.setName(name);
+					key.setName(name);
+					anno.setKey(key);
+
 					if (listValues) {
 						String val = CAPI.annis_matrix_str_get(orig, new NativeLong(i), new NativeLong(2));
 						anno.setValue(val);
 					}
+
 					result.add(anno);
 				}
 			}
@@ -193,13 +199,16 @@ public class CorpusStorageManager {
 			if (ncols >= (listValues ? 3 : 2)) {
 				for (int i = 0; i < nrows; i++) {
 					Annotation anno = new Annotation();
+					AnnoKey key = new AnnoKey();
 					String ns = CAPI.annis_matrix_str_get(orig, new NativeLong(i), new NativeLong(0));
 					String name = CAPI.annis_matrix_str_get(orig, new NativeLong(i), new NativeLong(1));
 
 					if (!"".equals(ns)) {
-						anno.setNamespace(ns);
+						key.setNs(ns);
 					}
-					anno.setName(name);
+					key.setName(name);
+					anno.setKey(key);
+
 					if (listValues) {
 						String val = CAPI.annis_matrix_str_get(orig, new NativeLong(i), new NativeLong(2));
 						anno.setValue(val);
@@ -409,7 +418,7 @@ public class CorpusStorageManager {
 		return null;
 	}
 
-	public FrequencyTable frequency(String corpusName, String query, FrequencyTableQuery freqQueryDef,
+	public List<FrequencyTableEntry<String>> frequency(String corpusName, String query, Collection<FrequencyDefEntry> freqQueryDef,
 			QueryLanguage queryLanguage) throws GraphANNISException {
 		if (instance != null) {
 			String freqQueryDefString = freqQueryDef.toString();
@@ -419,7 +428,7 @@ public class CorpusStorageManager {
 			err.checkErrors();
 
 			if (orig != null) {
-				FrequencyTable result = new FrequencyTable();
+				List<FrequencyTableEntry<String>> result = new ArrayList<>();
 
 				final int nrows = CAPI.annis_freqtable_str_nrows(orig).intValue();
 				final int ncols = CAPI.annis_freqtable_str_ncols(orig).intValue();
@@ -429,7 +438,7 @@ public class CorpusStorageManager {
 					for (int c = 0; c < ncols; c++) {
 						tuple[c] = CAPI.annis_freqtable_str_get(orig, new NativeLong(i), new NativeLong(c));
 					}
-					result.addEntry(new FrequencyTable.Entry(tuple, count.longValue()));
+					result.add(new FrequencyTableEntry<>(tuple, count.longValue()));
 				}
 				return result;
 			}
