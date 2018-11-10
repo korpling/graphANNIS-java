@@ -17,9 +17,10 @@ package org.corpus_tools.graphannis;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+
+import com.sun.jna.NativeLong;
 
 import org.corpus_tools.graphannis.capi.AnnisCountExtra;
 import org.corpus_tools.graphannis.capi.AnnisErrorListRef;
@@ -35,15 +36,12 @@ import org.corpus_tools.graphannis.errors.SetLoggerError;
 import org.corpus_tools.graphannis.model.AnnoKey;
 import org.corpus_tools.graphannis.model.Annotation;
 import org.corpus_tools.graphannis.model.Component;
-import org.corpus_tools.graphannis.model.FrequencyDefEntry;
 import org.corpus_tools.graphannis.model.FrequencyTableEntry;
 import org.corpus_tools.graphannis.model.NodeDesc;
 import org.corpus_tools.salt.common.SCorpusGraph;
 import org.corpus_tools.salt.common.SDocumentGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.sun.jna.NativeLong;
 
 	
 /**
@@ -418,13 +416,12 @@ public class CorpusStorageManager {
 		return null;
 	}
 
-	public List<FrequencyTableEntry<String>> frequency(String corpusName, String query, Collection<FrequencyDefEntry> freqQueryDef,
+	public List<FrequencyTableEntry<String>> frequency(String corpusName, String query, String frequencyQueryDefinition,
 			QueryLanguage queryLanguage) throws GraphANNISException {
 		if (instance != null) {
-			String freqQueryDefString = freqQueryDef.toString();
 			AnnisErrorListRef err = new AnnisErrorListRef();
 			CAPI.AnnisFrequencyTable_AnnisCString orig = CAPI.annis_cs_frequency(instance, corpusName, query,
-					queryLanguage.capiVal, freqQueryDefString, err);
+					queryLanguage.capiVal, frequencyQueryDefinition, err);
 			err.checkErrors();
 
 			if (orig != null) {
