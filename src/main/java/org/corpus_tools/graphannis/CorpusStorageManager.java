@@ -22,6 +22,7 @@ import java.util.List;
 
 import com.sun.jna.NativeLong;
 
+import org.corpus_tools.graphannis.capi.AnnisComponentType;
 import org.corpus_tools.graphannis.capi.AnnisCountExtra;
 import org.corpus_tools.graphannis.capi.AnnisErrorListRef;
 import org.corpus_tools.graphannis.capi.AnnisImportFormat;
@@ -43,7 +44,6 @@ import org.corpus_tools.salt.common.SDocumentGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-	
 /**
  * An API for managing corpora stored in a common location on the file system.
  * 
@@ -386,8 +386,8 @@ public class CorpusStorageManager {
 			throws GraphANNISException {
 		if (instance != null) {
 			AnnisErrorListRef err = new AnnisErrorListRef();
-			CAPI.AnnisGraph graph = CAPI.annis_cs_subgraph_for_query(instance, corpusName, query, queryLanguage.capiVal,
-					err);
+			CAPI.AnnisGraph graph = CAPI.annis_cs_subgraph_for_query_with_ctype(instance, corpusName, query,
+					queryLanguage.capiVal, AnnisComponentType.PartOfSubcorpus, err);
 			err.checkErrors();
 
 			SCorpusGraph result = SaltExport.mapCorpusGraph(graph);
