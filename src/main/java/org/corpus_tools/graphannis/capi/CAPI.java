@@ -181,6 +181,9 @@ public class CAPI implements Library {
 	public static native AnnisGraph annis_cs_subgraph_for_query(AnnisCorpusStorage cs, String corpusName, String query,
 			int queryLanguage, AnnisErrorListRef err);
 
+	public static native AnnisGraph annis_cs_subgraph_for_query_with_ctype(AnnisCorpusStorage cs, String corpusName,
+			String query, int queryLanguage, int ctype, AnnisErrorListRef err);
+
 	public static native AnnisFrequencyTable_AnnisCString annis_cs_frequency(AnnisCorpusStorage cs, String corpusName,
 			String query, int queryLanguage, String frequencyQueryDefinition, AnnisErrorListRef err);
 
