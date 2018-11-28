@@ -9,11 +9,11 @@
 	<description>A wrapper around the C API of graphANNIS</description>
 	<version>0.14.0-SNAPSHOT</version>
 	<packaging>bundle</packaging>
-	<url>https://github.com/corpus-tools/graphANNIS</url>
+	<url>https://github.com/korpling/graphANNIS</url>
 	<scm>
-		<connection>scm:git:https://github.com/corpus-tools/graphANNIS</connection>
-		<developerConnection>scm:git:ssh://git@github.com/corpus-tools/graphANNIS.git</developerConnection>
-		<url>https://github.com/corpus-tools/graphANNIS</url>
+		<connection>scm:git:https://github.com/korpling/graphANNIS</connection>
+		<developerConnection>scm:git:ssh://git@github.com/korpling/graphANNIS.git</developerConnection>
+		<url>https://github.com/korpling/graphANNIS</url>
 	</scm>
 	<licenses>
 		<license>
