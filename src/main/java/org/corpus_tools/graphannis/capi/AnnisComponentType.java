@@ -23,16 +23,16 @@ public interface AnnisComponentType {
 
   public static final int Coverage = 0;
 
-  public static final int Dominance = 1;
+  public static final int Dominance = 2;
 
-  public static final int Pointing = 2;
+  public static final int Pointing = 3;
 
-  public static final int Ordering = 3;
+  public static final int Ordering = 4;
 
-  public static final int LeftToken = 4;
+  public static final int LeftToken = 5;
 
-  public static final int RightToken = 5;
+  public static final int RightToken = 6;
 
-  public static final int PartOfSubcorpus = 6;
+  public static final int PartOfSubcorpus = 7;
   
 }
