@@ -165,17 +165,8 @@ public class SaltImport {
       return;
     }
 
-    // sort the token by left index
-    List<SToken> sortedOverlappedToken = graph.getSortedTokenByText(overlappedToken);
-
     String name = nodeName(node);
 
-    // add the LEFT_TOKEN and RIGHT_TOKEN edges
-    String firstOverlappedToken = nodeName(sortedOverlappedToken.get(0));
-    String lastOverlappedToken = nodeName(sortedOverlappedToken.get(sortedOverlappedToken.size() - 1));
-
-    updateList.addEdge(name, firstOverlappedToken, ANNIS_NS, "LeftToken", "");
-    updateList.addEdge(name, lastOverlappedToken, ANNIS_NS, "RightToken", "");
 
     // add the COVERAGE edges
     for (SToken covered : overlappedToken) {
