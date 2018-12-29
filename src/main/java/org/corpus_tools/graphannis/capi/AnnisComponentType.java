@@ -23,8 +23,6 @@ public interface AnnisComponentType {
 
   public static final int Coverage = 0;
 
-  public static final int InverseCoverage = 1;
-
   public static final int Dominance = 2;
 
   public static final int Pointing = 3;
