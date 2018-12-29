@@ -174,16 +174,12 @@ public class SaltImport {
     String firstOverlappedToken = nodeName(sortedOverlappedToken.get(0));
     String lastOverlappedToken = nodeName(sortedOverlappedToken.get(sortedOverlappedToken.size() - 1));
 
-    updateList.addEdge(firstOverlappedToken, name, ANNIS_NS, "LeftToken", "");
     updateList.addEdge(name, firstOverlappedToken, ANNIS_NS, "LeftToken", "");
-
-    updateList.addEdge(lastOverlappedToken, name, ANNIS_NS, "RightToken", "");
     updateList.addEdge(name, lastOverlappedToken, ANNIS_NS, "RightToken", "");
 
-    // add the COVERAGE and INVERSE_COVERAGE edges
-    for (SToken covered : sortedOverlappedToken) {
+    // add the COVERAGE edges
+    for (SToken covered : overlappedToken) {
       updateList.addEdge(name, nodeName(covered), ANNIS_NS, "Coverage", "");
-      updateList.addEdge(nodeName(covered), name, ANNIS_NS, "InverseCoverage", "");
     }
 
   }
