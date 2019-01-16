@@ -1,22 +1,29 @@
 package org.corpus_tools.graphannis.model;
 
-import java.util.LinkedHashMap;
+import java.util.Collections;
 import java.util.Map;
 
 public class Node {
+	private final int id;
 	private final String name;
 	private final String type;
 	
-	private final Map<QName, String> attributes;
+	private final Map<QName, String> labels;
 	
-	public Node(String name) {
-		this(name, "node");
+	public Node(int id, String name, Map<QName, String> labels) {
+		this(id, name, "node", labels);
 	}
 	
-	public Node(String name, String type) {
+	
+	public Node(int id, String name, String type, Map<QName, String> labels) {
+		this.id = id;
 		this.name = name;
 		this.type = type;
-		this.attributes = new LinkedHashMap<>();
+		this.labels = labels;
+	}
+	
+	protected int getId() {
+		return id;
 	}
 	
 	public String getName() {
@@ -27,8 +34,8 @@ public class Node {
 		return type;
 	}
 	
-	public Map<QName, String> getAttributes() {
-		return attributes;
+	public Map<QName, String> getLabels() {
+		return Collections.unmodifiableMap(labels);
 	}
 	
 	@Override
