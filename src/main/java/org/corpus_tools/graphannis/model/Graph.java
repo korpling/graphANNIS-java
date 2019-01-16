@@ -88,7 +88,7 @@ public class Graph {
 	private static Component mapComponent(AnnisComponentConst cOrig) {
 		Component c = new Component();
 		int ctype = CAPI.annis_component_type(cOrig);
-		c.setType(ctype);
+		c.setType(Component.Type.fromInt(ctype));
 
 		CharPointer cname = CAPI.annis_component_name(cOrig);
 		c.setName(cname == null ? "" : cname.toString());
