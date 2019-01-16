@@ -228,7 +228,7 @@ public class CorpusStorageManager {
 			for (int i = 0; i < CAPI.annis_vec_component_size(orig).intValue(); i++) {
 				AnnisComponentConst cOrig = CAPI.annis_vec_component_get(orig, new NativeLong(i));
 				Component c = new Component();
-				c.setType(ctype);
+				c.setType(Component.Type.fromInt(ctype));
 
 				CharPointer cname = CAPI.annis_component_name(cOrig);
 				c.setName(cname == null ? "" : cname.toString());
