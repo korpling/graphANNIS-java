@@ -185,12 +185,12 @@ public class CorpusStorageManager {
 		return result;
 	}
 
-	public List<Annotation> listEdgeAnnotations(String corpusName, int component_type, String component_name,
+	public List<Annotation> listEdgeAnnotations(String corpusName, ComponentType component_type, String component_name,
 			String component_layer, boolean listValues, boolean onlyMostFrequentValues) {
 		List<Annotation> result = new LinkedList<>();
 		if (instance != null) {
 			CAPI.AnnisMatrix_AnnisCString orig = CAPI.annis_cs_list_edge_annotations(instance, corpusName,
-					component_type, component_name, component_layer, listValues, onlyMostFrequentValues);
+					component_type.toInt(), component_name, component_layer, listValues, onlyMostFrequentValues);
 
 			final int nrows = CAPI.annis_matrix_str_nrows(orig).intValue();
 			final int ncols = CAPI.annis_matrix_str_ncols(orig).intValue();
@@ -220,15 +220,15 @@ public class CorpusStorageManager {
 		return result;
 	}
 
-	public List<Component> getAllComponentsByType(String corpusName, int ctype) {
+	public List<Component> getAllComponentsByType(String corpusName, ComponentType ctype) {
 		List<Component> result = new LinkedList<>();
 		if (instance != null) {
-			CAPI.AnnisVec_AnnisComponent orig = CAPI.annis_cs_list_components_by_type(instance, corpusName, ctype);
+			CAPI.AnnisVec_AnnisComponent orig = CAPI.annis_cs_list_components_by_type(instance, corpusName, ctype.toInt());
 
 			for (int i = 0; i < CAPI.annis_vec_component_size(orig).intValue(); i++) {
 				AnnisComponentConst cOrig = CAPI.annis_vec_component_get(orig, new NativeLong(i));
 				Component c = new Component();
-				c.setType(ComponentType.fromInt(ctype));
+				c.setType(ctype);
 
 				CharPointer cname = CAPI.annis_component_name(cOrig);
 				c.setName(cname == null ? "" : cname.toString());
