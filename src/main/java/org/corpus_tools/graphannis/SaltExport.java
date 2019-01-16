@@ -28,7 +28,6 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.corpus_tools.graphannis.capi.AnnisComponentType;
 import org.corpus_tools.graphannis.capi.AnnisEdge;
 import org.corpus_tools.graphannis.capi.CAPI;
 import org.corpus_tools.graphannis.capi.CAPI.AnnisAnnotation;
@@ -39,6 +38,7 @@ import org.corpus_tools.graphannis.capi.CAPI.AnnisVec_AnnisEdge;
 import org.corpus_tools.graphannis.capi.CharPointer;
 import org.corpus_tools.graphannis.capi.NodeID;
 import org.corpus_tools.graphannis.capi.NodeIDByRef;
+import org.corpus_tools.graphannis.model.ComponentType;
 import org.corpus_tools.salt.SALT_TYPE;
 import org.corpus_tools.salt.SaltFactory;
 import org.corpus_tools.salt.common.SCorpus;
@@ -105,7 +105,7 @@ public class SaltExport {
     private boolean hasDominanceEdge(NodeIDByRef nID) {
 
         AnnisVec_AnnisComponent components = CAPI.annis_graph_all_components_by_type(orig,
-                AnnisComponentType.Dominance);
+        		ComponentType.Dominance.toInt());
         for (int i = 0; i < CAPI.annis_vec_component_size(components).intValue(); i++) {
             CAPI.AnnisComponentConst c = CAPI.annis_vec_component_get(components, new NativeLong(i));
             // check if the node has an outgoing edge of this component
@@ -119,7 +119,7 @@ public class SaltExport {
 
     private boolean hasCoverageEdge(NodeIDByRef nID) {
 
-        AnnisVec_AnnisComponent components = CAPI.annis_graph_all_components_by_type(orig, AnnisComponentType.Coverage);
+        AnnisVec_AnnisComponent components = CAPI.annis_graph_all_components_by_type(orig, ComponentType.Coverage.toInt());
         for (int i = 0; i < CAPI.annis_vec_component_size(components).intValue(); i++) {
             CAPI.AnnisComponentConst c = CAPI.annis_vec_component_get(components, new NativeLong(i));
             // check if the node has an outgoing edge of this component
@@ -197,13 +197,13 @@ public class SaltExport {
                 edgeType = cName.toString();
             }
             SRelation<?, ?> rel = null;
-            switch (CAPI.annis_component_type(component)) {
-            case AnnisComponentType.Dominance:
+            switch (ComponentType.fromInt(CAPI.annis_component_type(component))) {
+            case Dominance:
                 if (edgeType == null || edgeType.isEmpty()) {
                     // We don't include edges that have no type if there is an edge
                     // between the same nodes which has a type.
                     AnnisVec_AnnisComponent domComponents = CAPI.annis_graph_all_components_by_type(orig,
-                            AnnisComponentType.Dominance);
+                    		ComponentType.Dominance.toInt());
                     for (int cIdx = 0; cIdx < CAPI.annis_vec_component_size(domComponents).intValue(); cIdx++) {
                         CAPI.AnnisComponentConst dc = CAPI.annis_vec_component_get(domComponents, new NativeLong(cIdx));
 
@@ -224,13 +224,13 @@ public class SaltExport {
                 rel = docGraph.createRelation(source, target, SALT_TYPE.SDOMINANCE_RELATION, null);
 
                 break;
-            case AnnisComponentType.Pointing:
+            case Pointing:
                 rel = docGraph.createRelation(source, target, SALT_TYPE.SPOINTING_RELATION, null);
                 break;
-            case AnnisComponentType.Ordering:
+            case Ordering:
                 rel = docGraph.createRelation(source, target, SALT_TYPE.SORDER_RELATION, null);
                 break;
-            case AnnisComponentType.Coverage:
+            case Coverage:
                 // only add coverage edges in salt to spans, not structures
                 if (source instanceof SSpan && target instanceof SToken) {
                     rel = docGraph.createRelation(source, target, SALT_TYPE.SSPANNING_RELATION, null);
@@ -358,7 +358,7 @@ public class SaltExport {
         
         if (docGraph.getTimeline() != null) {
             AnnisVec_AnnisComponent coverageComponents = CAPI.annis_graph_all_components_by_type(orig,
-                    AnnisComponentType.Coverage);
+            		ComponentType.Coverage.toInt());
             final int coverageComponents_size = CAPI.annis_vec_component_size(coverageComponents).intValue();
             AnnisComponentConst covComponent = null;
             for (int i = 0; i < coverageComponents_size; i++) {
@@ -523,7 +523,7 @@ public class SaltExport {
         Map<String, AnnisComponentConst> types = new TreeMap<>();
         for (int i = 0; i < component_size; i++) {
             AnnisComponentConst c = CAPI.annis_vec_component_get(components, new NativeLong(i));
-            if (CAPI.annis_component_type(c) == AnnisComponentType.Ordering) {
+            if (CAPI.annis_component_type(c) == ComponentType.Ordering.toInt()) {
                 CharPointer t = CAPI.annis_component_name(c);
                 types.put(t == null ? "" : t.toString(), c);
             }
@@ -628,7 +628,7 @@ public class SaltExport {
         AnnisComponentConst subcorpusComponent = null;
         for (int i = 0; i < CAPI.annis_vec_component_size(components).intValue(); i++) {
             CAPI.AnnisComponentConst c = CAPI.annis_vec_component_get(components, new NativeLong(i));
-            if (CAPI.annis_component_type(c) == AnnisComponentType.PartOfSubcorpus) {
+            if (CAPI.annis_component_type(c) == ComponentType.PartOfSubcorpus.toInt()) {
                 subcorpusComponent = c;
             }
         }

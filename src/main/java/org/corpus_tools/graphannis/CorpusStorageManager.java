@@ -20,9 +20,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.sun.jna.NativeLong;
-
-import org.corpus_tools.graphannis.capi.AnnisComponentType;
 import org.corpus_tools.graphannis.capi.AnnisCountExtra;
 import org.corpus_tools.graphannis.capi.AnnisErrorListRef;
 import org.corpus_tools.graphannis.capi.AnnisImportFormat;
@@ -37,12 +34,15 @@ import org.corpus_tools.graphannis.errors.SetLoggerError;
 import org.corpus_tools.graphannis.model.AnnoKey;
 import org.corpus_tools.graphannis.model.Annotation;
 import org.corpus_tools.graphannis.model.Component;
+import org.corpus_tools.graphannis.model.ComponentType;
 import org.corpus_tools.graphannis.model.FrequencyTableEntry;
 import org.corpus_tools.graphannis.model.NodeDesc;
 import org.corpus_tools.salt.common.SCorpusGraph;
 import org.corpus_tools.salt.common.SDocumentGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.sun.jna.NativeLong;
 
 /**
  * An API for managing corpora stored in a common location on the file system.
@@ -228,7 +228,7 @@ public class CorpusStorageManager {
 			for (int i = 0; i < CAPI.annis_vec_component_size(orig).intValue(); i++) {
 				AnnisComponentConst cOrig = CAPI.annis_vec_component_get(orig, new NativeLong(i));
 				Component c = new Component();
-				c.setType(Component.Type.fromInt(ctype));
+				c.setType(ComponentType.fromInt(ctype));
 
 				CharPointer cname = CAPI.annis_component_name(cOrig);
 				c.setName(cname == null ? "" : cname.toString());
@@ -387,7 +387,7 @@ public class CorpusStorageManager {
 		if (instance != null) {
 			AnnisErrorListRef err = new AnnisErrorListRef();
 			CAPI.AnnisGraph graph = CAPI.annis_cs_subgraph_for_query_with_ctype(instance, corpusName, query,
-					queryLanguage.capiVal, AnnisComponentType.PartOfSubcorpus, err);
+					queryLanguage.capiVal, ComponentType.PartOfSubcorpus.toInt(), err);
 			err.checkErrors();
 
 			SCorpusGraph result = SaltExport.mapCorpusGraph(graph);
