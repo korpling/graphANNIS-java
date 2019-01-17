@@ -5,6 +5,18 @@ public class Component {
 	private ComponentType ctype;
 	private String name;
 	private String layer;
+	
+	
+	public Component() {
+		super();
+	}
+
+	public Component(ComponentType ctype, String layer, String name) {
+		super();
+		this.ctype = ctype;
+		this.name = name;
+		this.layer = layer;
+	}
 
 	public ComponentType getType() {
 		return ctype;

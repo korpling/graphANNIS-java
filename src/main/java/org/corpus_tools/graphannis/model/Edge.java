@@ -11,8 +11,8 @@ public class Edge {
 	private Node source;
 	private Node target;
 	
-	private final int source_ref;
-	private final int target_ref;
+	private final int sourceID;
+	private final int targetID;
 	
 	private final Graph graph;
 	
@@ -20,12 +20,12 @@ public class Edge {
 	
 	private final Map<QName, String> labels;
 
-	public Edge(int source_ref, int target_ref, Component component, Map<QName, String> labels, Graph graph) {
+	public Edge(int sourceID, int targetID, Component component, Map<QName, String> labels, Graph graph) {
 		
 		Preconditions.checkNotNull(graph);
 		
-		this.source_ref = source_ref;
-		this.target_ref = target_ref;
+		this.sourceID = sourceID;
+		this.targetID = targetID;
 		this.component = component;
 		this.labels = labels == null ? new LinkedHashMap<>() : labels;
 		this.graph = graph;
@@ -33,16 +33,24 @@ public class Edge {
 	
 	public Node getSource() {
 		if(source == null) {
-			source = graph.getNodeForID(source_ref);
+			source = graph.getNodeForID(sourceID);
 		}
 		return source;
 	}
 	
+	public int getSourceID() {
+		return sourceID;
+	}
+	
 	public Node getTarget() {
 		if(target == null) {
-			target = graph.getNodeForID(target_ref);
+			target = graph.getNodeForID(targetID);
 		}
 		return target;
+	}
+	
+	public int getTargetID() {
+		return targetID;
 	}
 	
 	public Map<QName, String> getLabels() {
@@ -61,7 +69,7 @@ public class Edge {
 		
 		if(obj instanceof Edge) {
 			Edge other = (Edge) obj;
-			return Objects.equal(this.source_ref, other.source_ref) && Objects.equal(this.target_ref, other.target_ref)
+			return Objects.equal(this.sourceID, other.sourceID) && Objects.equal(this.targetID, other.targetID)
 					&& Objects.equal(this.component, other.component);
 		} else {
 			return false;

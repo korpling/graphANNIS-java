@@ -36,6 +36,7 @@ import org.corpus_tools.graphannis.model.Annotation;
 import org.corpus_tools.graphannis.model.Component;
 import org.corpus_tools.graphannis.model.ComponentType;
 import org.corpus_tools.graphannis.model.FrequencyTableEntry;
+import org.corpus_tools.graphannis.model.Graph;
 import org.corpus_tools.graphannis.model.NodeDesc;
 import org.corpus_tools.salt.common.SCorpusGraph;
 import org.corpus_tools.salt.common.SDocumentGraph;
@@ -338,7 +339,7 @@ public class CorpusStorageManager {
 				new NativeLong(ctx_right), err);
 		err.checkErrors();
 
-		SDocumentGraph result = SaltExport.map(graph);
+		SDocumentGraph result = SaltExport.map(new Graph(graph));
 		c_node_ids.dispose();
 		graph.dispose();
 
@@ -357,7 +358,7 @@ public class CorpusStorageManager {
 			CAPI.AnnisGraph graph = CAPI.annis_cs_subcorpus_graph(instance, corpusName, c_document_ids, err);
 			err.checkErrors();
 
-			result = SaltExport.map(graph);
+			result = SaltExport.map(new Graph(graph));
 			c_document_ids.dispose();
 			if (graph != null) {
 				graph.dispose();
@@ -373,7 +374,7 @@ public class CorpusStorageManager {
 			CAPI.AnnisGraph graph = CAPI.annis_cs_corpus_graph(instance, corpusName, err);
 			err.checkErrors();
 
-			SCorpusGraph result = SaltExport.mapCorpusGraph(graph);
+			SCorpusGraph result = SaltExport.mapCorpusGraph(new Graph(graph));
 			if (graph != null) {
 				graph.dispose();
 			}
@@ -390,7 +391,7 @@ public class CorpusStorageManager {
 					queryLanguage.capiVal, ComponentType.PartOfSubcorpus.toInt(), err);
 			err.checkErrors();
 
-			SCorpusGraph result = SaltExport.mapCorpusGraph(graph);
+			SCorpusGraph result = SaltExport.mapCorpusGraph(new Graph(graph));
 			if (graph != null) {
 				graph.dispose();
 			}
@@ -407,7 +408,7 @@ public class CorpusStorageManager {
 					err);
 			err.checkErrors();
 
-			SDocumentGraph result = SaltExport.map(graph);
+			SDocumentGraph result = SaltExport.map(new Graph(graph));
 			if (graph != null) {
 				graph.dispose();
 			}
