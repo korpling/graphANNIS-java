@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,13 +33,17 @@ import org.corpus_tools.graphannis.capi.AnnisEdge;
 import org.corpus_tools.graphannis.capi.CAPI;
 import org.corpus_tools.graphannis.capi.CAPI.AnnisAnnotation;
 import org.corpus_tools.graphannis.capi.CAPI.AnnisComponentConst;
-import org.corpus_tools.graphannis.capi.CAPI.AnnisGraph;
 import org.corpus_tools.graphannis.capi.CAPI.AnnisVec_AnnisComponent;
 import org.corpus_tools.graphannis.capi.CAPI.AnnisVec_AnnisEdge;
 import org.corpus_tools.graphannis.capi.CharPointer;
 import org.corpus_tools.graphannis.capi.NodeID;
 import org.corpus_tools.graphannis.capi.NodeIDByRef;
+import org.corpus_tools.graphannis.model.Component;
 import org.corpus_tools.graphannis.model.ComponentType;
+import org.corpus_tools.graphannis.model.Edge;
+import org.corpus_tools.graphannis.model.Graph;
+import org.corpus_tools.graphannis.model.Node;
+import org.corpus_tools.graphannis.model.QName;
 import org.corpus_tools.salt.SALT_TYPE;
 import org.corpus_tools.salt.SaltFactory;
 import org.corpus_tools.salt.common.SCorpus;
@@ -76,228 +81,170 @@ import com.sun.jna.NativeLong;
  */
 public class SaltExport {
 
-    private final CAPI.AnnisGraph orig;
-    private final SDocumentGraph docGraph;
-    private final BiMap<Integer, SNode> nodesByID;
-    private final Map<Integer, Integer> node2timelinePOT;
+	private final Graph orig;
+	private final SDocumentGraph docGraph;
+	private final BiMap<Integer, SNode> nodesByID;
+	private final Map<Integer, Integer> node2timelinePOT;
 
-    protected SaltExport(AnnisGraph orig) {
-        this.orig = orig;
+	protected SaltExport(Graph orig) {
+		this.orig = orig;
 
-        this.docGraph = SaltFactory.createSDocumentGraph();
-        this.nodesByID = HashBiMap.create();
-        this.node2timelinePOT = new HashMap<>();
-    }
+		this.docGraph = SaltFactory.createSDocumentGraph();
+		this.nodesByID = HashBiMap.create();
+		this.node2timelinePOT = new HashMap<>();
+	}
 
-    private static void mapLabels(SAnnotationContainer n, Map<Pair<String, String>, String> labels, boolean isMeta) {
-        for (Map.Entry<Pair<String, String>, String> e : labels.entrySet()) {
-            if ("annis".equals(e.getKey().getKey())) {
-                n.createFeature(e.getKey().getKey(), e.getKey().getValue(), e.getValue());
-            } else if (isMeta) {
-                n.createMetaAnnotation(e.getKey().getKey(), e.getKey().getValue(), e.getValue());
-            } else {
-                n.createAnnotation(e.getKey().getKey(), e.getKey().getValue(), e.getValue());
-            }
-        }
+	private static void mapLabels(SAnnotationContainer n, Map<QName, String> labels, boolean isMeta) {
+		for (Map.Entry<QName, String> e : labels.entrySet()) {
+			if ("annis".equals(e.getKey().getNs())) {
+				n.createFeature(e.getKey().getNs(), e.getKey().getName(), e.getValue());
+			} else if (isMeta) {
+				n.createMetaAnnotation(e.getKey().getNs(), e.getKey().getName(), e.getValue());
+			} else {
+				n.createAnnotation(e.getKey().getNs(), e.getKey().getName(), e.getValue());
+			}
+		}
 
-    }
+	}
 
-    private boolean hasDominanceEdge(NodeIDByRef nID) {
+	private boolean hasDominanceEdge(Node node) {
 
-        AnnisVec_AnnisComponent components = CAPI.annis_graph_all_components_by_type(orig,
-        		ComponentType.Dominance.toInt());
-        for (int i = 0; i < CAPI.annis_vec_component_size(components).intValue(); i++) {
-            CAPI.AnnisComponentConst c = CAPI.annis_vec_component_get(components, new NativeLong(i));
-            // check if the node has an outgoing edge of this component
-            AnnisVec_AnnisEdge outEdges = CAPI.annis_graph_outgoing_edges(orig, new NodeID(nID.getValue()), c);
-            if (CAPI.annis_vec_edge_size(outEdges).longValue() > 0) {
-                return true;
-            }
-        }
-        return false;
-    }
+		List<Edge> outEdges = orig.getOutgoingEdges(node, ComponentType.Dominance);
+		return !outEdges.isEmpty();
+	}
 
-    private boolean hasCoverageEdge(NodeIDByRef nID) {
+	private boolean hasCoverageEdge(Node node) {
+		List<Edge> outEdges = orig.getOutgoingEdges(node, ComponentType.Coverage);
+		return !outEdges.isEmpty();
+	}
 
-        AnnisVec_AnnisComponent components = CAPI.annis_graph_all_components_by_type(orig, ComponentType.Coverage.toInt());
-        for (int i = 0; i < CAPI.annis_vec_component_size(components).intValue(); i++) {
-            CAPI.AnnisComponentConst c = CAPI.annis_vec_component_get(components, new NativeLong(i));
-            // check if the node has an outgoing edge of this component
-            AnnisVec_AnnisEdge outEdges = CAPI.annis_graph_outgoing_edges(orig, new NodeID(nID.getValue()), c);
-            if (CAPI.annis_vec_edge_size(outEdges).longValue() > 0) {
-                return true;
-            }
-        }
-        return false;
-    }
+	private static Map<Pair<String, String>, String> getNodeLabels(CAPI.AnnisGraph g, int nID) {
+		Map<Pair<String, String>, String> labels = new LinkedHashMap<>();
+		CAPI.AnnisVec_AnnisAnnotation annos = CAPI.annis_graph_annotations_for_node(g, new NodeID(nID));
+		for (long i = 0; i < CAPI.annis_vec_annotation_size(annos).longValue(); i++) {
+			AnnisAnnotation a = CAPI.annis_vec_annotation_get(annos, new NativeLong(i));
 
-    private static Map<Pair<String, String>, String> getNodeLabels(CAPI.AnnisGraph g, int nID) {
-        Map<Pair<String, String>, String> labels = new LinkedHashMap<>();
-        CAPI.AnnisVec_AnnisAnnotation annos = CAPI.annis_graph_annotations_for_node(g, new NodeID(nID));
-        for (long i = 0; i < CAPI.annis_vec_annotation_size(annos).longValue(); i++) {
-            AnnisAnnotation a = CAPI.annis_vec_annotation_get(annos, new NativeLong(i));
+			String ns = CAPI.annis_annotation_ns(a).toString();
+			String name = CAPI.annis_annotation_name(a).toString();
+			String value = CAPI.annis_annotation_val(a).toString();
 
-            String ns = CAPI.annis_annotation_ns(a).toString();
-            String name = CAPI.annis_annotation_name(a).toString();
-            String value = CAPI.annis_annotation_val(a).toString();
+			if (name != null && value != null) {
+				if (ns == null) {
+					labels.put(new ImmutablePair<>("", name), value);
+				} else {
+					labels.put(new ImmutablePair<>(ns, name), value);
+				}
+			}
+		}
+		annos.dispose();
 
-            if (name != null && value != null) {
-                if (ns == null) {
-                    labels.put(new ImmutablePair<>("", name), value);
-                } else {
-                    labels.put(new ImmutablePair<>(ns, name), value);
-                }
-            }
-        }
-        annos.dispose();
+		return labels;
+	}
 
-        return labels;
-    }
+	private SNode mapNode(Node node) {
+		SNode newNode;
 
-    private SNode mapNode(NodeIDByRef nID) {
-        SNode newNode;
+		// get all annotations for the node into a map, also create the node itself
+		Map<QName, String> labels = node.getLabels();
 
-        // get all annotations for the node into a map, also create the node itself
-        int copyID = nID.getValue();
-        Map<Pair<String, String>, String> labels = getNodeLabels(orig, copyID);
+		if (labels.containsKey(Graph.TOK) && !hasCoverageEdge(node)) {
+			newNode = SaltFactory.createSToken();
+		} else if (hasDominanceEdge(node)) {
+			newNode = SaltFactory.createSStructure();
+		} else {
+			newNode = SaltFactory.createSSpan();
+		}
 
-        if (labels.containsKey(new ImmutablePair<>("annis", "tok")) && !hasCoverageEdge(nID)) {
-            newNode = SaltFactory.createSToken();
-        } else if (hasDominanceEdge(nID)) {
-            newNode = SaltFactory.createSStructure();
-        } else {
-            newNode = SaltFactory.createSSpan();
-        }
-        newNode.createFeature("annis", "node_id", copyID);
+		String nodeName = node.getName();
+		if (!nodeName.startsWith("salt:/")) {
+			nodeName = "salt:/" + nodeName;
+		}
+		newNode.setId(nodeName);
+		// get the name from the ID
+		newNode.setName(newNode.getPath().fragment());
 
-        String nodeName = labels.get(new ImmutablePair<>("annis", "node_name"));
-        if (nodeName != null) {
-            if (!nodeName.startsWith("salt:/")) {
-                nodeName = "salt:/" + nodeName;
-            }
-            newNode.setId(nodeName);
-            // get the name from the ID
-            newNode.setName(newNode.getPath().fragment());
+		mapLabels(newNode, labels, false);
 
-        }
+		return newNode;
+	}
 
-        mapLabels(newNode, labels, false);
+	private void mapAndAddEdge(Edge origEdge) {
+		SNode source = nodesByID.get(origEdge.getSource().getId());
+		SNode target = nodesByID.get(origEdge.getSource().getId());
 
-        return newNode;
-    }
+		String edgeType = origEdge.getComponent().getName();
+		;
+		if (source != null && target != null && source != target) {
 
-    private void mapAndAddEdge(NodeID node, AnnisEdge origEdge, CAPI.AnnisComponentConst component) {
-        SNode source = nodesByID.get(origEdge.source.intValue());
-        SNode target = nodesByID.get(origEdge.target.intValue());
+			SRelation<?, ?> rel = null;
+			switch (origEdge.getComponent().getType()) {
+			case Dominance:
+				if (edgeType == null || edgeType.isEmpty()) {
+					// We don't include edges that have no type if there is an edge
+					// between the same nodes which has a type.
+					List<Edge> domOutEdges = orig.getOutgoingEdges(origEdge.getSource(), ComponentType.Dominance);
+					for (Edge outEdge : domOutEdges) {
+						if (outEdge.getTargetID() == origEdge.getTargetID()) {
+							// exclude this relation
+							return;
+						}
+					}
+				} // end mirror check
+				rel = docGraph.createRelation(source, target, SALT_TYPE.SDOMINANCE_RELATION, null);
 
-        String edgeType = null;
-        if (source != null && target != null && source != target) {
-            CharPointer cName = CAPI.annis_component_name(component);
-            if (cName != null) {
-                edgeType = cName.toString();
-            }
-            SRelation<?, ?> rel = null;
-            switch (ComponentType.fromInt(CAPI.annis_component_type(component))) {
-            case Dominance:
-                if (edgeType == null || edgeType.isEmpty()) {
-                    // We don't include edges that have no type if there is an edge
-                    // between the same nodes which has a type.
-                    AnnisVec_AnnisComponent domComponents = CAPI.annis_graph_all_components_by_type(orig,
-                    		ComponentType.Dominance.toInt());
-                    for (int cIdx = 0; cIdx < CAPI.annis_vec_component_size(domComponents).intValue(); cIdx++) {
-                        CAPI.AnnisComponentConst dc = CAPI.annis_vec_component_get(domComponents, new NativeLong(cIdx));
+				break;
+			case Pointing:
+				rel = docGraph.createRelation(source, target, SALT_TYPE.SPOINTING_RELATION, null);
+				break;
+			case Ordering:
+				rel = docGraph.createRelation(source, target, SALT_TYPE.SORDER_RELATION, null);
+				break;
+			case Coverage:
+				// only add coverage edges in salt to spans, not structures
+				if (source instanceof SSpan && target instanceof SToken) {
+					rel = docGraph.createRelation(source, target, SALT_TYPE.SSPANNING_RELATION, null);
+				}
+				break;
+			}
 
-                        if (!CAPI.annis_component_name(dc).toString().isEmpty()
-                                && !CAPI.annis_component_layer(dc).toString().isEmpty()) {
-                            AnnisVec_AnnisEdge outEdges = CAPI.annis_graph_outgoing_edges(orig, origEdge.source, dc);
-                            for (int i = 0; i < CAPI.annis_vec_edge_size(outEdges).intValue(); i++) {
-                                AnnisEdge outEdge = CAPI.annis_vec_edge_get(outEdges, new NativeLong(i));
+			if (rel != null) {
+				rel.setType(edgeType);
 
-                                if (outEdge.target.equals(origEdge.target)) {
-                                    // exclude this relation
-                                    return;
-                                }
-                            }
-                        }
-                    }
-                } // end mirror check
-                rel = docGraph.createRelation(source, target, SALT_TYPE.SDOMINANCE_RELATION, null);
+				// map edge labels
+				mapLabels(rel, origEdge.getLabels(), false);
 
-                break;
-            case Pointing:
-                rel = docGraph.createRelation(source, target, SALT_TYPE.SPOINTING_RELATION, null);
-                break;
-            case Ordering:
-                rel = docGraph.createRelation(source, target, SALT_TYPE.SORDER_RELATION, null);
-                break;
-            case Coverage:
-                // only add coverage edges in salt to spans, not structures
-                if (source instanceof SSpan && target instanceof SToken) {
-                    rel = docGraph.createRelation(source, target, SALT_TYPE.SSPANNING_RELATION, null);
-                }
-                break;
-            }
+				String layerName = origEdge.getComponent().getLayer();
+				if (layerName != null && !layerName.isEmpty()) {
+					List<SLayer> layer = docGraph.getLayerByName(layerName);
+					if (layer == null || layer.isEmpty()) {
+						SLayer newLayer = SaltFactory.createSLayer();
+						newLayer.setName(layerName);
+						docGraph.addLayer(newLayer);
+						layer = Arrays.asList(newLayer);
+					}
+					layer.get(0).addRelation(rel);
+				}
+			}
+		}
+	}
 
-            if (rel != null) {
-                rel.setType(edgeType);
+	private void addNodeLayers() {
+		List<SNode> nodeList = new LinkedList<>(docGraph.getNodes());
+		for (SNode n : nodeList) {
+			SFeature featLayer = n.getFeature("annis", "layer");
+			if (featLayer != null) {
+				SLayer layer = docGraph.getLayer(featLayer.getValue_STEXT());
+				if (layer == null) {
+					layer = SaltFactory.createSLayer();
+					layer.setName(featLayer.getValue_STEXT());
+					docGraph.addLayer(layer);
+				}
+				layer.addNode(n);
+			}
+		}
+	}
 
-                // map edge labels
-                Map<Pair<String, String>, String> labels = new LinkedHashMap<>();
-                AnnisEdge.ByValue copyEdge = new AnnisEdge.ByValue();
-                copyEdge.source = origEdge.source;
-                copyEdge.target = origEdge.target;
-                CAPI.AnnisVec_AnnisAnnotation annos = CAPI.annis_graph_annotations_for_edge(orig, copyEdge, component);
-                for (long i = 0; i < CAPI.annis_vec_annotation_size(annos).longValue(); i++) {
-                    AnnisAnnotation a = CAPI.annis_vec_annotation_get(annos, new NativeLong(i));
-
-                    String ns = CAPI.annis_annotation_ns(a).toString();
-                    String name = CAPI.annis_annotation_name(a).toString();
-                    String value = CAPI.annis_annotation_val(a).toString();
-
-                    if (name != null && value != null) {
-                        if (ns == null) {
-                            labels.put(new ImmutablePair<>("", name), value);
-                        } else {
-                            labels.put(new ImmutablePair<>(ns, name), value);
-                        }
-                    }
-                }
-                annos.dispose();
-                mapLabels(rel, labels, false);
-
-                CharPointer layerNameRaw = CAPI.annis_component_layer(component);
-                String layerName = layerNameRaw == null ? null : layerNameRaw.toString();
-                if (layerName != null && !layerName.isEmpty()) {
-                    List<SLayer> layer = docGraph.getLayerByName(layerName);
-                    if (layer == null || layer.isEmpty()) {
-                        SLayer newLayer = SaltFactory.createSLayer();
-                        newLayer.setName(layerName);
-                        docGraph.addLayer(newLayer);
-                        layer = Arrays.asList(newLayer);
-                    }
-                    layer.get(0).addRelation(rel);
-                }
-            }
-        }
-    }
-
-    private void addNodeLayers() {
-        List<SNode> nodeList = new LinkedList<>(docGraph.getNodes());
-        for (SNode n : nodeList) {
-            SFeature featLayer = n.getFeature("annis", "layer");
-            if (featLayer != null) {
-                SLayer layer = docGraph.getLayer(featLayer.getValue_STEXT());
-                if (layer == null) {
-                    layer = SaltFactory.createSLayer();
-                    layer.setName(featLayer.getValue_STEXT());
-                    docGraph.addLayer(layer);
-                }
-                layer.addNode(n);
-            }
-        }
-    }
-
-    private void recreateText(final String name, List<SNode> rootNodes) {
+	private void recreateText(final String name, List<SNode> rootNodes) {
         final StringBuilder text = new StringBuilder();
         final STextualDS ds = docGraph.createTextualDS("");
 
@@ -357,339 +304,210 @@ public class SaltExport {
         });
         
         if (docGraph.getTimeline() != null) {
-            AnnisVec_AnnisComponent coverageComponents = CAPI.annis_graph_all_components_by_type(orig,
-            		ComponentType.Coverage.toInt());
-            final int coverageComponents_size = CAPI.annis_vec_component_size(coverageComponents).intValue();
-            AnnisComponentConst covComponent = null;
-            for (int i = 0; i < coverageComponents_size; i++) {
-                AnnisComponentConst c = CAPI.annis_vec_component_get(coverageComponents, new NativeLong(i));
-                CharPointer cName = CAPI.annis_component_name(c);
-                CharPointer cLayer = CAPI.annis_component_layer(c);
-                if ((cName == null || cName.toString().isEmpty()) && "annis".equals(cLayer.toString())) {
-                    covComponent = c;
-                    break;
-                }
-            }
-
-            if (covComponent != null) {
-                // create the relations to the timeline for the tokens of this text by getting
-                // the original node IDs of the coverage edges and their mapping to a point of time (POT)
-                for (SToken tok : token2Range.keySet()) {
-                    Integer tokID = nodesByID.inverse().get(tok);
-                    if (tokID != null) {
-                        Integer tokPOT = this.node2timelinePOT.get(tokID);
-                        if(tokPOT != null)  {
-                            // directly map the relation of the token to its POT
-                            STimelineRelation rel = SaltFactory.createSTimelineRelation();
-                            rel.setSource(tok);
-                            rel.setTarget(docGraph.getTimeline());
-                            rel.setStart(tokPOT);
-                            rel.setEnd(tokPOT);
-                            docGraph.addRelation(rel);
-                        } else {
-                            // find the coverage edges from this node to a token which has a POT
-                            AnnisVec_AnnisEdge edges = CAPI.annis_graph_outgoing_edges(orig, new NodeID(tokID),
-                                    covComponent);
-                            final int edges_size = CAPI.annis_vec_edge_size(edges).intValue();
-                            for(int i=0; i < edges_size; i++) {
-                                AnnisEdge e = CAPI.annis_vec_edge_get(edges, new NativeLong(i));
-                                
-                                Integer pot = this.node2timelinePOT.get(e.target.intValue());
-                                if(pot != null) {
-                                    STimelineRelation rel = SaltFactory.createSTimelineRelation();
-                                    rel.setSource(tok);
-                                    rel.setTarget(docGraph.getTimeline());
-                                    rel.setStart(pot);
-                                    rel.setEnd(pot);
-                                    docGraph.addRelation(rel);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    private void addTextToSegmentation(final String name, List<SNode> rootNodes) {
-
-        // traverse the token chain using the order relations
-        docGraph.traverse(rootNodes, SGraph.GRAPH_TRAVERSE_TYPE.TOP_DOWN_DEPTH_FIRST, "ORDERING_" + name,
-                new GraphTraverseHandler() {
-                    @Override
-                    public void nodeReached(SGraph.GRAPH_TRAVERSE_TYPE traversalType, String traversalId,
-                            SNode currNode, SRelation<SNode, SNode> relation, SNode fromNode, long order) {
-
-                        SFeature featTok = currNode.getFeature("annis::tok");
-                        if (featTok != null && currNode instanceof SSpan) {
-                            currNode.createAnnotation(null, name, featTok.getValue().toString());
-                        }
-                    }
-
-                    @Override
-                    public void nodeLeft(SGraph.GRAPH_TRAVERSE_TYPE traversalType, String traversalId, SNode currNode,
-                            SRelation<SNode, SNode> relation, SNode fromNode, long order) {
-                    }
-
-                    @Override
-                    public boolean checkConstraint(SGraph.GRAPH_TRAVERSE_TYPE traversalType, String traversalId,
-                            SRelation relation, SNode currNode, long order) {
-                        if (relation == null) {
-                            // TODO: check if this is ever true
-                            return true;
-                        } else if (relation instanceof SOrderRelation && Objects.equal(name, relation.getType())) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-                });
-    }
-    
-
-    public static SDocumentGraph map(CAPI.AnnisGraph orig) {
-        if (orig == null) {
-            return null;
-        }
-        SaltExport export = new SaltExport(orig);
-
-        export.mapDocGraph();
-        return export.docGraph;
-    }
-
-    private void mapDocGraph() {
-
-        // create all new nodes
-        CAPI.AnnisIterPtr_AnnisNodeID itNodes = CAPI.annis_graph_nodes_by_type(orig, "node");
-
-        if (itNodes != null) {
-
-            for (NodeIDByRef nID = CAPI.annis_iter_nodeid_next(itNodes); nID != null; nID = CAPI
-                    .annis_iter_nodeid_next(itNodes)) {
-                SNode n = mapNode(nID);
-                nodesByID.put(nID.getValue(), n);
-            }
-            itNodes.dispose();
-        }
-
-        AnnisVec_AnnisComponent components = CAPI.annis_graph_all_components(orig);
-        final int component_size = CAPI.annis_vec_component_size(components).intValue();
-        
-        //mapTimeline(components, false);
-
-        // add nodes to the graph
-        nodesByID.values().stream().forEach(n -> docGraph.addNode(n));
-
-        // create and add all edges
-        for (Map.Entry<Integer, SNode> nodeEntry : nodesByID.entrySet()) {
-            for (int i = 0; i < component_size; i++) {
-                CAPI.AnnisComponentConst c = CAPI.annis_vec_component_get(components, new NativeLong(i));
-                NodeID nId = new NodeID(nodeEntry.getKey());
-                AnnisVec_AnnisEdge outEdges = CAPI.annis_graph_outgoing_edges(orig, nId, c);
-                for (int edgeIdx = 0; edgeIdx < CAPI.annis_vec_edge_size(outEdges).intValue(); edgeIdx++) {
-                    AnnisEdge edge = CAPI.annis_vec_edge_get(outEdges, new NativeLong(edgeIdx));
-                    mapAndAddEdge(nId, edge, c);
-                }
-            }
-        }
-        components.dispose();
-        components = null;
-
-        // find all chains of SOrderRelations and reconstruct the texts belonging to
-        // them
-        Multimap<String, SNode> orderRoots = docGraph.getRootsByRelationType(SALT_TYPE.SORDER_RELATION);
-        orderRoots.keySet().forEach((name) -> {
-            ArrayList<SNode> roots = new ArrayList<>(orderRoots.get(name));
-            if (SaltUtil.SALT_NULL_VALUE.equals(name)) {
-                name = null;
-            }
-            if (name == null || "".equals(name)) {
-            // only re-create text if this is the default (possible virtual) tokenization
-               recreateText(name, roots);
-           } else {
-               // add the text as label to the spans
-               addTextToSegmentation(name, roots);
-           }
-        });
-
-        addNodeLayers();
-    }
-    
-    private void mapTimeline(AnnisVec_AnnisComponent components, boolean removeOriginalToken) {
-
-        // find all order relation types
-        final int component_size = CAPI.annis_vec_component_size(components).intValue();
-
-        Map<String, AnnisComponentConst> types = new TreeMap<>();
-        for (int i = 0; i < component_size; i++) {
-            AnnisComponentConst c = CAPI.annis_vec_component_get(components, new NativeLong(i));
-            if (CAPI.annis_component_type(c) == ComponentType.Ordering.toInt()) {
-                CharPointer t = CAPI.annis_component_name(c);
-                types.put(t == null ? "" : t.toString(), c);
-            }
-        }
-
-        AnnisComponentConst timelineOrderComponent = types.get("");
-        if (types.size() > 1 && timelineOrderComponent != null) {
-
-            // there can be only one outgoing edge at maximum per node, thus use a map
-            // instead of a multimap
-            Map<Integer, Integer> timelineOrderEdges = new HashMap<>();
-
-            for (Map.Entry<Integer, SNode> node : nodesByID.entrySet()) {
-                AnnisVec_AnnisEdge edges = CAPI.annis_graph_outgoing_edges(orig, new NodeID(node.getKey()),
-                        timelineOrderComponent);
-                final int edges_size = CAPI.annis_vec_edge_size(edges).intValue();
-                for (int i = 0; i < edges_size; i++) {
-                    AnnisEdge e = CAPI.annis_vec_edge_get(edges, new NativeLong(i));
-
-                    timelineOrderEdges.put(e.source.intValue(), e.target.intValue());
-                }
-            }
-
-            Set<Integer> rootNodes = new HashSet<>(timelineOrderEdges.keySet());
-            for (Map.Entry<Integer, Integer> edge : timelineOrderEdges.entrySet()) {
-                rootNodes.remove(edge.getValue());
-            }
-
-            if (rootNodes.size() == 1) {
-
-                STimeline timeline = docGraph.createTimeline();
-
-                // iterate over the edges of the component starting at the root node
-                // (there should be only one chain of order relations for the timeline)
-                Integer currentNode = rootNodes.iterator().next();
-                while (currentNode != null) {
-
-                    SNode token = null;
-                    if(removeOriginalToken) {
-                        // Items on the timeline are not nodes, but "point of times", thus remove the
-                        // node from
-                        // map so it won't be added as SToken later.
-                        token = nodesByID.remove(currentNode);
+        	
+            // create the relations to the timeline for the tokens of this text by getting
+            // the original node IDs of the coverage edges and their mapping to a point of time (POT)
+            for (SToken tok : token2Range.keySet()) {
+                Integer tokID = nodesByID.inverse().get(tok);
+                if (tokID != null) {
+                    Integer tokPOT = this.node2timelinePOT.get(tokID);
+                    if(tokPOT != null)  {
+                        // directly map the relation of the token to its POT
+                        STimelineRelation rel = SaltFactory.createSTimelineRelation();
+                        rel.setSource(tok);
+                        rel.setTarget(docGraph.getTimeline());
+                        rel.setStart(tokPOT);
+                        rel.setEnd(tokPOT);
+                        docGraph.addRelation(rel);
                     } else {
-                        token = nodesByID.get(currentNode);
+                        // find the coverage edges from this node to a token which has a POT
+                    	Component covCompoment = new Component(ComponentType.Coverage, "annis", "");
+                    	List<Edge> edges = orig.getOutgoingEdges(orig.getNodeForID(tokID), covCompoment);
+                        for(Edge e : edges) {                     
+                            Integer pot = this.node2timelinePOT.get(e.getTargetID());
+                            if(pot != null) {
+                                STimelineRelation rel = SaltFactory.createSTimelineRelation();
+                                rel.setSource(tok);
+                                rel.setTarget(docGraph.getTimeline());
+                                rel.setStart(pot);
+                                rel.setEnd(pot);
+                                docGraph.addRelation(rel);
+                            }
+                    	
+                        }
                     }
-                    
-                    if (token != null) {
-
-                        // add another point of time for this token
-                        timeline.increasePointOfTime();
-
-                        // remember which token node (by ID) should be mapped to which timeline POT
-                        node2timelinePOT.put(currentNode, timeline.getEnd());
-                    }
-
-                    // get next node in the chain
-                    currentNode = timelineOrderEdges.get(currentNode);
                 }
             }
+        
         }
-
     }
 
-    private static SCorpus addCorpusAndParents(SCorpusGraph cg, long id, Map<Long, Long> parentOfNode,
-            Map<Long, SCorpus> id2corpus, Map<Long, Map<Pair<String, String>, String>> node2labels) {
+	private void addTextToSegmentation(final String name, List<SNode> rootNodes) {
 
-        if (id2corpus.containsKey(id)) {
-            return id2corpus.get(id);
-        }
+		// traverse the token chain using the order relations
+		docGraph.traverse(rootNodes, SGraph.GRAPH_TRAVERSE_TYPE.TOP_DOWN_DEPTH_FIRST, "ORDERING_" + name,
+				new GraphTraverseHandler() {
+					@Override
+					public void nodeReached(SGraph.GRAPH_TRAVERSE_TYPE traversalType, String traversalId,
+							SNode currNode, SRelation<SNode, SNode> relation, SNode fromNode, long order) {
 
-        Map<Pair<String, String>, String> labels = node2labels.get(id);
-        if (labels == null) {
-            return null;
-        }
+						SFeature featTok = currNode.getFeature("annis::tok");
+						if (featTok != null && currNode instanceof SSpan) {
+							currNode.createAnnotation(null, name, featTok.getValue().toString());
+						}
+					}
 
-        // create parents first
-        Long parentID = parentOfNode.get(id);
-        SCorpus parent = null;
-        if (parentID != null) {
-            parent = addCorpusAndParents(cg, parentID, parentOfNode, id2corpus, node2labels);
-        }
+					@Override
+					public void nodeLeft(SGraph.GRAPH_TRAVERSE_TYPE traversalType, String traversalId, SNode currNode,
+							SRelation<SNode, SNode> relation, SNode fromNode, long order) {
+					}
 
-        String corpusName = labels.getOrDefault(new ImmutablePair<>("annis", "node_name"), "corpus");
-        List<String> corpusNameSplitted = Splitter.on('/').trimResults().splitToList(corpusName);
-        // use last part of the path as name
-        SCorpus newCorpus = cg.createCorpus(parent, corpusNameSplitted.get(corpusNameSplitted.size() - 1));
-        id2corpus.put(id, newCorpus);
+					@Override
+					public boolean checkConstraint(SGraph.GRAPH_TRAVERSE_TYPE traversalType, String traversalId,
+							SRelation relation, SNode currNode, long order) {
+						if (relation == null) {
+							// TODO: check if this is ever true
+							return true;
+						} else if (relation instanceof SOrderRelation && Objects.equal(name, relation.getType())) {
+							return true;
+						} else {
+							return false;
+						}
+					}
+				});
+	}
 
-        return newCorpus;
+	public static SDocumentGraph map(Graph orig) {
+		if (orig == null) {
+			return null;
+		}
+		SaltExport export = new SaltExport(orig);
 
-    }
+		export.mapDocGraph();
+		return export.docGraph;
+	}
 
-    public static SCorpusGraph mapCorpusGraph(CAPI.AnnisGraph orig) {
-        if (orig == null) {
-            return null;
-        }
-        SCorpusGraph cg = SaltFactory.createSCorpusGraph();
+	private void mapDocGraph() {
 
-        // find the part-of-subcorpus component
-        AnnisVec_AnnisComponent components = CAPI.annis_graph_all_components(orig);
-        AnnisComponentConst subcorpusComponent = null;
-        for (int i = 0; i < CAPI.annis_vec_component_size(components).intValue(); i++) {
-            CAPI.AnnisComponentConst c = CAPI.annis_vec_component_get(components, new NativeLong(i));
-            if (CAPI.annis_component_type(c) == ComponentType.PartOfSubcorpus.toInt()) {
-                subcorpusComponent = c;
-            }
-        }
+		// create all new nodes
+		Iterator<Node> itNodes = orig.getNodesByType("node");
+		List<Edge> edges = new LinkedList<>();
+		while (itNodes.hasNext()) {
+			Node node = itNodes.next();
 
-        if (subcorpusComponent == null) {
-            // a graph without the subcorpus component is not a corpus graph
-            return null;
-        }
+			SNode n = mapNode(node);
+			nodesByID.put(node.getId(), n);
+			edges.addAll(orig.getOutgoingEdges(node));
+		}
 
-        Map<Long, Map<Pair<String, String>, String>> node2labels = new LinkedHashMap<>();
-        Map<Long, Long> parentOfNode = new LinkedHashMap<>();
+		// add nodes to the graph
+		nodesByID.values().stream().forEach(n -> docGraph.addNode(n));
 
-        // iterate over all nodes and get their outgoing edges
-        CAPI.AnnisIterPtr_AnnisNodeID itNodes = CAPI.annis_graph_nodes_by_type(orig, "corpus");
-        if (itNodes != null) {
+		// create and add all edges
+		for (Edge e : edges) {
+			mapAndAddEdge(e);
+		}
 
-            for (NodeIDByRef nID = CAPI.annis_iter_nodeid_next(itNodes); nID != null; nID = CAPI
-                    .annis_iter_nodeid_next(itNodes)) {
+		// find all chains of SOrderRelations and reconstruct the texts belonging to
+		// them
+		Multimap<String, SNode> orderRoots = docGraph.getRootsByRelationType(SALT_TYPE.SORDER_RELATION);
+		orderRoots.keySet().forEach((name) -> {
+			ArrayList<SNode> roots = new ArrayList<>(orderRoots.get(name));
+			if (SaltUtil.SALT_NULL_VALUE.equals(name)) {
+				name = null;
+			}
+			if (name == null || "".equals(name)) {
+				// only re-create text if this is the default (possible virtual) tokenization
+				recreateText(name, roots);
+			} else {
+				// add the text as label to the spans
+				addTextToSegmentation(name, roots);
+			}
+		});
 
-                Map<Pair<String, String>, String> nodeLabels = getNodeLabels(orig, nID.getValue());
-                node2labels.put((long) nID.getValue(), nodeLabels);
+		addNodeLayers();
+	}
 
-                AnnisVec_AnnisEdge outEdges = CAPI.annis_graph_outgoing_edges(orig, new NodeID(nID.getValue()),
-                        subcorpusComponent);
-                for (int edgeIdx = 0; edgeIdx < CAPI.annis_vec_edge_size(outEdges).intValue(); edgeIdx++) {
-                    AnnisEdge edge = CAPI.annis_vec_edge_get(outEdges, new NativeLong(edgeIdx));
-                    // add edge
-                    parentOfNode.put(edge.source.longValue(), edge.target.longValue());
-                }
-            }
-            itNodes.dispose();
-        }
+	private static SCorpus addCorpusAndParents(SCorpusGraph cg, int id, Map<Integer, Integer> parentOfNode,
+			Map<Integer, SCorpus> id2corpus, Map<Integer, Map<QName, String>> node2labels) {
 
-        Map<Long, SCorpus> id2corpus = new HashMap<>();
-        // add all non-documents first
-        for (Long id : parentOfNode.values()) {
-            addCorpusAndParents(cg, id, parentOfNode, id2corpus, node2labels);
-        }
-        for (Map.Entry<Long, SCorpus> e : id2corpus.entrySet()) {
-            Map<Pair<String, String>, String> labels = node2labels.get(e.getKey());
-            if (labels != null) {
-                mapLabels(e.getValue(), labels, true);
-            }
-        }
+		if (id2corpus.containsKey(id)) {
+			return id2corpus.get(id);
+		}
 
-        // add all documents next
-        for (Map.Entry<Long, Long> edge : parentOfNode.entrySet()) {
-            long childID = edge.getKey();
-            long parentID = edge.getValue();
-            if (!id2corpus.containsKey(childID)) {
-                Map<Pair<String, String>, String> labels = node2labels.get(childID);
-                if (labels != null) {
-                    String docName = labels.getOrDefault(new ImmutablePair<>("annis", "doc"), "document");
-                    SCorpus parent = id2corpus.get(parentID);
-                    SDocument doc = cg.createDocument(parent, docName);
+		Map<QName, String> labels = node2labels.get(id);
+		if (labels == null) {
+			return null;
+		}
 
-                    mapLabels(doc, labels, true);
-                }
-            }
-        }
+		// create parents first
+		Integer parentID = parentOfNode.get(id);
+		SCorpus parent = null;
+		if (parentID != null) {
+			parent = addCorpusAndParents(cg, parentID, parentOfNode, id2corpus, node2labels);
+		}
 
-        return cg;
-    }
+		String corpusName = labels.getOrDefault(new ImmutablePair<>("annis", "node_name"), "corpus");
+		List<String> corpusNameSplitted = Splitter.on('/').trimResults().splitToList(corpusName);
+		// use last part of the path as name
+		SCorpus newCorpus = cg.createCorpus(parent, corpusNameSplitted.get(corpusNameSplitted.size() - 1));
+		id2corpus.put(id, newCorpus);
+
+		return newCorpus;
+
+	}
+
+	public static SCorpusGraph mapCorpusGraph(Graph orig) {
+		if (orig == null) {
+			return null;
+		}
+		SCorpusGraph cg = SaltFactory.createSCorpusGraph();
+
+
+		Map<Integer, Map<QName, String>> node2labels = new LinkedHashMap<>();
+		Map<Integer, Integer> parentOfNode = new LinkedHashMap<>();
+
+		// iterate over all nodes and get their outgoing edges
+		Iterator<Node> itNodes = orig.getNodesByType("corpus");
+		while (itNodes.hasNext()) {
+			Node n = itNodes.next();
+			Map<QName, String> nodeLabels = n.getLabels();
+			node2labels.put(n.getId(), nodeLabels);
+
+			List<Edge> outEdges = orig.getOutgoingEdges(n, ComponentType.PartOfSubcorpus);
+			for (Edge edge: outEdges) {
+				parentOfNode.put(edge.getSourceID(), edge.getTargetID());
+			}
+		}
+
+		Map<Integer, SCorpus> id2corpus = new HashMap<>();
+		// add all non-documents first
+		for (Integer id : parentOfNode.values()) {
+			addCorpusAndParents(cg, id, parentOfNode, id2corpus, node2labels);
+		}
+		for (Map.Entry<Integer, SCorpus> e : id2corpus.entrySet()) {
+			Map<QName, String> labels = node2labels.get(e.getKey());
+			if (labels != null) {
+				mapLabels(e.getValue(), labels, true);
+			}
+		}
+
+		// add all documents next
+		for (Map.Entry<Integer, Integer> edge : parentOfNode.entrySet()) {
+			long childID = edge.getKey();
+			long parentID = edge.getValue();
+			if (!id2corpus.containsKey(childID)) {
+				Map<QName, String> labels = node2labels.get(childID);
+				if (labels != null) {
+					String docName = labels.getOrDefault(new ImmutablePair<>("annis", "doc"), "document");
+					SCorpus parent = id2corpus.get(parentID);
+					SDocument doc = cg.createDocument(parent, docName);
+
+					mapLabels(doc, labels, true);
+				}
+			}
+		}
+
+		return cg;
+	}
 }
