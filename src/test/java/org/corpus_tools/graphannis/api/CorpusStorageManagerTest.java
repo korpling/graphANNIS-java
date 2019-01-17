@@ -24,6 +24,7 @@ import org.corpus_tools.graphannis.CorpusStorageManager;
 import org.corpus_tools.graphannis.LogLevel;
 import org.corpus_tools.graphannis.SaltImport;
 import org.corpus_tools.graphannis.errors.GraphANNISException;
+import org.corpus_tools.graphannis.model.Graph;
 import org.corpus_tools.salt.common.SDocument;
 import org.corpus_tools.salt.common.SDocumentGraph;
 import org.corpus_tools.salt.common.SaltProject;
@@ -107,7 +108,7 @@ public class CorpusStorageManagerTest
     // repeat several times to make it more likely that garbage collection is run
     for(int i=0; i < 25; i++) {
       System.out.println("subcorpusGraph run " + (i+1));
-       SDocumentGraph docCreated = storage.subcorpusGraph(corpusName, Arrays.asList(docOrig.getId()));
+       Graph docCreated = storage.subcorpusGraph(corpusName, Arrays.asList(docOrig.getId()));
        docCreated = null;
        System.gc();
     }
