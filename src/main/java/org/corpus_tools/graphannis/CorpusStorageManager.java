@@ -38,8 +38,6 @@ import org.corpus_tools.graphannis.model.ComponentType;
 import org.corpus_tools.graphannis.model.FrequencyTableEntry;
 import org.corpus_tools.graphannis.model.Graph;
 import org.corpus_tools.graphannis.model.NodeDesc;
-import org.corpus_tools.salt.common.SCorpusGraph;
-import org.corpus_tools.salt.common.SDocumentGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -327,7 +325,7 @@ public class CorpusStorageManager {
 		return result.toArray(new String[0]);
 	}
 
-	public SDocumentGraph subgraph(String corpusName, List<String> node_ids, long ctx_left, long ctx_right)
+	public Graph subgraph(String corpusName, List<String> node_ids, long ctx_left, long ctx_right)
 			throws GraphANNISException {
 		CAPI.AnnisVec_AnnisCString c_node_ids = CAPI.annis_vec_str_new();
 		for (String id : node_ids) {
@@ -339,51 +337,42 @@ public class CorpusStorageManager {
 				new NativeLong(ctx_right), err);
 		err.checkErrors();
 
-		SDocumentGraph result = SaltExport.map(new Graph(graph));
 		c_node_ids.dispose();
-		graph.dispose();
-
-		return result;
+		
+		return new Graph(graph);
 	}
 
-	public SDocumentGraph subcorpusGraph(String corpusName, List<String> document_ids) throws GraphANNISException {
+	public Graph subcorpusGraph(String corpusName, List<String> document_ids) throws GraphANNISException {
 		CAPI.AnnisVec_AnnisCString c_document_ids = CAPI.annis_vec_str_new();
 		for (String id : document_ids) {
 			CAPI.annis_vec_str_push(c_document_ids, id);
 		}
-
-		SDocumentGraph result = null;
+		
+		Graph result = null;
 		if (instance != null) {
 			AnnisErrorListRef err = new AnnisErrorListRef();
 			CAPI.AnnisGraph graph = CAPI.annis_cs_subcorpus_graph(instance, corpusName, c_document_ids, err);
 			err.checkErrors();
 
-			result = SaltExport.map(new Graph(graph));
 			c_document_ids.dispose();
-			if (graph != null) {
-				graph.dispose();
-			}
+			result = new Graph(graph);
 		}
 
 		return result;
 	}
 
-	public SCorpusGraph corpusGraph(String corpusName) throws GraphANNISException {
+	public Graph corpusGraph(String corpusName) throws GraphANNISException {
 		if (instance != null) {
 			AnnisErrorListRef err = new AnnisErrorListRef();
 			CAPI.AnnisGraph graph = CAPI.annis_cs_corpus_graph(instance, corpusName, err);
 			err.checkErrors();
 
-			SCorpusGraph result = SaltExport.mapCorpusGraph(new Graph(graph));
-			if (graph != null) {
-				graph.dispose();
-			}
-			return result;
+			return new Graph(graph);
 		}
 		return null;
 	}
 
-	public SCorpusGraph corpusGraphForQuery(String corpusName, String query, QueryLanguage queryLanguage)
+	public Graph corpusGraphForQuery(String corpusName, String query, QueryLanguage queryLanguage)
 			throws GraphANNISException {
 		if (instance != null) {
 			AnnisErrorListRef err = new AnnisErrorListRef();
@@ -391,16 +380,13 @@ public class CorpusStorageManager {
 					queryLanguage.capiVal, ComponentType.PartOfSubcorpus.toInt(), err);
 			err.checkErrors();
 
-			SCorpusGraph result = SaltExport.mapCorpusGraph(new Graph(graph));
-			if (graph != null) {
-				graph.dispose();
-			}
-			return result;
+			
+			return new Graph(graph);
 		}
 		return null;
 	}
 
-	public SDocumentGraph subGraphForQuery(String corpusName, String query, QueryLanguage queryLanguage)
+	public Graph subGraphForQuery(String corpusName, String query, QueryLanguage queryLanguage)
 			throws GraphANNISException {
 		if (instance != null) {
 			AnnisErrorListRef err = new AnnisErrorListRef();
@@ -408,11 +394,7 @@ public class CorpusStorageManager {
 					err);
 			err.checkErrors();
 
-			SDocumentGraph result = SaltExport.map(new Graph(graph));
-			if (graph != null) {
-				graph.dispose();
-			}
-			return result;
+			return new Graph(graph);
 		}
 		return null;
 	}
