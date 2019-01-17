@@ -140,12 +140,12 @@ public class SaltExport {
 			SRelation<?, ?> rel = null;
 			switch (origEdge.getComponent().getType()) {
 			case Dominance:
-				if (edgeType == null || edgeType.isEmpty()) {
+				if (edgeType.isEmpty()) {
 					// We don't include edges that have no type if there is an edge
 					// between the same nodes which has a type.
 					List<Edge> domOutEdges = orig.getOutgoingEdges(origEdge.getSource(), ComponentType.Dominance);
 					for (Edge outEdge : domOutEdges) {
-						if (outEdge.getTargetID() == origEdge.getTargetID()) {
+						if (outEdge.getTargetID() == origEdge.getTargetID() && !outEdge.getComponent().getName().isEmpty()) {
 							// exclude this relation
 							return;
 						}
