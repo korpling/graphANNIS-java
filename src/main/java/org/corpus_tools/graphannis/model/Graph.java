@@ -18,7 +18,6 @@ import org.corpus_tools.graphannis.capi.CharPointer;
 import org.corpus_tools.graphannis.capi.NodeID;
 import org.corpus_tools.graphannis.capi.NodeIDByRef;
 
-import com.google.common.base.Preconditions;
 import com.sun.jna.NativeLong;
 
 public class Graph {
@@ -31,7 +30,9 @@ public class Graph {
 	private final CAPI.AnnisGraph graph;
 	
 	public Graph(CAPI.AnnisGraph g) {
-		Preconditions.checkNotNull(g);
+		if(g == null) {
+			throw new NullPointerException();
+		}
 		this.graph = g;
 	}
 	

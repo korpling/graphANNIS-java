@@ -4,9 +4,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Preconditions;
-
 public class Edge {
 	private Node source;
 	private Node target;
@@ -22,7 +19,9 @@ public class Edge {
 
 	public Edge(int sourceID, int targetID, Component component, Map<QName, String> labels, Graph graph) {
 		
-		Preconditions.checkNotNull(graph);
+		if(graph == null) {
+			throw new NullPointerException();
+		}
 		
 		this.sourceID = sourceID;
 		this.targetID = targetID;
@@ -60,19 +59,37 @@ public class Edge {
 	public Component getComponent() {
 		return component;
 	}
-	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((component == null) ? 0 : component.hashCode());
+		result = prime * result + sourceID;
+		result = prime * result + targetID;
+		return result;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
-		if(this == obj) {
+		if (this == obj)
 			return true;
-		}
-		
-		if(obj instanceof Edge) {
-			Edge other = (Edge) obj;
-			return Objects.equal(this.sourceID, other.sourceID) && Objects.equal(this.targetID, other.targetID)
-					&& Objects.equal(this.component, other.component);
-		} else {
+		if (obj == null)
 			return false;
-		}
+		if (getClass() != obj.getClass())
+			return false;
+		Edge other = (Edge) obj;
+		if (component == null) {
+			if (other.component != null)
+				return false;
+		} else if (!component.equals(other.component))
+			return false;
+		if (sourceID != other.sourceID)
+			return false;
+		if (targetID != other.targetID)
+			return false;
+		return true;
 	}
+	
+	
 }
