@@ -18,26 +18,13 @@ package org.corpus_tools.graphannis;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-import org.corpus_tools.graphannis.capi.AnnisEdge;
-import org.corpus_tools.graphannis.capi.CAPI;
-import org.corpus_tools.graphannis.capi.CAPI.AnnisAnnotation;
-import org.corpus_tools.graphannis.capi.CAPI.AnnisComponentConst;
-import org.corpus_tools.graphannis.capi.CAPI.AnnisVec_AnnisComponent;
-import org.corpus_tools.graphannis.capi.CAPI.AnnisVec_AnnisEdge;
-import org.corpus_tools.graphannis.capi.CharPointer;
-import org.corpus_tools.graphannis.capi.NodeID;
-import org.corpus_tools.graphannis.capi.NodeIDByRef;
 import org.corpus_tools.graphannis.model.Component;
 import org.corpus_tools.graphannis.model.ComponentType;
 import org.corpus_tools.graphannis.model.Edge;
@@ -54,7 +41,6 @@ import org.corpus_tools.salt.common.SOrderRelation;
 import org.corpus_tools.salt.common.SSpan;
 import org.corpus_tools.salt.common.STextualDS;
 import org.corpus_tools.salt.common.STextualRelation;
-import org.corpus_tools.salt.common.STimeline;
 import org.corpus_tools.salt.common.STimelineRelation;
 import org.corpus_tools.salt.common.SToken;
 import org.corpus_tools.salt.core.GraphTraverseHandler;
@@ -72,7 +58,6 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Range;
-import com.sun.jna.NativeLong;
 
 /**
  * Allows to extract a Salt-Graph from a database subgraph.
@@ -118,29 +103,6 @@ public class SaltExport {
 		return !outEdges.isEmpty();
 	}
 
-	private static Map<Pair<String, String>, String> getNodeLabels(CAPI.AnnisGraph g, int nID) {
-		Map<Pair<String, String>, String> labels = new LinkedHashMap<>();
-		CAPI.AnnisVec_AnnisAnnotation annos = CAPI.annis_graph_annotations_for_node(g, new NodeID(nID));
-		for (long i = 0; i < CAPI.annis_vec_annotation_size(annos).longValue(); i++) {
-			AnnisAnnotation a = CAPI.annis_vec_annotation_get(annos, new NativeLong(i));
-
-			String ns = CAPI.annis_annotation_ns(a).toString();
-			String name = CAPI.annis_annotation_name(a).toString();
-			String value = CAPI.annis_annotation_val(a).toString();
-
-			if (name != null && value != null) {
-				if (ns == null) {
-					labels.put(new ImmutablePair<>("", name), value);
-				} else {
-					labels.put(new ImmutablePair<>(ns, name), value);
-				}
-			}
-		}
-		annos.dispose();
-
-		return labels;
-	}
-
 	private SNode mapNode(Node node) {
 		SNode newNode;
 
@@ -170,10 +132,9 @@ public class SaltExport {
 
 	private void mapAndAddEdge(Edge origEdge) {
 		SNode source = nodesByID.get(origEdge.getSource().getId());
-		SNode target = nodesByID.get(origEdge.getSource().getId());
+		SNode target = nodesByID.get(origEdge.getTarget().getId());
 
 		String edgeType = origEdge.getComponent().getName();
-		;
 		if (source != null && target != null && source != target) {
 
 			SRelation<?, ?> rel = null;
@@ -245,102 +206,103 @@ public class SaltExport {
 	}
 
 	private void recreateText(final String name, List<SNode> rootNodes) {
-        final StringBuilder text = new StringBuilder();
-        final STextualDS ds = docGraph.createTextualDS("");
+		final StringBuilder text = new StringBuilder();
+		final STextualDS ds = docGraph.createTextualDS("");
 
-        ds.setName(name);
+		ds.setName(name);
 
-        Map<SToken, Range<Integer>> token2Range = new HashMap<>();
+		Map<SToken, Range<Integer>> token2Range = new HashMap<>();
 
-        // traverse the token chain using the order relations
-        docGraph.traverse(rootNodes, SGraph.GRAPH_TRAVERSE_TYPE.TOP_DOWN_DEPTH_FIRST, "ORDERING_" + name,
-                new GraphTraverseHandler() {
-                    @Override
-                    public void nodeReached(SGraph.GRAPH_TRAVERSE_TYPE traversalType, String traversalId,
-                            SNode currNode, SRelation<SNode, SNode> relation, SNode fromNode, long order) {
-                        if (fromNode != null) {
-                            text.append(" ");
-                        }
+		// traverse the token chain using the order relations
+		docGraph.traverse(rootNodes, SGraph.GRAPH_TRAVERSE_TYPE.TOP_DOWN_DEPTH_FIRST, "ORDERING_" + name,
+				new GraphTraverseHandler() {
+					@Override
+					public void nodeReached(SGraph.GRAPH_TRAVERSE_TYPE traversalType, String traversalId,
+							SNode currNode, SRelation<SNode, SNode> relation, SNode fromNode, long order) {
+						if (fromNode != null) {
+							text.append(" ");
+						}
 
-                        SFeature featTok = currNode.getFeature("annis::tok");
-                        if (featTok != null && currNode instanceof SToken) {
-                            int idxStart = text.length();
-                            text.append(featTok.getValue_STEXT());
-                            token2Range.put((SToken) currNode, Range.closed(idxStart, text.length()));
-                        }
-                    }
+						SFeature featTok = currNode.getFeature("annis::tok");
+						if (featTok != null && currNode instanceof SToken) {
+							int idxStart = text.length();
+							text.append(featTok.getValue_STEXT());
+							token2Range.put((SToken) currNode, Range.closed(idxStart, text.length()));
+						}
+					}
 
-                    @Override
-                    public void nodeLeft(SGraph.GRAPH_TRAVERSE_TYPE traversalType, String traversalId, SNode currNode,
-                            SRelation<SNode, SNode> relation, SNode fromNode, long order) {
-                    }
+					@Override
+					public void nodeLeft(SGraph.GRAPH_TRAVERSE_TYPE traversalType, String traversalId, SNode currNode,
+							SRelation<SNode, SNode> relation, SNode fromNode, long order) {
+					}
 
-                    @SuppressWarnings("rawtypes")
-                    @Override
-                    public boolean checkConstraint(SGraph.GRAPH_TRAVERSE_TYPE traversalType, String traversalId,
-                            SRelation relation, SNode currNode, long order) {
-                        if (relation == null) {
-                            // TODO: check if this is ever true
-                            return true;
-                        } else if (relation instanceof SOrderRelation && Objects.equal(name, relation.getType())) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-                });
+					@SuppressWarnings("rawtypes")
+					@Override
+					public boolean checkConstraint(SGraph.GRAPH_TRAVERSE_TYPE traversalType, String traversalId,
+							SRelation relation, SNode currNode, long order) {
+						if (relation == null) {
+							// TODO: check if this is ever true
+							return true;
+						} else if (relation instanceof SOrderRelation && Objects.equal(name, relation.getType())) {
+							return true;
+						} else {
+							return false;
+						}
+					}
+				});
 
-        // update the actual text
-        ds.setText(text.toString());
+		// update the actual text
+		ds.setText(text.toString());
 
-        // add all relations
-        token2Range.forEach((t, r) -> {
-            STextualRelation rel = SaltFactory.createSTextualRelation();
-            rel.setSource(t);
-            rel.setTarget(ds);
-            rel.setStart(r.lowerEndpoint());
-            rel.setEnd(r.upperEndpoint());
-            docGraph.addRelation(rel);
-        });
-        
-        if (docGraph.getTimeline() != null) {
-        	
-            // create the relations to the timeline for the tokens of this text by getting
-            // the original node IDs of the coverage edges and their mapping to a point of time (POT)
-            for (SToken tok : token2Range.keySet()) {
-                Integer tokID = nodesByID.inverse().get(tok);
-                if (tokID != null) {
-                    Integer tokPOT = this.node2timelinePOT.get(tokID);
-                    if(tokPOT != null)  {
-                        // directly map the relation of the token to its POT
-                        STimelineRelation rel = SaltFactory.createSTimelineRelation();
-                        rel.setSource(tok);
-                        rel.setTarget(docGraph.getTimeline());
-                        rel.setStart(tokPOT);
-                        rel.setEnd(tokPOT);
-                        docGraph.addRelation(rel);
-                    } else {
-                        // find the coverage edges from this node to a token which has a POT
-                    	Component covCompoment = new Component(ComponentType.Coverage, "annis", "");
-                    	List<Edge> edges = orig.getOutgoingEdges(orig.getNodeForID(tokID), covCompoment);
-                        for(Edge e : edges) {                     
-                            Integer pot = this.node2timelinePOT.get(e.getTargetID());
-                            if(pot != null) {
-                                STimelineRelation rel = SaltFactory.createSTimelineRelation();
-                                rel.setSource(tok);
-                                rel.setTarget(docGraph.getTimeline());
-                                rel.setStart(pot);
-                                rel.setEnd(pot);
-                                docGraph.addRelation(rel);
-                            }
-                    	
-                        }
-                    }
-                }
-            }
-        
-        }
-    }
+		// add all relations
+		token2Range.forEach((t, r) -> {
+			STextualRelation rel = SaltFactory.createSTextualRelation();
+			rel.setSource(t);
+			rel.setTarget(ds);
+			rel.setStart(r.lowerEndpoint());
+			rel.setEnd(r.upperEndpoint());
+			docGraph.addRelation(rel);
+		});
+
+		if (docGraph.getTimeline() != null) {
+
+			// create the relations to the timeline for the tokens of this text by getting
+			// the original node IDs of the coverage edges and their mapping to a point of
+			// time (POT)
+			for (SToken tok : token2Range.keySet()) {
+				Integer tokID = nodesByID.inverse().get(tok);
+				if (tokID != null) {
+					Integer tokPOT = this.node2timelinePOT.get(tokID);
+					if (tokPOT != null) {
+						// directly map the relation of the token to its POT
+						STimelineRelation rel = SaltFactory.createSTimelineRelation();
+						rel.setSource(tok);
+						rel.setTarget(docGraph.getTimeline());
+						rel.setStart(tokPOT);
+						rel.setEnd(tokPOT);
+						docGraph.addRelation(rel);
+					} else {
+						// find the coverage edges from this node to a token which has a POT
+						Component covCompoment = new Component(ComponentType.Coverage, "annis", "");
+						List<Edge> edges = orig.getOutgoingEdges(orig.getNodeForID(tokID), covCompoment);
+						for (Edge e : edges) {
+							Integer pot = this.node2timelinePOT.get(e.getTargetID());
+							if (pot != null) {
+								STimelineRelation rel = SaltFactory.createSTimelineRelation();
+								rel.setSource(tok);
+								rel.setTarget(docGraph.getTimeline());
+								rel.setStart(pot);
+								rel.setEnd(pot);
+								docGraph.addRelation(rel);
+							}
+
+						}
+					}
+				}
+			}
+
+		}
+	}
 
 	private void addTextToSegmentation(final String name, List<SNode> rootNodes) {
 
@@ -463,7 +425,6 @@ public class SaltExport {
 		}
 		SCorpusGraph cg = SaltFactory.createSCorpusGraph();
 
-
 		Map<Integer, Map<QName, String>> node2labels = new LinkedHashMap<>();
 		Map<Integer, Integer> parentOfNode = new LinkedHashMap<>();
 
@@ -475,7 +436,7 @@ public class SaltExport {
 			node2labels.put(n.getId(), nodeLabels);
 
 			List<Edge> outEdges = orig.getOutgoingEdges(n, ComponentType.PartOfSubcorpus);
-			for (Edge edge: outEdges) {
+			for (Edge edge : outEdges) {
 				parentOfNode.put(edge.getSourceID(), edge.getTargetID());
 			}
 		}
