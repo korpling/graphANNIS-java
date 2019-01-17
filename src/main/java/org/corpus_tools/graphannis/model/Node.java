@@ -22,7 +22,7 @@ public class Node {
 		this.labels = labels;
 	}
 	
-	protected int getId() {
+	public int getId() {
 		return id;
 	}
 	

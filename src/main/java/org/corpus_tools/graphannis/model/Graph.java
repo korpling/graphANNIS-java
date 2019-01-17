@@ -52,20 +52,18 @@ public class Graph {
             for (int edgeIdx = 0; edgeIdx < CAPI.annis_vec_edge_size(outEdges).intValue(); edgeIdx++) {
                 AnnisEdge edge = CAPI.annis_vec_edge_get(outEdges, new NativeLong(edgeIdx));
                 // add edge
-                Node source = getNodeForID(edge.source.intValue());
-                Node target = getNodeForID(edge.target.intValue());
-                Map<QName, String> labels = getEdgeLabels(source, target, cOrig);
-                result.add(new Edge(source, target, c, labels));
+                Map<QName, String> labels = getEdgeLabels(edge.source.intValue(), edge.target.intValue(), cOrig);
+                result.add(new Edge(edge.source.intValue(), edge.target.intValue(), c, labels, this));
             }
         }
 		
 		return result;
 	}
 	
-	public List<Edge> getOutgoingEdges(Node node, int componentType) {
+	public List<Edge> getOutgoingEdges(Node node, ComponentType componentType) {
 		List<Edge> result = new ArrayList<Edge>();
 		
-		AnnisVec_AnnisComponent components = CAPI.annis_graph_all_components_by_type(graph, componentType);
+		AnnisVec_AnnisComponent components = CAPI.annis_graph_all_components_by_type(graph, componentType.toInt());
 		for (int i = 0; i < CAPI.annis_vec_component_size(components).intValue(); i++) {
             CAPI.AnnisComponentConst cOrig = CAPI.annis_vec_component_get(components, new NativeLong(i));
             Component c = mapComponent(cOrig);
@@ -75,10 +73,8 @@ public class Graph {
             for (int edgeIdx = 0; edgeIdx < CAPI.annis_vec_edge_size(outEdges).intValue(); edgeIdx++) {
                 AnnisEdge edge = CAPI.annis_vec_edge_get(outEdges, new NativeLong(edgeIdx));
                 // add edge
-                Node source = getNodeForID(edge.source.intValue());
-                Node target = getNodeForID(edge.target.intValue());
-                Map<QName, String> labels = getEdgeLabels(source, target, cOrig);
-                result.add(new Edge(source, target, c, labels));
+                Map<QName, String> labels = getEdgeLabels(edge.source.intValue(), edge.target.intValue(), cOrig);
+                result.add(new Edge(edge.source.intValue(), edge.target.intValue(), c, labels, this));
             }
         }
 		
@@ -99,7 +95,7 @@ public class Graph {
 		return c;
 	}
 	
-	private Node getNodeForID(int id) {
+	protected Node getNodeForID(int id) {
 		Map<QName, String> labels = getNodeLabels(graph, id);
 		
 		String name = labels.remove(NODE_NAME);
@@ -140,11 +136,11 @@ public class Graph {
         return labels;
     }
 	
-	private Map<QName, String> getEdgeLabels(Node source, Node target, AnnisComponentConst component) {
+	private Map<QName, String> getEdgeLabels(int source, int target, AnnisComponentConst component) {
 		Map<QName, String> labels = new LinkedHashMap<>();
         AnnisEdge.ByValue copyEdge = new AnnisEdge.ByValue();
-        copyEdge.source = new NodeID(source.getId());
-        copyEdge.target = new NodeID(target.getId());
+        copyEdge.source = new NodeID(source);
+        copyEdge.target = new NodeID(target);
         CAPI.AnnisVec_AnnisAnnotation annos = CAPI.annis_graph_annotations_for_edge(graph, copyEdge, component);
         for (long i = 0; i < CAPI.annis_vec_annotation_size(annos).longValue(); i++) {
             AnnisAnnotation a = CAPI.annis_vec_annotation_get(annos, new NativeLong(i));
