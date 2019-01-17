@@ -1,9 +1,5 @@
 package org.corpus_tools.graphannis.model;
 
-import java.util.Objects;
-
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 public class QName {
 	private final String ns;
 	private final String name;
@@ -22,17 +18,35 @@ public class QName {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof QName) {
-			QName other = (QName) obj;
-			return Objects.equals(this.ns, other.ns) && Objects.equals(this.name, other.name);
-		} else {
-			return false;
-		}
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((ns == null) ? 0 : ns.hashCode());
+		return result;
 	}
 
 	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(this.ns).append(this.name).toHashCode();
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		QName other = (QName) obj;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (ns == null) {
+			if (other.ns != null)
+				return false;
+		} else if (!ns.equals(other.ns))
+			return false;
+		return true;
 	}
+
+	
 }
