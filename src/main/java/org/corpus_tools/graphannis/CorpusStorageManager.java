@@ -20,9 +20,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.sun.jna.NativeLong;
-
-import org.corpus_tools.graphannis.capi.AnnisComponentType;
 import org.corpus_tools.graphannis.capi.AnnisCountExtra;
 import org.corpus_tools.graphannis.capi.AnnisErrorListRef;
 import org.corpus_tools.graphannis.capi.AnnisImportFormat;
@@ -37,12 +34,14 @@ import org.corpus_tools.graphannis.errors.SetLoggerError;
 import org.corpus_tools.graphannis.model.AnnoKey;
 import org.corpus_tools.graphannis.model.Annotation;
 import org.corpus_tools.graphannis.model.Component;
+import org.corpus_tools.graphannis.model.ComponentType;
 import org.corpus_tools.graphannis.model.FrequencyTableEntry;
+import org.corpus_tools.graphannis.model.Graph;
 import org.corpus_tools.graphannis.model.NodeDesc;
-import org.corpus_tools.salt.common.SCorpusGraph;
-import org.corpus_tools.salt.common.SDocumentGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.sun.jna.NativeLong;
 
 /**
  * An API for managing corpora stored in a common location on the file system.
@@ -185,12 +184,12 @@ public class CorpusStorageManager {
 		return result;
 	}
 
-	public List<Annotation> listEdgeAnnotations(String corpusName, int component_type, String component_name,
+	public List<Annotation> listEdgeAnnotations(String corpusName, ComponentType component_type, String component_name,
 			String component_layer, boolean listValues, boolean onlyMostFrequentValues) {
 		List<Annotation> result = new LinkedList<>();
 		if (instance != null) {
 			CAPI.AnnisMatrix_AnnisCString orig = CAPI.annis_cs_list_edge_annotations(instance, corpusName,
-					component_type, component_name, component_layer, listValues, onlyMostFrequentValues);
+					component_type.toInt(), component_name, component_layer, listValues, onlyMostFrequentValues);
 
 			final int nrows = CAPI.annis_matrix_str_nrows(orig).intValue();
 			final int ncols = CAPI.annis_matrix_str_ncols(orig).intValue();
@@ -220,10 +219,10 @@ public class CorpusStorageManager {
 		return result;
 	}
 
-	public List<Component> getAllComponentsByType(String corpusName, int ctype) {
+	public List<Component> getAllComponentsByType(String corpusName, ComponentType ctype) {
 		List<Component> result = new LinkedList<>();
 		if (instance != null) {
-			CAPI.AnnisVec_AnnisComponent orig = CAPI.annis_cs_list_components_by_type(instance, corpusName, ctype);
+			CAPI.AnnisVec_AnnisComponent orig = CAPI.annis_cs_list_components_by_type(instance, corpusName, ctype.toInt());
 
 			for (int i = 0; i < CAPI.annis_vec_component_size(orig).intValue(); i++) {
 				AnnisComponentConst cOrig = CAPI.annis_vec_component_get(orig, new NativeLong(i));
@@ -326,7 +325,7 @@ public class CorpusStorageManager {
 		return result.toArray(new String[0]);
 	}
 
-	public SDocumentGraph subgraph(String corpusName, List<String> node_ids, long ctx_left, long ctx_right)
+	public Graph subgraph(String corpusName, List<String> node_ids, long ctx_left, long ctx_right)
 			throws GraphANNISException {
 		CAPI.AnnisVec_AnnisCString c_node_ids = CAPI.annis_vec_str_new();
 		for (String id : node_ids) {
@@ -338,68 +337,56 @@ public class CorpusStorageManager {
 				new NativeLong(ctx_right), err);
 		err.checkErrors();
 
-		SDocumentGraph result = SaltExport.map(graph);
 		c_node_ids.dispose();
-		graph.dispose();
-
-		return result;
+		
+		return new Graph(graph);
 	}
 
-	public SDocumentGraph subcorpusGraph(String corpusName, List<String> document_ids) throws GraphANNISException {
+	public Graph subcorpusGraph(String corpusName, List<String> document_ids) throws GraphANNISException {
 		CAPI.AnnisVec_AnnisCString c_document_ids = CAPI.annis_vec_str_new();
 		for (String id : document_ids) {
 			CAPI.annis_vec_str_push(c_document_ids, id);
 		}
-
-		SDocumentGraph result = null;
+		
+		Graph result = null;
 		if (instance != null) {
 			AnnisErrorListRef err = new AnnisErrorListRef();
 			CAPI.AnnisGraph graph = CAPI.annis_cs_subcorpus_graph(instance, corpusName, c_document_ids, err);
 			err.checkErrors();
 
-			result = SaltExport.map(graph);
 			c_document_ids.dispose();
-			if (graph != null) {
-				graph.dispose();
-			}
+			result = new Graph(graph);
 		}
 
 		return result;
 	}
 
-	public SCorpusGraph corpusGraph(String corpusName) throws GraphANNISException {
+	public Graph corpusGraph(String corpusName) throws GraphANNISException {
 		if (instance != null) {
 			AnnisErrorListRef err = new AnnisErrorListRef();
 			CAPI.AnnisGraph graph = CAPI.annis_cs_corpus_graph(instance, corpusName, err);
 			err.checkErrors();
 
-			SCorpusGraph result = SaltExport.mapCorpusGraph(graph);
-			if (graph != null) {
-				graph.dispose();
-			}
-			return result;
+			return new Graph(graph);
 		}
 		return null;
 	}
 
-	public SCorpusGraph corpusGraphForQuery(String corpusName, String query, QueryLanguage queryLanguage)
+	public Graph corpusGraphForQuery(String corpusName, String query, QueryLanguage queryLanguage)
 			throws GraphANNISException {
 		if (instance != null) {
 			AnnisErrorListRef err = new AnnisErrorListRef();
 			CAPI.AnnisGraph graph = CAPI.annis_cs_subgraph_for_query_with_ctype(instance, corpusName, query,
-					queryLanguage.capiVal, AnnisComponentType.PartOfSubcorpus, err);
+					queryLanguage.capiVal, ComponentType.PartOfSubcorpus.toInt(), err);
 			err.checkErrors();
 
-			SCorpusGraph result = SaltExport.mapCorpusGraph(graph);
-			if (graph != null) {
-				graph.dispose();
-			}
-			return result;
+			
+			return new Graph(graph);
 		}
 		return null;
 	}
 
-	public SDocumentGraph subGraphForQuery(String corpusName, String query, QueryLanguage queryLanguage)
+	public Graph subGraphForQuery(String corpusName, String query, QueryLanguage queryLanguage)
 			throws GraphANNISException {
 		if (instance != null) {
 			AnnisErrorListRef err = new AnnisErrorListRef();
@@ -407,11 +394,7 @@ public class CorpusStorageManager {
 					err);
 			err.checkErrors();
 
-			SDocumentGraph result = SaltExport.map(graph);
-			if (graph != null) {
-				graph.dispose();
-			}
-			return result;
+			return new Graph(graph);
 		}
 		return null;
 	}

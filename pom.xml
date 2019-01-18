@@ -5,7 +5,7 @@
 	<artifactId>graphannis-api</artifactId>
 	<name>graphANNIS API</name>
 	<description>A wrapper around the C API of graphANNIS</description>
-	<version>0.15.0</version>
+	<version>0.16.0</version>
 	<packaging>bundle</packaging>
 	<url>https://github.com/korpling/graphANNIS</url>
 	<scm>
@@ -180,19 +180,14 @@
 	</profiles>
 	<dependencies>
 		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.25</version>
+		</dependency>
+		<dependency>
 			<groupId>net.java.dev.jna</groupId>
 			<artifactId>jna</artifactId>
 			<version>4.5.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.corpus-tools</groupId>
-			<artifactId>salt-api</artifactId>
-			<version>3.3.6</version>
-		</dependency>
-		<dependency>
-			<groupId>org.corpus-tools</groupId>
-			<artifactId>salt-extensions</artifactId>
-			<version>3.3.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -228,6 +223,20 @@
 			<version>1.2.1</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>27.0.1-jre</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.corpus-tools</groupId>
+			<artifactId>salt-api</artifactId>
+			<version>3.3.6</version>
+			<type>bundle</type>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<resources>
