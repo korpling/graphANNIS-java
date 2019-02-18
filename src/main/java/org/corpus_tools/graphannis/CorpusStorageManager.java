@@ -377,7 +377,7 @@ public class CorpusStorageManager {
 		if (instance != null) {
 			AnnisErrorListRef err = new AnnisErrorListRef();
 			CAPI.AnnisGraph graph = CAPI.annis_cs_subgraph_for_query_with_ctype(instance, corpusName, query,
-					queryLanguage.capiVal, ComponentType.PartOfSubcorpus.toInt(), err);
+					queryLanguage.capiVal, ComponentType.PartOf.toInt(), err);
 			err.checkErrors();
 
 			
