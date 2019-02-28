@@ -294,6 +294,11 @@ public class CorpusStorageManager {
 		return result;
 	}
 
+	public String[] find(List<String> corpora, String query, long offset, long limit)
+			throws GraphANNISException {
+		return find(corpora, query, offset, limit, ResultOrder.Normal, QueryLanguage.AQL);
+	}
+
 	public String[] find(List<String> corpora, String query, long offset, long limit, QueryLanguage queryLanguage)
 			throws GraphANNISException {
 		return find(corpora, query, offset, limit, ResultOrder.Normal, queryLanguage);
