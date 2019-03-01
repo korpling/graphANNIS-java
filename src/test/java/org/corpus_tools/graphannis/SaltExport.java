@@ -354,11 +354,8 @@ public class SaltExport {
 	private void mapDocGraph() {
 
 		// create all new nodes
-		Iterator<Node> itNodes = orig.getNodesByType("node");
 		List<Edge> edges = new LinkedList<>();
-		while (itNodes.hasNext()) {
-			Node node = itNodes.next();
-
+		for(Node node : orig.getNodesByType("node")) {
 			SNode n = mapNode(node);
 			nodesByID.put(node.getId(), n);
 			edges.addAll(orig.getOutgoingEdges(node, ComponentType.Dominance));
@@ -430,9 +427,7 @@ public class SaltExport {
 		Map<Node, Node> parentOfNode = new LinkedHashMap<>();
 
 		// iterate over all nodes and get their outgoing edges
-		Iterator<Node> itNodes = orig.getNodesByType("corpus");
-		while (itNodes.hasNext()) {
-			Node n = itNodes.next();
+		for(Node n : orig.getNodesByType("corpus")) {
 
 			List<Edge> outEdges = orig.getOutgoingEdges(n, ComponentType.PartOf);
 			for (Edge edge : outEdges) {

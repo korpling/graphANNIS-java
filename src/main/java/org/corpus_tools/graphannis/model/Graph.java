@@ -36,8 +36,9 @@ public class Graph {
 		this.graph = g;
 	}
 	
-	public Iterator<Node> getNodesByType(String type) {
-		return new NodeIterator(CAPI.annis_graph_nodes_by_type(this.graph, type));
+	public Iterable<Node> getNodesByType(String type) {
+		NodeIterator it = new NodeIterator(CAPI.annis_graph_nodes_by_type(this.graph, type));
+		return () -> it;
 	}
 	
 	public List<Edge> getOutgoingEdges(Node node) {
