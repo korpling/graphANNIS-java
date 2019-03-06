@@ -294,6 +294,11 @@ public class CorpusStorageManager {
 		return result;
 	}
 
+	public String[] find(List<String> corpora, String query, long offset, long limit)
+			throws GraphANNISException {
+		return find(corpora, query, offset, limit, ResultOrder.Normal, QueryLanguage.AQL);
+	}
+
 	public String[] find(List<String> corpora, String query, long offset, long limit, QueryLanguage queryLanguage)
 			throws GraphANNISException {
 		return find(corpora, query, offset, limit, ResultOrder.Normal, queryLanguage);
@@ -377,7 +382,7 @@ public class CorpusStorageManager {
 		if (instance != null) {
 			AnnisErrorListRef err = new AnnisErrorListRef();
 			CAPI.AnnisGraph graph = CAPI.annis_cs_subgraph_for_query_with_ctype(instance, corpusName, query,
-					queryLanguage.capiVal, ComponentType.PartOfSubcorpus.toInt(), err);
+					queryLanguage.capiVal, ComponentType.PartOf.toInt(), err);
 			err.checkErrors();
 
 			
