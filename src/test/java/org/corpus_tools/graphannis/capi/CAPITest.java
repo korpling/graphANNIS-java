@@ -61,8 +61,8 @@ public class CAPITest
   public void testDispose()
   {
       File tmpDir = Files.createTempDir();
-
-      CAPI.AnnisCorpusStorage cs = CAPI.annis_cs_with_auto_cache_size(tmpDir.getAbsolutePath(), false);
+      
+      CAPI.AnnisCorpusStorage cs = CAPI.annis_cs_with_auto_cache_size(tmpDir.getAbsolutePath(), false, null);
       
       CAPI.AnnisVec_AnnisCString list = CAPI.annis_cs_list(cs, null);
       

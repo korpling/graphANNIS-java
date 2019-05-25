@@ -151,10 +151,10 @@ public class CAPI implements Library {
 
 	// corpus storage class
 
-	public static native AnnisCorpusStorage annis_cs_with_auto_cache_size(String db_dir, boolean use_parallel);
+	public static native AnnisCorpusStorage annis_cs_with_auto_cache_size(String db_dir, boolean use_parallel, AnnisErrorListRef err);
 
 	public static native AnnisCorpusStorage annis_cs_with_max_cache_size(String db_dir, long max_cache_size,
-			boolean use_parallel);
+			boolean use_parallel, AnnisErrorListRef err);
 
 	protected static native void annis_cs_free(Pointer ptr);
 
