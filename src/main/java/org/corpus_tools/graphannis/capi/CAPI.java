@@ -151,10 +151,10 @@ public class CAPI implements Library {
 
 	// corpus storage class
 
-	public static native AnnisCorpusStorage annis_cs_with_auto_cache_size(String db_dir, boolean use_parallel);
+	public static native AnnisCorpusStorage annis_cs_with_auto_cache_size(String db_dir, boolean use_parallel, AnnisErrorListRef err);
 
 	public static native AnnisCorpusStorage annis_cs_with_max_cache_size(String db_dir, long max_cache_size,
-			boolean use_parallel);
+			boolean use_parallel, AnnisErrorListRef err);
 
 	protected static native void annis_cs_free(Pointer ptr);
 
@@ -210,6 +210,8 @@ public class CAPI implements Library {
 			int queryLanguage, AnnisErrorListRef err);
 
 	public static native boolean annis_cs_delete(AnnisCorpusStorage cs, String corpusName, AnnisErrorListRef err);
+	
+	public static native void annis_cs_unload(AnnisCorpusStorage cs, String corpusName, AnnisErrorListRef err);
 
 	// graph update class
 

@@ -112,7 +112,9 @@ public class CorpusStorageManager {
 			// only warn about this
 			log.warn("Could not initialize graphANNIS logger", ex);
 		}
-		this.instance = CAPI.annis_cs_with_auto_cache_size(dbDir, useParallel);
+		err = new AnnisErrorListRef();
+		this.instance = CAPI.annis_cs_with_auto_cache_size(dbDir, useParallel, err);
+		err.checkErrors();
 	}
 
 	public CorpusStorageManager(String dbDir, String logfile, long maxCacheSize, boolean useParallel, LogLevel level)
@@ -131,7 +133,9 @@ public class CorpusStorageManager {
 			// only warn about this
 			log.warn("Could not initialize graphANNIS logger", ex);
 		}
-		this.instance = CAPI.annis_cs_with_max_cache_size(dbDir, maxCacheSize, useParallel);
+		err = new AnnisErrorListRef();
+		this.instance = CAPI.annis_cs_with_max_cache_size(dbDir, maxCacheSize, useParallel, err);
+		err.checkErrors();
 	}
 
 	public String[] list() throws GraphANNISException {
@@ -447,6 +451,14 @@ public class CorpusStorageManager {
 			err.checkErrors();
 		}
 		return result;
+	}
+	
+	public void unloadCorpus(String corpusName) throws GraphANNISException {
+		if (instance != null) {
+			AnnisErrorListRef err = new AnnisErrorListRef();
+			CAPI.annis_cs_unload(instance, corpusName, err);
+			err.checkErrors();
+		}
 	}
 
 	public void applyUpdate(String corpusName, GraphUpdate update) throws GraphANNISException {
