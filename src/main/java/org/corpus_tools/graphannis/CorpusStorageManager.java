@@ -452,6 +452,14 @@ public class CorpusStorageManager {
 		}
 		return result;
 	}
+	
+	public void unloadCorpus(String corpusName) throws GraphANNISException {
+		if (instance != null) {
+			AnnisErrorListRef err = new AnnisErrorListRef();
+			CAPI.annis_cs_unload(instance, corpusName, err);
+			err.checkErrors();
+		}
+	}
 
 	public void applyUpdate(String corpusName, GraphUpdate update) throws GraphANNISException {
 		AnnisErrorListRef err = new AnnisErrorListRef();
