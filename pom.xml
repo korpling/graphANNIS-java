@@ -61,7 +61,7 @@
 		<native-libs-windows>win32-x86-64/graphannis.dll;
 			osname=Win32;processor=x86-64
 		</native-libs-windows>
-		<native-libs-macosx>darwin-x86-64/libgraphannis.dylib;
+		<native-libs-macosx>darwin/libgraphannis.dylib;
 			osname=MacOSX;processor=x86-64
 		</native-libs-macosx>
 	</properties>

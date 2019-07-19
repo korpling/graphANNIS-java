@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Native library was not found on Mac OS X
+
 ### Changed
 
 - Update to JNA library 5.3.1
