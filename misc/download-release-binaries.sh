@@ -13,7 +13,7 @@ curl -f -o "$DIR/../src/main/resources/linux-x86-64/$LINUX_FILE" -L "https://git
 
 MAC_FILE="libgraphannis.dylib"
 echo "Downloading $MAC_FILE"
-curl -f -o "$DIR/../src/main/resources/darwin-x86-64/$MAC_FILE" -L "https://github.com/korpling/graphANNIS/releases/download/$1/$MAC_FILE"
+curl -f -o "$DIR/../src/main/resources/darwin/$MAC_FILE" -L "https://github.com/korpling/graphANNIS/releases/download/$1/$MAC_FILE"
 
 WIN_FILE="graphannis.dll"
 echo "Downloading $WIN_FILE"
