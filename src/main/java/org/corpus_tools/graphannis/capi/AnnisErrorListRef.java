@@ -7,6 +7,7 @@ import org.corpus_tools.graphannis.errors.NoSuchCorpus;
 import org.corpus_tools.graphannis.errors.SetLoggerError;
 
 import com.sun.jna.Memory;
+import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
@@ -14,7 +15,7 @@ import com.sun.jna.PointerType;
 
 public class AnnisErrorListRef extends PointerType {
     
-    private final Memory memPtr = new Memory(Pointer.SIZE);
+    private final Memory memPtr = new Memory(Native.POINTER_SIZE);
     
     public AnnisErrorListRef() {
         this(null);
