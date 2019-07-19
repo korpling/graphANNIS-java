@@ -322,6 +322,12 @@
 					<niceManifest>true</niceManifest>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>co.enear.maven.plugins</groupId>
+				<artifactId>keepachangelog-maven-plugin</artifactId>
+				<version>1.2.2</version>
+				<inherited>false</inherited>
+			</plugin>
 		</plugins>
 	</build>
 </project>
