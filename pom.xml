@@ -332,7 +332,7 @@
 						<configuration>
 							<artifacts>
 								<artifact>
-									<id>org.corpus-tools:graphannis-api:0.21.1-SNAPSHOT</id>
+									<id>org.corpus-tools:graphannis-api:${project.version}</id>
 								</artifact>
 							</artifacts>
 						</configuration>
