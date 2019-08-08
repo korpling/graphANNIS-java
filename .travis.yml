@@ -13,7 +13,15 @@ branches:
   - develop
   - feature/p2-site
   
-cache: cargo
+cache: 
+   directories:
+   - $TRAVIS_HOME/.cache/sccache
+   - $TRAVIS_HOME/.cargo/
+   - $TRAVIS_HOME/.rustup/
+   - ext/graphANNIS/target
+   
+before_cache:
+  - rm -rf "$TRAVIS_HOME/.cargo/registry/src"
 
 before_install:
   - "curl -sSf https://build.travis-ci.org/files/rustup-init.sh | sh -s -- --default-toolchain stable -y"
