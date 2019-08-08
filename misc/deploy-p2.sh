@@ -10,6 +10,9 @@ if [ -n "$GITHUB_API_KEY" ]; then
     cd gh-pages
     mkdir -p p2/${SHORT_VERSION}
     cd p2/${SHORT_VERSION}
+    # remove all old file
+    rm -Rf *
+    # copy the P2 repository content from the maven build directory
     cp -R ${TRAVIS_BUILD_DIR}/target/repository/* .
     git add .
     git -c user.name='travis' -c user.email='travis' commit -m "add p2 repository for version ${SHORT_VERSION}"
