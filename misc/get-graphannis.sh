@@ -14,7 +14,7 @@ fi
 
 if [ -z "$GRAPHANNIS_VERSION" ]; then
   # compile latest development
-  if [ -d "$DIR"/../ext/ ]; then
+  if [ -d "$DIR"/../ext/graphANNIS/Cargo.toml ]; then
   	cd "$DIR"/../ext/graphANNIS
   	git reset --hard HEAD
   	git pull https://github.com/korpling/graphANNIS
