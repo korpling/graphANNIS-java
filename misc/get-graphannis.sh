@@ -14,9 +14,17 @@ fi
 
 if [ -z "$GRAPHANNIS_VERSION" ]; then
   # compile latest development
-  mkdir "$DIR"/../ext/
-  git clone https://github.com/korpling/graphANNIS "$DIR"/../ext/graphANNIS
-  cd "$DIR"/../ext/graphANNIS
+  if [ -d "$DIR"/../ext/ ]; then
+  	cd "$DIR"/../ext/graphANNIS
+  	git reset --hard HEAD
+  	git pull https://github.com/$TRAVIS_REPO_SLUG
+  else
+	  mkdir "$DIR"/../ext/
+	  git clone https://github.com/$TRAVIS_REPO_SLUG "$DIR"/../ext/graphANNIS  
+	  cd "$DIR"/../ext/graphANNIS
+  fi
+
+  
   cargo build --release --features "c-api"
   cp target/release/libgraphannis.so "$DIR"/../src/main/resources/linux-x86-64/
   cd "$DIR"/..
