@@ -36,7 +36,16 @@ deploy:
     script: bash $TRAVIS_BUILD_DIR/misc/deploy-p2.sh
     on:
       repo: korpling/graphANNIS-java
-      branch: feature/p2-site
-#      tags: true
+      branch: master
+      tags: true
       condition: $TRAVIS_OS_NAME = linux
     skip-cleanup: true
+  - provider: script
+    script: bash $TRAVIS_BUILD_DIR/misc/deploy-p2.sh
+    on:
+      repo: korpling/graphANNIS-java
+      branch: feature/p2-site
+      condition: $TRAVIS_OS_NAME = linux
+    skip-cleanup: true
+        
+    
