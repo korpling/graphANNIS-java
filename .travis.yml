@@ -19,12 +19,7 @@ before_install:
   # checkout latest development version of graphANNIS
   - ./misc/get-graphannis.sh
 
-cache: 
-  directories:
-  - $HOME/.cargo
-  - $HOME/.m2
-
-
+cache: cargo
 
 script:
   - mvn test -B
