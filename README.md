@@ -1,13 +1,11 @@
 [![Javadocs](http://www.javadoc.io/badge/org.corpus-tools/graphannis-api.svg)](http://www.javadoc.io/doc/org.corpus-tools/graphannis-api)
 
-graphANNIS Java Bindings
-========================
+# graphANNIS Java Bindings
 
 GraphANNIS is a library for corpus linguistic queries.
 This are the Java bindings to its API.
 
-How to compile
----------------
+## How to compile
 
 You will need to build and install the graphANNIS library (Rust version) with cargo for your system before you can build the Java project with Maven.
 
@@ -28,13 +26,27 @@ You will need to build and install the graphANNIS library (Rust version) with ca
 mvn install
 ```
 
+### Creating a P2 repository
 
-3rd party dependencies
-----------------------
+For easier integration of graphANNIS into Eclipse RCP projects like Hexatomic, it is possible to create a P2 repository with the graphANNIS bundles (and its dependencies).
+Execute
+
+```bash
+mvn p2:site
+```
+
+to create a local P2 repository in `target/repository`. You can serve this locally with Jetty using
+
+```bash
+mvn jetty:run -Djetty.http.port=9999
+```
+
+and access it at http://localhost:9999/site/. You can choose the port freely, e.g. to avoid conflicts with other local P2 repositoriess.
+
+## 3rd party dependencies
 
 This software depends on several 3rd party libraries. These are documented in the THIRD-PARTY.txt file in this folder.
 
-Author(s)
----------
+## Author(s)
 
 * Thomas Krause (thomaskrause@posteo.de)

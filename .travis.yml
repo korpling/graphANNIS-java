@@ -10,16 +10,41 @@ env:
 branches:
   only:
   - "/^v\\d+\\.\\d+\\.\\d+.*$/"
-  - test-release-tag-please-ignore
   - develop
+  - feature/p2-site
+  
+cache: cargo
 
 before_install:
   - "curl -sSf https://build.travis-ci.org/files/rustup-init.sh | sh -s -- --default-toolchain stable -y"
   - export PATH=$HOME/.cargo/bin:$PATH
   # checkout latest development version of graphANNIS
   - ./misc/get-graphannis.sh
-
-cache: cargo
+  
+before_script:
+   - export SHORT_VERSION=`echo ${TRAVIS_TAG:-develop} | sed -E 's/(\.[0-9]+)$//'`
 
 script:
   - mvn test -B
+  
+before_deploy:
+   - mvn p2:site
+
+deploy:
+  - provider: script
+    script: bash $TRAVIS_BUILD_DIR/misc/deploy-p2.sh
+    on:
+      repo: korpling/graphANNIS-java
+      branch: master
+      tags: true
+      condition: $TRAVIS_OS_NAME = linux
+    skip-cleanup: true
+  - provider: script
+    script: bash $TRAVIS_BUILD_DIR/misc/deploy-p2.sh
+    on:
+      repo: korpling/graphANNIS-java
+      branch: feature/p2-site
+      condition: $TRAVIS_OS_NAME = linux
+    skip-cleanup: true
+        
+    

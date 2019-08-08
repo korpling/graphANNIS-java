@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Native library was not found on Mac OS X
+- Create and deploy a P2 repository to GitHub pages to make using graphANNIS from Eclipse RCP projects like Hexatomic easier
 
 ### Changed
 
