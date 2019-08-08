@@ -17,10 +17,10 @@ if [ -z "$GRAPHANNIS_VERSION" ]; then
   if [ -d "$DIR"/../ext/ ]; then
   	cd "$DIR"/../ext/graphANNIS
   	git reset --hard HEAD
-  	git pull https://github.com/$TRAVIS_REPO_SLUG
+  	git pull https://github.com/korpling/graphANNIS
   else
 	  mkdir "$DIR"/../ext/
-	  git clone https://github.com/$TRAVIS_REPO_SLUG "$DIR"/../ext/graphANNIS  
+	  git clone https://github.com/korpling/graphANNIS "$DIR"/../ext/graphANNIS  
 	  cd "$DIR"/../ext/graphANNIS
   fi
 
