@@ -1,5 +1,8 @@
 language: java
 
+jdk:
+   - openjdk8
+
 env:
   # if explicitly set, instead of compiling graphANNIS, the released version will be used 
   #- GRAPHANNIS_VERSION=v0.13.0
