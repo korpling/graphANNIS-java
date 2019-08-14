@@ -3,10 +3,6 @@ language: java
 jdk:
    - openjdk8
 
-env:
-  # if explicitly set, instead of compiling graphANNIS, the released version will be used 
-  #- GRAPHANNIS_VERSION=v0.13.0
-
 branches:
   only:
   - "/^v\\d+\\.\\d+\\.\\d+.*$/"
@@ -26,8 +22,6 @@ before_cache:
 before_install:
   - "curl -sSf https://build.travis-ci.org/files/rustup-init.sh | sh -s -- --default-toolchain stable -y"
   - export PATH=$HOME/.cargo/bin:$PATH
-  # checkout latest development version of graphANNIS
-  - ./misc/get-graphannis.sh
   
 before_script:
    - export SHORT_VERSION=`echo ${TRAVIS_TAG:-develop} | sed -E 's/(\.[0-9]+)$//'`
