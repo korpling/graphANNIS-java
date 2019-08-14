@@ -4,7 +4,7 @@
 	<groupId>org.corpus-tools</groupId>
 	<artifactId>graphannis</artifactId>
 	<name>graphANNIS</name>
-	<description>A wrapper around the C API of graphANNIS</description>
+	<description>A wrapper around the C API of graphANNIS (version ${core.version})</description>
 	<version>0.22.1-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 	<url>https://github.com/korpling/graphANNIS</url>
@@ -62,6 +62,7 @@
 		<native-libs-macosx>darwin/libgraphannis.dylib;
 			osname=MacOSX;processor=x86-64
 		</native-libs-macosx>
+		<!-- The version of graphANNIS to wrap -->
 		<core.version>0.22.0</core.version>
 	</properties>
 	<profiles>
@@ -351,6 +352,28 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.google.code.maven-replacer-plugin</groupId>
+				<artifactId>replacer</artifactId>
+				<version>1.5.3</version>
+				<executions>
+					<execution>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>replace</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<file>README.md</file>
+					<replacements>
+						<replacement>
+							<token>wrapping graphANNIS [0-9.]+</token>
+							<value>wrapping the graphANNIS version ${core.version}</value>
+						</replacement>
+					</replacements>
+				</configuration>
 			</plugin>
 
 			<plugin>
