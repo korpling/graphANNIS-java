@@ -2,29 +2,25 @@
 
 # graphANNIS Java Bindings
 
-GraphANNIS is a library for corpus linguistic queries and these are its Java bindings.
-This version is currently wrapping the graphANNIS version 0.22.0.
+GraphANNIS is a library for corpus linguistic queries and these are its Java bindings to **graphANNIS version 0.22.0**.
 
 ## How to compile
 
-You will need to build and install the graphANNIS library (Rust version) with cargo for your system before you can build the Java project with Maven.
+You can compile the Java project with Maven (http://maven.apache.org/)
+```
+mvn install
+```
 
-- Install the latest version (at least 1.31.0) of Rust:
-- Clone the graphANNIS library  from https://github.com/korpling/graphANNIS/
-- Execute `cargo build --release --features "c-api"` in the cloned repository
-- Change to a clone of this graphANNIS Java bindings repository
-- Copy the resulting  shared library file `<graphANNIS-repo>/target/release/libgraphannis.so` (`libgraphannis.dylib` under MacOS X and `graphannis.dll` under Windows) to `src/main/resources/<platform>/` where the platform is one of the following:
+This will automatically download the the graphANNIS binaries to the `target/native/<platform>` folder, where platform is one of the following:
 
 | Operating system       | `<platform>`  |
 |------------------------|---------------|
 | Linux (64 bit)         | linux-x86-64  |
-| MacOS X (64 bit)       | darwin-x86-64 |
+| MacOS X (64 bit)       | darwin        |
 | Windows (64 bit)       | win32-x86-64  |
 
-- Now compile the Java project with Maven (http://maven.apache.org/)
-```
-mvn install
-```
+You can change the `core.version` property in the `pom.xml` to use a different version of graphANNIS or compile graphANNIS on your own.
+To do so, follow the [graphANNIS compile instructions](https://github.com/korpling/graphANNIS#how-to-compile) and copy the resulting binary into the `target/native/<platform>` folder.
 
 ### Creating a P2 repository
 
