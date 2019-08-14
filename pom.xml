@@ -369,8 +369,8 @@
 					<file>README.md</file>
 					<replacements>
 						<replacement>
-							<token>graphANNIS version ([0-9]+\.[0-9]+\.[0-9]+)</token>
-							<value>graphANNIS version ${core.version}</value>
+							<token>graphANNIS core library version ([0-9]+\.[0-9]+\.[0-9]+)</token>
+							<value>graphANNIS core library version ${core.version}</value>
 						</replacement>
 					</replacements>
 				</configuration>
