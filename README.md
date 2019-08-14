@@ -19,8 +19,13 @@ This will automatically download the the graphANNIS binaries to the `target/nati
 | MacOS X (64 bit)       | darwin        |
 | Windows (64 bit)       | win32-x86-64  |
 
-You can change the `core.version` property in the `pom.xml` to use a different version of graphANNIS or compile graphANNIS on your own.
-To do so, follow the [graphANNIS compile instructions](https://github.com/korpling/graphANNIS#how-to-compile) and copy the resulting binary into the `target/native/<platform>` folder.
+You can change the `core.version` property in the `pom.xml` to use a different released version of graphANNIS.
+
+To compile graphANNIS on your own (e.g. for using a non-released version)
+
+- Clone the graphANNIS library  from https://github.com/korpling/graphANNIS/
+- Follow the [graphANNIS compile instructions](https://github.com/korpling/graphANNIS#how-to-compile)
+- Copy the resulting shared library file `<graphANNIS-repo>/target/release/libgraphannis.so` (`libgraphannis.dylib` under MacOS X and `graphannis.dll` under Windows) into the `target/native/<platform>` folder.
 
 ### Creating a P2 repository
 
