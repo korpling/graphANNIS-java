@@ -22,7 +22,7 @@ if [ -z "$GRAPHANNIS_VERSION" ]; then
   	git pull https://github.com/korpling/graphANNIS
   else
   	  rm -Rf ext/graphANNIS/
-	  mkdir ext/
+	  mkdir -p ext/
 	  git clone https://github.com/korpling/graphANNIS ext/graphANNIS  
 	  cd ext/graphANNIS
   fi
