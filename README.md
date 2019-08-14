@@ -44,6 +44,15 @@ mvn jetty:run -Djetty.http.port=9999
 
 and access it at http://localhost:9999/site/. You can choose the port freely, e.g. to avoid conflicts with other local P2 repositories.
 
+## Release process
+
+1. **Start** the release process with `mvn gitflow:release-start` or `mvn gitflow:hotfix-start`
+2. **Test** with `mvn test`
+3. **Finish** the release process with `mvn gitflow:release-finish` or `mvn gitflow:hotfix-finish`
+4. **Release** the closed staging repository to Maven Central with the Nexus interface: [https://oss.sonatype.org/](https://oss.sonatype.org/)
+
+CI will automatically create a P2 repository in the gh-pages branch in under the sub-folder `p2/<short-version>`, e.g. https://korpling.github.io/graphannis-java/p2/v0.22/. 
+
 ## 3rd party dependencies
 
 This software depends on several 3rd party libraries. These are documented in the THIRD-PARTY.txt file in this folder.
