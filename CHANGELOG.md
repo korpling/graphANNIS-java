@@ -5,11 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-From this version on, graphANNIS-java follows its own versioning scheme independent of the graphANNIS core library.
-
 
 ### Changed
 
+- From this version on, graphANNIS-java follows its own versioning scheme independent of the graphANNIS core library.
 - **Use "graphannis" as artifact ID instead "graphannis-api"**
 - Update to JNA library 5.3.1
 - Update to bugfix version 2.9.9.1 from jackson-databind
