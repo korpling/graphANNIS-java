@@ -276,7 +276,6 @@ public class CorpusStorageManager {
 
 	}
 
-
 	/**
 	 * Count the number of results for a query.
 	 * 
@@ -299,8 +298,8 @@ public class CorpusStorageManager {
 	 * Count the number of results for a query and return both the total number of
 	 * matches and also the number of documents in the result set.
 	 * 
-	 * @param corpusName The name of the corpus to execute the query on.
-	 * @param query The query as string.
+	 * @param corpusName    The name of the corpus to execute the query on.
+	 * @param query         The query as string.
 	 * @param queryLanguage The query language of the query (e.g. AQL).
 	 * @return
 	 * @throws GraphANNISException
@@ -321,37 +320,52 @@ public class CorpusStorageManager {
 		return result;
 	}
 
-	public String[] find(List<String> corpora, String query, long offset, long limit) throws GraphANNISException {
-		return find(corpora, query, offset, limit, ResultOrder.Normal, QueryLanguage.AQL);
-	}
-
-	public String[] find(List<String> corpora, String query, long offset, long limit, QueryLanguage queryLanguage)
+	/**
+	 * Find all results for a `query` and return the match ID for each result in default order.
+	 * 
+	 * The query is paginated and an offset and limit can be specified.
+	 * 
+	 * @param corpusName    The name of the corpus to execute the query on.
+	 * @param query         The query as string.
+	 * @param queryLanguage The query language of the query (e.g. AQL).
+	 * @param offset        Skip the `n` first results, where `n` is the offset.
+	 * @param limit         Return at most `n` matches, where `n` is the limit.
+	 * @return
+	 * @throws GraphANNISException
+	 */
+	public String[] find(String corpusName, QueryLanguage queryLanguage, String query, long offset, long limit)
 			throws GraphANNISException {
-		return find(corpora, query, offset, limit, ResultOrder.Normal, queryLanguage);
+		return find(corpusName, query, queryLanguage, offset, limit, ResultOrder.Normal);
 	}
 
-	public String[] find(List<String> corpora, String query, long offset, long limit, ResultOrder order)
-			throws GraphANNISException {
-		return find(corpora, query, offset, limit, order, QueryLanguage.AQL);
-
-	}
-
-	public String[] find(List<String> corpora, String query, long offset, long limit, ResultOrder order,
-			QueryLanguage queryLanguage) throws GraphANNISException {
+	/**
+	 * Find all results for a `query` and return the match ID for each result.
+	 * 
+	 * The query is paginated and an offset and limit can be specified.
+	 * 
+	 * @param corpusName    The name of the corpus to execute the query on.
+	 * @param query         The query as string.
+	 * @param queryLanguage The query language of the query (e.g. AQL).
+	 * @param offset        Skip the `n` first results, where `n` is the offset.
+	 * @param limit         Return at most `n` matches, where `n` is the limit.
+	 * @param order         Specify the order of the matches.
+	 * @return
+	 * @throws GraphANNISException
+	 */
+	public String[] find(String corpusName, String query, QueryLanguage queryLanguage, long offset, long limit,
+			ResultOrder order) throws GraphANNISException {
 
 		ArrayList<String> result = new ArrayList<>();
-		for (String corpusName : corpora) {
-			AnnisErrorListRef err = new AnnisErrorListRef();
-			CAPI.AnnisVec_AnnisCString vec = CAPI.annis_cs_find(instance, corpusName, query, queryLanguage.capiVal,
-					offset, limit, order.capiVal, err);
-			err.checkErrors();
+		AnnisErrorListRef err = new AnnisErrorListRef();
+		CAPI.AnnisVec_AnnisCString vec = CAPI.annis_cs_find(instance, corpusName, query, queryLanguage.capiVal, offset,
+				limit, order.capiVal, err);
+		err.checkErrors();
 
-			final int vecSize = CAPI.annis_vec_str_size(vec).intValue();
-			for (int i = 0; i < vecSize; i++) {
-				result.add(CAPI.annis_vec_str_get(vec, new NativeLong(i)));
-			}
-			vec.dispose();
+		final int vecSize = CAPI.annis_vec_str_size(vec).intValue();
+		for (int i = 0; i < vecSize; i++) {
+			result.add(CAPI.annis_vec_str_get(vec, new NativeLong(i)));
 		}
+		vec.dispose();
 
 		return result.toArray(new String[0]);
 	}
