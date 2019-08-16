@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - From this version on, graphANNIS-java follows its own versioning scheme independent of the graphANNIS core library.
 - **Use "graphannis" as artifact ID instead "graphannis-api"**
 - API now only accepts a single corpus name in `find`, `count`, `countExtra` and `graph` instead of a list of corpus names
+- Removed some redundant API calls and re-prdered some arguments to better match the original Rust-API
 - Automatically download released graphANNIS core binaries in build process instead of reyling on a script
 - Update to JNA library 5.3.1
 
