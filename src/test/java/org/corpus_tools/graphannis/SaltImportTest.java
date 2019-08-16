@@ -202,7 +202,7 @@ public class SaltImportTest {
 
 		Set<String> matches = new HashSet<>();
 
-		String[] result = storage.find(Arrays.asList("root"), "tok", 0, Long.MAX_VALUE, ResultOrder.Normal);
+		String[] result = storage.find("root", "tok", QueryLanguage.AQL, 0, Long.MAX_VALUE, ResultOrder.Normal);
 		assertEquals(2, result.length);
 		for (int i = 0; i < 2; i++) {
 			matches.add(result[i]);
