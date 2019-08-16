@@ -401,7 +401,7 @@
 						<configuration>
 							<artifacts>
 								<artifact>
-									<id>org.corpus-tools:graphannis-api:${project.version}</id>
+									<id>org.corpus-tools:graphannis:${project.version}</id>
 								</artifact>
 							</artifacts>
 						</configuration>
