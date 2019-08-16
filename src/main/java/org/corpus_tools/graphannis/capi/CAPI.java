@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Thomas Krause <thomaskrause@posteo.de>
+   Copyright 2017 Thomas Krause <krauseto@hu-berlin.de>
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.

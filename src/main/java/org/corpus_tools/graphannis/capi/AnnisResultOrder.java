@@ -15,10 +15,6 @@
  */
 package org.corpus_tools.graphannis.capi;
 
-/**
- *
- * @author Thomas Krause <thomaskrause@posteo.de>
- */
 public interface AnnisResultOrder {
 
     public static final int Normal = 0;
