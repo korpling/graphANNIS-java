@@ -226,7 +226,8 @@ public class CorpusStorageManager {
 	public List<Component> getAllComponentsByType(String corpusName, ComponentType ctype) {
 		List<Component> result = new LinkedList<>();
 		if (instance != null) {
-			CAPI.AnnisVec_AnnisComponent orig = CAPI.annis_cs_list_components_by_type(instance, corpusName, ctype.toInt());
+			CAPI.AnnisVec_AnnisComponent orig = CAPI.annis_cs_list_components_by_type(instance, corpusName,
+					ctype.toInt());
 
 			for (int i = 0; i < CAPI.annis_vec_component_size(orig).intValue(); i++) {
 				AnnisComponentConst cOrig = CAPI.annis_vec_component_get(orig, new NativeLong(i));
@@ -245,16 +246,25 @@ public class CorpusStorageManager {
 		return result;
 	}
 
-	public boolean validateQuery(List<String> corpora, String query, QueryLanguage queryLanguage)
+	/**
+	 * Checks if a query is valid
+	 * 
+	 * @param corpusName    The name of the corpus to check the query against. For
+	 *                      some queries, it is a semantic error if an annotation
+	 *                      does not exists and thus the corpus name needs to be
+	 *                      known.
+	 * @param query			Query to check
+	 * @param queryLanguage	Query language variant
+	 * @return				True if this a valid query, false otherwise.
+	 * @throws GraphANNISException
+	 */
+	public boolean validateQuery(String corpusName, String query, QueryLanguage queryLanguage)
 			throws GraphANNISException {
-		boolean result = true;
-		for (String corpusName : corpora) {
-			AnnisErrorListRef err = new AnnisErrorListRef();
-			if (CAPI.annis_cs_validate_query(instance, corpusName, query, queryLanguage.capiVal, err) == false) {
-				result = false;
-			}
-			err.checkErrors();
-		}
+
+		AnnisErrorListRef err = new AnnisErrorListRef();
+		boolean result = CAPI.annis_cs_validate_query(instance, corpusName, query, queryLanguage.capiVal, err);
+		err.checkErrors();
+
 		return result;
 	}
 
@@ -298,8 +308,7 @@ public class CorpusStorageManager {
 		return result;
 	}
 
-	public String[] find(List<String> corpora, String query, long offset, long limit)
-			throws GraphANNISException {
+	public String[] find(List<String> corpora, String query, long offset, long limit) throws GraphANNISException {
 		return find(corpora, query, offset, limit, ResultOrder.Normal, QueryLanguage.AQL);
 	}
 
@@ -347,7 +356,7 @@ public class CorpusStorageManager {
 		err.checkErrors();
 
 		c_node_ids.dispose();
-		
+
 		return new Graph(graph);
 	}
 
@@ -356,7 +365,7 @@ public class CorpusStorageManager {
 		for (String id : document_ids) {
 			CAPI.annis_vec_str_push(c_document_ids, id);
 		}
-		
+
 		Graph result = null;
 		if (instance != null) {
 			AnnisErrorListRef err = new AnnisErrorListRef();
@@ -389,7 +398,6 @@ public class CorpusStorageManager {
 					queryLanguage.capiVal, ComponentType.PartOf.toInt(), err);
 			err.checkErrors();
 
-			
 			return new Graph(graph);
 		}
 		return null;
@@ -452,7 +460,7 @@ public class CorpusStorageManager {
 		}
 		return result;
 	}
-	
+
 	public void unloadCorpus(String corpusName) throws GraphANNISException {
 		if (instance != null) {
 			AnnisErrorListRef err = new AnnisErrorListRef();
