@@ -46,7 +46,7 @@ import com.sun.jna.NativeLong;
 /**
  * An API for managing corpora stored in a common location on the file system.
  * 
- * @author Thomas Krause <thomaskrause@posteo.de>
+ * @author Thomas Krause {@literal <krauseto@hu-berlin.de>}
  */
 public class CorpusStorageManager {
 	private final CAPI.AnnisCorpusStorage instance;
@@ -58,6 +58,13 @@ public class CorpusStorageManager {
 		public long documentCount;
 	}
 
+	/**
+	 * An enum over all supported query languages of graphANNIS.
+	 *
+	 * Currently, only the ANNIS Query Language (AQL) and its variants are
+	 * supported, but this enum allows us to add a support for older query language
+	 * versions or completely new query languages.
+	 */
 	public static enum QueryLanguage {
 
 		AQL(AnnisQueryLanguage.AQL), AQLQuirksV3(AnnisQueryLanguage.AQLQuirksV3);
@@ -69,6 +76,9 @@ public class CorpusStorageManager {
 		}
 	}
 
+	/**
+	 * Defines the order of results of a "find" query. *
+	 */
 	public static enum ResultOrder {
 
 		Normal(AnnisResultOrder.Normal), Inverted(AnnisResultOrder.Inverted), Randomized(AnnisResultOrder.Randomized),
@@ -81,6 +91,10 @@ public class CorpusStorageManager {
 		}
 	}
 
+	/**
+	 * An enum of all supported input formats of graphANNIS.
+	 * 
+	 */
 	public static enum ImportFormat {
 
 		RelANNIS(AnnisImportFormat.RelANNIS);
@@ -92,11 +106,34 @@ public class CorpusStorageManager {
 		}
 	}
 
+	/**
+	 * Create a new instance with a an automatic determined size of the internal
+	 * corpus cache.
+	 * 
+	 * This constructor version does not use parallel query execution and an
+	 * automatic strategy for its internal corpus cache.
+	 * 
+	 * @param dbDir The path on the filesystem where the corpus storage content is
+	 *              located. Must be an existing directory.
+	 * @throws GraphANNISException
+	 */
 	public CorpusStorageManager(String dbDir) throws GraphANNISException {
-		this(dbDir, null, false, LogLevel.Off);
+		this(dbDir, null, LogLevel.Off, false);
 	}
 
-	public CorpusStorageManager(String dbDir, String logfile, boolean useParallel, LogLevel level)
+	/**
+	 * Create a new instance with a an automatic determined size of the internal
+	 * corpus cache.
+	 * 
+	 * @param dbDir       The path on the filesystem where the corpus storage
+	 *                    content is located. Must be an existing directory.
+	 * @param logfile     Path to where a logfile should be written
+	 * @param level       Log level for the logfile
+	 * @param useParallel If "true" parallel joins are used by the system, using all
+	 *                    available cores.
+	 * @throws GraphANNISException
+	 */
+	public CorpusStorageManager(String dbDir, String logfile, LogLevel level, boolean useParallel)
 			throws GraphANNISException {
 
 		// create the parent directories of the output directory
@@ -117,7 +154,19 @@ public class CorpusStorageManager {
 		err.checkErrors();
 	}
 
-	public CorpusStorageManager(String dbDir, String logfile, long maxCacheSize, boolean useParallel, LogLevel level)
+	/**
+	 * Create a new instance with a maximum size for the internal corpus cache.
+	 * 
+	 * @param dbDir        The path on the filesystem where the corpus storage
+	 *                     content is located. Must be an existing directory.
+	 * @param logfile      Path to where a logfile should be written
+	 * @param level        Log level for the logfile
+	 * @param useParallel  If "true" parallel joins are used by the system, using
+	 *                     all available cores.
+	 * @param maxCacheSize Fixed maximum size of the cache in bytes.
+	 * @throws GraphANNISException
+	 */
+	public CorpusStorageManager(String dbDir, String logfile, LogLevel level, boolean useParallel, long maxCacheSize)
 			throws GraphANNISException {
 
 		// create the parent directories of the output directory
@@ -321,7 +370,8 @@ public class CorpusStorageManager {
 	}
 
 	/**
-	 * Find all results for a `query` and return the match ID for each result in default order.
+	 * Find all results for a `query` and return the match ID for each result in
+	 * default order.
 	 * 
 	 * The query is paginated and an offset and limit can be specified.
 	 * 

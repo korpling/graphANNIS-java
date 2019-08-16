@@ -37,89 +37,71 @@ import org.junit.Test;
 
 import com.google.common.io.Files;
 
-/**
- *
- * @author thomas
- */
-public class CorpusStorageManagerTest
-{
-  private CorpusStorageManager storage;
-  
-  public CorpusStorageManagerTest()
-  {
-  }
-  
-  @BeforeClass
-  public static void setUpClass()
-  {
-  }
-  
-  @AfterClass
-  public static void tearDownClass()
-  {
-  }
-  
-  @Before
-  public void setUp() throws GraphANNISException
-  {
-    File tmpDir = Files.createTempDir();
-    
-    File logfile =  new File(tmpDir, "graphannis.log");
-    System.out.println("logging to " + logfile.getAbsolutePath());
-    storage = new CorpusStorageManager(tmpDir.getAbsolutePath(), 
-    logfile.getAbsolutePath(), false, LogLevel.Debug);
-  }
-  
-  @After
-  public void tearDown()
-  {
-  }
+public class CorpusStorageManagerTest {
+	private CorpusStorageManager storage;
 
- 
+	public CorpusStorageManagerTest() {
+	}
 
-  /**
-   * Test of subgraph method, of class CorpusStorageManager.
-   
-  /**
-   * Test of subcorpusGraph method, of class CorpusStorageManager.
-   */
-  @Test
-  public void testSubcorpusGraph() throws GraphANNISException
-  {
-    System.out.println("subcorpusGraph");
-    
-    String corpusName = "subcorpusExample";
-    
-    SaltProject p = SampleGenerator.createSaltProject();
+	@BeforeClass
+	public static void setUpClass() {
+	}
 
-    {
-    
-      SaltImport i = new SaltImport();
-      for(SDocument d : p.getCorpusGraphs().get(0).getDocuments()) {
-        i.map(d.getDocumentGraph());
-      }
-      storage.applyUpdate(corpusName, i.finish());
+	@AfterClass
+	public static void tearDownClass() {
+	}
 
-       
-    }
-    
-    SDocumentGraph docOrig = p.getCorpusGraphs().get(0).getDocuments().get(0).getDocumentGraph();
-    
-    // repeat several times to make it more likely that garbage collection is run
-    for(int i=0; i < 25; i++) {
-      System.out.println("subcorpusGraph run " + (i+1));
-       Graph docCreated = storage.subcorpusGraph(corpusName, Arrays.asList(docOrig.getId()));
-       docCreated = null;
-       System.gc();
-    }
-  }
-  
-  @Test()
-  public void testDeleteThrowsException() throws GraphANNISException {
-      System.out.println("deleteThrowsException");
-      assertFalse(storage.deleteCorpus("nonexistingcorpus"));
-  }
+	@Before
+	public void setUp() throws GraphANNISException {
+		File tmpDir = Files.createTempDir();
 
-  
-  
+		File logfile = new File(tmpDir, "graphannis.log");
+		System.out.println("logging to " + logfile.getAbsolutePath());
+		storage = new CorpusStorageManager(tmpDir.getAbsolutePath(), logfile.getAbsolutePath(), LogLevel.Debug, false);
+	}
+
+	@After
+	public void tearDown() {
+	}
+
+	/**
+	 * Test of subgraph method, of class CorpusStorageManager.
+	 * 
+	 * /** Test of subcorpusGraph method, of class CorpusStorageManager.
+	 */
+	@Test
+	public void testSubcorpusGraph() throws GraphANNISException {
+		System.out.println("subcorpusGraph");
+
+		String corpusName = "subcorpusExample";
+
+		SaltProject p = SampleGenerator.createSaltProject();
+
+		{
+
+			SaltImport i = new SaltImport();
+			for (SDocument d : p.getCorpusGraphs().get(0).getDocuments()) {
+				i.map(d.getDocumentGraph());
+			}
+			storage.applyUpdate(corpusName, i.finish());
+
+		}
+
+		SDocumentGraph docOrig = p.getCorpusGraphs().get(0).getDocuments().get(0).getDocumentGraph();
+
+		// repeat several times to make it more likely that garbage collection is run
+		for (int i = 0; i < 25; i++) {
+			System.out.println("subcorpusGraph run " + (i + 1));
+			Graph docCreated = storage.subcorpusGraph(corpusName, Arrays.asList(docOrig.getId()));
+			docCreated = null;
+			System.gc();
+		}
+	}
+
+	@Test()
+	public void testDeleteThrowsException() throws GraphANNISException {
+		System.out.println("deleteThrowsException");
+		assertFalse(storage.deleteCorpus("nonexistingcorpus"));
+	}
+
 }
