@@ -42,7 +42,7 @@ to create a local P2 repository in `target/repository`. You can serve this local
 mvn jetty:run -Djetty.http.port=9999
 ```
 
-and access it at http://localhost:9999/site/. You can choose the port freely, e.g. to avoid conflicts with other local P2 repositories.
+and access it at http://localhost:9999/site/. You can choose another port, e.g. to avoid conflicts with other local P2 repositories.
 
 ## Release process
 
