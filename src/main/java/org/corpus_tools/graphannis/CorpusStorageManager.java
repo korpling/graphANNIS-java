@@ -721,6 +721,8 @@ public class CorpusStorageManager {
 
 	/**
 	 * Apply a sequence of updates to this graph for a corpus.
+	 *
+	 * It is ensured that the update process is atomic and that the changes are persisted to disk if the result no exception was thrown.
 	 * 
 	 * @param corpusName The name of the corpus to apply the updates on
 	 * @param update     The sequence of updates.
