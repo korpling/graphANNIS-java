@@ -53,8 +53,11 @@ public class CorpusStorageManager {
 
 	private final Logger log = LoggerFactory.getLogger(CorpusStorageManager.class);
 
+	/** Contains the extended results of the count query. */
 	public static class CountResult {
+		/** Total number of matches. */
 		public long matchCount;
+		/** Number of documents with at least one match. */
 		public long documentCount;
 	}
 
@@ -67,7 +70,10 @@ public class CorpusStorageManager {
 	 */
 	public static enum QueryLanguage {
 
-		AQL(AnnisQueryLanguage.AQL), AQLQuirksV3(AnnisQueryLanguage.AQLQuirksV3);
+		/** Default ANNIS query language implementation/specification */
+		AQL(AnnisQueryLanguage.AQL),
+		/** Emulates the (sometimes problematic) behavior of AQL used in ANNIS 3 */
+		AQLQuirksV3(AnnisQueryLanguage.AQLQuirksV3);
 
 		protected final int capiVal;
 
@@ -81,7 +87,21 @@ public class CorpusStorageManager {
 	 */
 	public static enum ResultOrder {
 
-		Normal(AnnisResultOrder.Normal), Inverted(AnnisResultOrder.Inverted), Randomized(AnnisResultOrder.Randomized),
+		/**
+		 * Order results by their document name and the the text position of the match.
+		 */
+		Normal(AnnisResultOrder.Normal),
+		/** Inverted the order of {@link #Normal} */
+		Inverted(AnnisResultOrder.Inverted),
+		/**
+		 * A random ordering which is <strong>not stable</strong>. Each new query will
+		 * result in a different order.
+		 */
+		Randomized(AnnisResultOrder.Randomized),
+		/**
+		 * Results are not ordered at all, but also not actively randomized. Each new
+		 * query <em>might</em> result in a different order.
+		 */
 		NotSorted(AnnisResultOrder.NotSorted);
 
 		protected final int capiVal;
@@ -97,6 +117,11 @@ public class CorpusStorageManager {
 	 */
 	public static enum ImportFormat {
 
+		/**
+		 * Legacy <a href=
+		 * "http://korpling.github.io/ANNIS/4.0/developer-guide/annisimportformat.html">relANNIS
+		 * import file format</a>
+		 */
 		RelANNIS(AnnisImportFormat.RelANNIS);
 
 		protected final int capiVal;
@@ -419,8 +444,10 @@ public class CorpusStorageManager {
 	 * @param corpusName    The name of the corpus to execute the query on.
 	 * @param query         The query as string.
 	 * @param queryLanguage The query language of the query (e.g. AQL).
-	 * @param offset        Skip the `n` first results, where `n` is the offset.
-	 * @param limit         Return at most `n` matches, where `n` is the limit.
+	 * @param offset        Skip the <em>n</em> first results, where <em>n</em> is
+	 *                      the offset.
+	 * @param limit         Return at most <em>n</em> matches, where <em>n</em> is
+	 *                      the limit.
 	 * @return An array of node identifiers
 	 * @throws GraphANNISException
 	 */
