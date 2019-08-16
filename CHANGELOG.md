@@ -11,9 +11,9 @@ From this version on, graphANNIS-java follows its own versioning scheme independ
 ### Changed
 
 - **Use "graphannis" as artifact ID instead "graphannis-api"**
-- Update to JNA library 5.3.1
-- Update to bugfix version 2.9.9.1 from jackson-databind
+- API now only accepts a single corpus name in `find`, `count`, `countExtra` and `graph` instead of a list of corpus names
 - Automatically download released graphANNIS core binaries in build process instead of reyling on a script
+- Update to JNA library 5.3.1
 
 ### Fixed
 
