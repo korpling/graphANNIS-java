@@ -18,10 +18,6 @@ package org.corpus_tools.graphannis.capi;
 import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 
-/**
- *
- * @author Thomas Krause <thomaskrause@posteo.de>
- */
 public class CharPointer extends PointerType implements CharSequence {
   
   public synchronized void dispose()
