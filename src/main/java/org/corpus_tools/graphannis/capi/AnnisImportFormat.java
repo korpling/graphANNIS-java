@@ -16,8 +16,9 @@
 package org.corpus_tools.graphannis.capi;
 
 /**
- *
- * @author Thomas Krause <thomaskrause@posteo.de>
+ * An enum of all supported input formats of graphANNIS.
+ * 
+ * @author Thomas Krause {@literal <krauseto@hu-berlin.de>}
  */
 public interface AnnisImportFormat {
 	/** Legacy relANNIS import file format */

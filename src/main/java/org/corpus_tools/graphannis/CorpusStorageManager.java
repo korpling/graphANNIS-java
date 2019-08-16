@@ -46,21 +46,34 @@ import com.sun.jna.NativeLong;
 /**
  * An API for managing corpora stored in a common location on the file system.
  * 
- * @author Thomas Krause <thomaskrause@posteo.de>
+ * @author Thomas Krause {@literal <krauseto@hu-berlin.de>}
  */
 public class CorpusStorageManager {
 	private final CAPI.AnnisCorpusStorage instance;
 
 	private final Logger log = LoggerFactory.getLogger(CorpusStorageManager.class);
 
+	/** Contains the extended results of the count query. */
 	public static class CountResult {
+		/** Total number of matches. */
 		public long matchCount;
+		/** Number of documents with at least one match. */
 		public long documentCount;
 	}
 
+	/**
+	 * An enum over all supported query languages of graphANNIS.
+	 *
+	 * Currently, only the ANNIS Query Language (AQL) and its variants are
+	 * supported, but this enum allows us to add a support for older query language
+	 * versions or completely new query languages.
+	 */
 	public static enum QueryLanguage {
 
-		AQL(AnnisQueryLanguage.AQL), AQLQuirksV3(AnnisQueryLanguage.AQLQuirksV3);
+		/** Default ANNIS query language implementation/specification */
+		AQL(AnnisQueryLanguage.AQL),
+		/** Emulates the (sometimes problematic) behavior of AQL used in ANNIS 3 */
+		AQLQuirksV3(AnnisQueryLanguage.AQLQuirksV3);
 
 		protected final int capiVal;
 
@@ -69,9 +82,26 @@ public class CorpusStorageManager {
 		}
 	}
 
+	/**
+	 * Defines the order of results of a "find" query. *
+	 */
 	public static enum ResultOrder {
 
-		Normal(AnnisResultOrder.Normal), Inverted(AnnisResultOrder.Inverted), Randomized(AnnisResultOrder.Randomized),
+		/**
+		 * Order results by their document name and the the text position of the match.
+		 */
+		Normal(AnnisResultOrder.Normal),
+		/** Inverted the order of {@link #Normal} */
+		Inverted(AnnisResultOrder.Inverted),
+		/**
+		 * A random ordering which is <strong>not stable</strong>. Each new query will
+		 * result in a different order.
+		 */
+		Randomized(AnnisResultOrder.Randomized),
+		/**
+		 * Results are not ordered at all, but also not actively randomized. Each new
+		 * query <em>might</em> result in a different order.
+		 */
 		NotSorted(AnnisResultOrder.NotSorted);
 
 		protected final int capiVal;
@@ -81,8 +111,17 @@ public class CorpusStorageManager {
 		}
 	}
 
+	/**
+	 * An enum of all supported input formats of graphANNIS.
+	 * 
+	 */
 	public static enum ImportFormat {
 
+		/**
+		 * Legacy <a href=
+		 * "http://korpling.github.io/ANNIS/4.0/developer-guide/annisimportformat.html">relANNIS
+		 * import file format</a>
+		 */
 		RelANNIS(AnnisImportFormat.RelANNIS);
 
 		protected final int capiVal;
@@ -92,11 +131,34 @@ public class CorpusStorageManager {
 		}
 	}
 
+	/**
+	 * Create a new instance with a an automatic determined size of the internal
+	 * corpus cache.
+	 * 
+	 * This constructor version does not use parallel query execution and an
+	 * automatic strategy for its internal corpus cache.
+	 * 
+	 * @param dbDir The path on the filesystem where the corpus storage content is
+	 *              located. Must be an existing directory.
+	 * @throws GraphANNISException
+	 */
 	public CorpusStorageManager(String dbDir) throws GraphANNISException {
-		this(dbDir, null, false, LogLevel.Off);
+		this(dbDir, null, LogLevel.Off, false);
 	}
 
-	public CorpusStorageManager(String dbDir, String logfile, boolean useParallel, LogLevel level)
+	/**
+	 * Create a new instance with a an automatic determined size of the internal
+	 * corpus cache.
+	 * 
+	 * @param dbDir       The path on the filesystem where the corpus storage
+	 *                    content is located. Must be an existing directory.
+	 * @param logfile     Path to where a logfile should be written
+	 * @param level       Log level for the logfile
+	 * @param useParallel If "true" parallel joins are used by the system, using all
+	 *                    available cores.
+	 * @throws GraphANNISException
+	 */
+	public CorpusStorageManager(String dbDir, String logfile, LogLevel level, boolean useParallel)
 			throws GraphANNISException {
 
 		// create the parent directories of the output directory
@@ -117,7 +179,19 @@ public class CorpusStorageManager {
 		err.checkErrors();
 	}
 
-	public CorpusStorageManager(String dbDir, String logfile, long maxCacheSize, boolean useParallel, LogLevel level)
+	/**
+	 * Create a new instance with a maximum size for the internal corpus cache.
+	 * 
+	 * @param dbDir        The path on the filesystem where the corpus storage
+	 *                     content is located. Must be an existing directory.
+	 * @param logfile      Path to where a logfile should be written
+	 * @param level        Log level for the logfile
+	 * @param useParallel  If "true" parallel joins are used by the system, using
+	 *                     all available cores.
+	 * @param maxCacheSize Fixed maximum size of the cache in bytes.
+	 * @throws GraphANNISException
+	 */
+	public CorpusStorageManager(String dbDir, String logfile, LogLevel level, boolean useParallel, long maxCacheSize)
 			throws GraphANNISException {
 
 		// create the parent directories of the output directory
@@ -138,6 +212,12 @@ public class CorpusStorageManager {
 		err.checkErrors();
 	}
 
+	/**
+	 * List all available corpora in the corpus storage.
+	 * 
+	 * @return A list of corpus names.
+	 * @throws GraphANNISException
+	 */
 	public String[] list() throws GraphANNISException {
 		AnnisErrorListRef err = new AnnisErrorListRef();
 		CAPI.AnnisVec_AnnisCString orig = CAPI.annis_cs_list(instance, err);
@@ -153,6 +233,17 @@ public class CorpusStorageManager {
 		return copy;
 	}
 
+	/**
+	 * Returns a list of all node annotations of a corpus given its name.
+	 * 
+	 * @param corpusName             The name of the corpus
+	 * @param listValues             If true include the possible values in the
+	 *                               result.
+	 * @param onlyMostFrequentValues If both this argument and "listValues" are
+	 *                               true, only return the most frequent value for
+	 *                               each annotation name.
+	 * @return list of annotations
+	 */
 	public List<Annotation> listNodeAnnotations(String corpusName, boolean listValues, boolean onlyMostFrequentValues) {
 		List<Annotation> result = new LinkedList<>();
 		if (instance != null) {
@@ -188,12 +279,28 @@ public class CorpusStorageManager {
 		return result;
 	}
 
-	public List<Annotation> listEdgeAnnotations(String corpusName, ComponentType component_type, String component_name,
-			String component_layer, boolean listValues, boolean onlyMostFrequentValues) {
+	/**
+	 * eturns a list of all edge annotations of a corpus given by its name and and
+	 * given component.
+	 * 
+	 * @param corpusName             The name of the corpus
+	 * @param componentType          Type of the component.
+	 * @param componentName          Name of the component.
+	 * @param componentLayer         A layer name which allows to group different
+	 *                               components into the same layer. Can be empty.
+	 * @param listValues             If true include the possible values in the
+	 *                               result.
+	 * @param onlyMostFrequentValues If both this argument and "listValues" are
+	 *                               true, only return the most frequent value for
+	 *                               each annotation name.
+	 * @return list of annotations
+	 */
+	public List<Annotation> listEdgeAnnotations(String corpusName, ComponentType componentType, String componentName,
+			String componentLayer, boolean listValues, boolean onlyMostFrequentValues) {
 		List<Annotation> result = new LinkedList<>();
 		if (instance != null) {
 			CAPI.AnnisMatrix_AnnisCString orig = CAPI.annis_cs_list_edge_annotations(instance, corpusName,
-					component_type.toInt(), component_name, component_layer, listValues, onlyMostFrequentValues);
+					componentType.toInt(), componentName, componentLayer, listValues, onlyMostFrequentValues);
 
 			final int nrows = CAPI.annis_matrix_str_nrows(orig).intValue();
 			final int ncols = CAPI.annis_matrix_str_ncols(orig).intValue();
@@ -223,15 +330,24 @@ public class CorpusStorageManager {
 		return result;
 	}
 
-	public List<Component> getAllComponentsByType(String corpusName, ComponentType ctype) {
+	/**
+	 * Returns a list of all components of a corpus given by its name and a given
+	 * component type
+	 * 
+	 * @param corpusName    The name of the corpus
+	 * @param componentType Type of the component to be returned
+	 * @return A list of all components of this type.
+	 */
+	public List<Component> getAllComponentsByType(String corpusName, ComponentType componentType) {
 		List<Component> result = new LinkedList<>();
 		if (instance != null) {
-			CAPI.AnnisVec_AnnisComponent orig = CAPI.annis_cs_list_components_by_type(instance, corpusName, ctype.toInt());
+			CAPI.AnnisVec_AnnisComponent orig = CAPI.annis_cs_list_components_by_type(instance, corpusName,
+					componentType.toInt());
 
 			for (int i = 0; i < CAPI.annis_vec_component_size(orig).intValue(); i++) {
 				AnnisComponentConst cOrig = CAPI.annis_vec_component_get(orig, new NativeLong(i));
 				Component c = new Component();
-				c.setType(ctype);
+				c.setType(componentType);
 
 				CharPointer cname = CAPI.annis_component_name(cOrig);
 				c.setName(cname == null ? "" : cname.toString());
@@ -245,16 +361,24 @@ public class CorpusStorageManager {
 		return result;
 	}
 
-	public boolean validateQuery(List<String> corpora, String query, QueryLanguage queryLanguage)
+	/**
+	 * Parses a query and checks if it is valid.
+	 * 
+	 * @param corpusName    The name of the corpus the query would be executed on
+	 *                      (needed because missing annotation names can be a
+	 *                      semantic parser error).
+	 * @param query         The query as string.
+	 * @param queryLanguage The query language of the query (e.g. AQL).
+	 * @return True if this a valid query, false otherwise.
+	 * @throws GraphANNISException
+	 */
+	public boolean validateQuery(String corpusName, String query, QueryLanguage queryLanguage)
 			throws GraphANNISException {
-		boolean result = true;
-		for (String corpusName : corpora) {
-			AnnisErrorListRef err = new AnnisErrorListRef();
-			if (CAPI.annis_cs_validate_query(instance, corpusName, query, queryLanguage.capiVal, err) == false) {
-				result = false;
-			}
-			err.checkErrors();
-		}
+
+		AnnisErrorListRef err = new AnnisErrorListRef();
+		boolean result = CAPI.annis_cs_validate_query(instance, corpusName, query, queryLanguage.capiVal, err);
+		err.checkErrors();
+
 		return result;
 	}
 
@@ -267,96 +391,154 @@ public class CorpusStorageManager {
 
 	}
 
-	public long count(List<String> corpora, String query) throws GraphANNISException {
-		return count(corpora, query, QueryLanguage.AQL);
-	}
-
-	public long count(List<String> corpora, String query, QueryLanguage queryLanguage) throws GraphANNISException {
+	/**
+	 * Count the number of results for a query.
+	 * 
+	 * @param corpusName    The name of the corpus to execute the query on.
+	 * @param query         The query as string.
+	 * @param queryLanguage The query language of the query (e.g. AQL).
+	 * @return Returns the count as number.
+	 * @throws GraphANNISException
+	 */
+	public long count(String corpusName, String query, QueryLanguage queryLanguage) throws GraphANNISException {
 		long result = 0l;
-		for (String corpusName : corpora) {
-			AnnisErrorListRef err = new AnnisErrorListRef();
-			result += CAPI.annis_cs_count(instance, corpusName, query, queryLanguage.capiVal, err);
-			err.checkErrors();
-		}
+		AnnisErrorListRef err = new AnnisErrorListRef();
+		result += CAPI.annis_cs_count(instance, corpusName, query, queryLanguage.capiVal, err);
+		err.checkErrors();
+
 		return result;
 	}
 
-	public CountResult countExtra(List<String> corpora, String query, QueryLanguage queryLanguage)
+	/**
+	 * Count the number of results for a query and return both the total number of
+	 * matches and also the number of documents in the result set.
+	 * 
+	 * @param corpusName    The name of the corpus to execute the query on.
+	 * @param query         The query as string.
+	 * @param queryLanguage The query language of the query (e.g. AQL).
+	 * @return An object containing both the match and document counts
+	 * @throws GraphANNISException
+	 */
+	public CountResult countExtra(String corpusName, String query, QueryLanguage queryLanguage)
 			throws GraphANNISException {
 		CountResult result = new CountResult();
 		result.documentCount = 0;
 		result.matchCount = 0;
-		for (String corpusName : corpora) {
-			AnnisErrorListRef err = new AnnisErrorListRef();
-			AnnisCountExtra resultForCorpus = CAPI.annis_cs_count_extra(instance, corpusName, query,
-					queryLanguage.capiVal, err);
-			err.checkErrors();
+		AnnisErrorListRef err = new AnnisErrorListRef();
+		AnnisCountExtra resultForCorpus = CAPI.annis_cs_count_extra(instance, corpusName, query, queryLanguage.capiVal,
+				err);
+		err.checkErrors();
 
-			result.matchCount += resultForCorpus.matchCount;
-			result.documentCount += resultForCorpus.documentCount;
-		}
+		result.matchCount += resultForCorpus.matchCount;
+		result.documentCount += resultForCorpus.documentCount;
+
 		return result;
 	}
 
-	public String[] find(List<String> corpora, String query, long offset, long limit)
+	/**
+	 * Find all results for a `query` and return the match ID for each result in
+	 * default order.
+	 * 
+	 * The query is paginated and an offset and limit can be specified.
+	 * 
+	 * @param corpusName    The name of the corpus to execute the query on.
+	 * @param query         The query as string.
+	 * @param queryLanguage The query language of the query (e.g. AQL).
+	 * @param offset        Skip the <em>n</em> first results, where <em>n</em> is
+	 *                      the offset.
+	 * @param limit         Return at most <em>n</em> matches, where <em>n</em> is
+	 *                      the limit.
+	 * @return An array of node identifiers
+	 * @throws GraphANNISException
+	 */
+	public String[] find(String corpusName, QueryLanguage queryLanguage, String query, long offset, long limit)
 			throws GraphANNISException {
-		return find(corpora, query, offset, limit, ResultOrder.Normal, QueryLanguage.AQL);
+		return find(corpusName, query, queryLanguage, offset, limit, ResultOrder.Normal);
 	}
 
-	public String[] find(List<String> corpora, String query, long offset, long limit, QueryLanguage queryLanguage)
-			throws GraphANNISException {
-		return find(corpora, query, offset, limit, ResultOrder.Normal, queryLanguage);
-	}
-
-	public String[] find(List<String> corpora, String query, long offset, long limit, ResultOrder order)
-			throws GraphANNISException {
-		return find(corpora, query, offset, limit, order, QueryLanguage.AQL);
-
-	}
-
-	public String[] find(List<String> corpora, String query, long offset, long limit, ResultOrder order,
-			QueryLanguage queryLanguage) throws GraphANNISException {
+	/**
+	 * Find all results for a `query` and return the match ID for each result.
+	 * 
+	 * The query is paginated and an offset and limit can be specified.
+	 * 
+	 * @param corpusName    The name of the corpus to execute the query on.
+	 * @param query         The query as string.
+	 * @param queryLanguage The query language of the query (e.g. AQL).
+	 * @param offset        Skip the `n` first results, where `n` is the offset.
+	 * @param limit         Return at most `n` matches, where `n` is the limit.
+	 * @param order         Specify the order of the matches.
+	 * @return An array of node identifiers
+	 * @throws GraphANNISException
+	 */
+	public String[] find(String corpusName, String query, QueryLanguage queryLanguage, long offset, long limit,
+			ResultOrder order) throws GraphANNISException {
 
 		ArrayList<String> result = new ArrayList<>();
-		for (String corpusName : corpora) {
-			AnnisErrorListRef err = new AnnisErrorListRef();
-			CAPI.AnnisVec_AnnisCString vec = CAPI.annis_cs_find(instance, corpusName, query, queryLanguage.capiVal,
-					offset, limit, order.capiVal, err);
-			err.checkErrors();
+		AnnisErrorListRef err = new AnnisErrorListRef();
+		CAPI.AnnisVec_AnnisCString vec = CAPI.annis_cs_find(instance, corpusName, query, queryLanguage.capiVal, offset,
+				limit, order.capiVal, err);
+		err.checkErrors();
 
-			final int vecSize = CAPI.annis_vec_str_size(vec).intValue();
-			for (int i = 0; i < vecSize; i++) {
-				result.add(CAPI.annis_vec_str_get(vec, new NativeLong(i)));
-			}
-			vec.dispose();
+		final int vecSize = CAPI.annis_vec_str_size(vec).intValue();
+		for (int i = 0; i < vecSize; i++) {
+			result.add(CAPI.annis_vec_str_get(vec, new NativeLong(i)));
 		}
+		vec.dispose();
 
 		return result.toArray(new String[0]);
 	}
 
-	public Graph subgraph(String corpusName, List<String> node_ids, long ctx_left, long ctx_right)
+	/**
+	 * Return the copy of a subgraph which includes the given list of node
+	 * annotation identifiers, the nodes that cover the same token as the given
+	 * nodes and all nodes that cover the token which are part of the defined
+	 * context.
+	 * 
+	 * @param corpusName The name of the corpus for which the subgraph should be
+	 *                   generated from.
+	 * @param nodeIDs    A set of node annotation identifiers describing the
+	 *                   subgraph.
+	 * @param ctxLeft    Left context in token distance to be included in the
+	 *                   subgraph.
+	 * @param ctxRight   Right context in token distance to be included in the
+	 *                   subgraph.
+	 * @return The subgraph.
+	 * @throws GraphANNISException
+	 */
+	public Graph subgraph(String corpusName, List<String> nodeIDs, long ctxLeft, long ctxRight)
 			throws GraphANNISException {
 		CAPI.AnnisVec_AnnisCString c_node_ids = CAPI.annis_vec_str_new();
-		for (String id : node_ids) {
+		for (String id : nodeIDs) {
 			CAPI.annis_vec_str_push(c_node_ids, id);
 		}
 
 		AnnisErrorListRef err = new AnnisErrorListRef();
-		CAPI.AnnisGraph graph = CAPI.annis_cs_subgraph(instance, corpusName, c_node_ids, new NativeLong(ctx_left),
-				new NativeLong(ctx_right), err);
+		CAPI.AnnisGraph graph = CAPI.annis_cs_subgraph(instance, corpusName, c_node_ids, new NativeLong(ctxLeft),
+				new NativeLong(ctxRight), err);
 		err.checkErrors();
 
 		c_node_ids.dispose();
-		
+
 		return new Graph(graph);
 	}
 
-	public Graph subcorpusGraph(String corpusName, List<String> document_ids) throws GraphANNISException {
+	/**
+	 * Return the copy of a subgraph which includes all nodes that belong to any of
+	 * the given list of sub-corpus/document identifiers.
+	 * 
+	 * @param corpusName  The name of the corpus for which the subgraph should be
+	 *                    generated from.
+	 * @param documentIDs A set of sub-corpus/document identifiers describing the
+	 *                    subgraph.
+	 * @return The subgraph.
+	 * @throws GraphANNISException
+	 */
+	public Graph subcorpusGraph(String corpusName, List<String> documentIDs) throws GraphANNISException {
 		CAPI.AnnisVec_AnnisCString c_document_ids = CAPI.annis_vec_str_new();
-		for (String id : document_ids) {
+		for (String id : documentIDs) {
 			CAPI.annis_vec_str_push(c_document_ids, id);
 		}
-		
+
 		Graph result = null;
 		if (instance != null) {
 			AnnisErrorListRef err = new AnnisErrorListRef();
@@ -370,6 +552,13 @@ public class CorpusStorageManager {
 		return result;
 	}
 
+	/**
+	 * Return the copy of the graph of the corpus structure given by its name.
+	 * 
+	 * @param corpusName The name of the corpus.
+	 * @return The corpus graph
+	 * @throws GraphANNISException
+	 */
 	public Graph corpusGraph(String corpusName) throws GraphANNISException {
 		if (instance != null) {
 			AnnisErrorListRef err = new AnnisErrorListRef();
@@ -381,6 +570,16 @@ public class CorpusStorageManager {
 		return null;
 	}
 
+	/**
+	 * Return the copy of the graph of the corpus structure which includes all nodes
+	 * matched by the given query.
+	 * 
+	 * @param corpusName    The name of the corpus.
+	 * @param query         The query as string.
+	 * @param queryLanguage The query language of the query (e.g. AQL).
+	 * @return The corpus graph
+	 * @throws GraphANNISException
+	 */
 	public Graph corpusGraphForQuery(String corpusName, String query, QueryLanguage queryLanguage)
 			throws GraphANNISException {
 		if (instance != null) {
@@ -389,12 +588,21 @@ public class CorpusStorageManager {
 					queryLanguage.capiVal, ComponentType.PartOf.toInt(), err);
 			err.checkErrors();
 
-			
 			return new Graph(graph);
 		}
 		return null;
 	}
 
+	/**
+	 * Return the copy of a subgraph which includes all nodes matched by the given
+	 * query.
+	 * 
+	 * @param corpusName    The name of the corpus.
+	 * @param query         The query as string.
+	 * @param queryLanguage The query language of the query (e.g. AQL).
+	 * @return The subgraph
+	 * @throws GraphANNISException
+	 */
 	public Graph subGraphForQuery(String corpusName, String query, QueryLanguage queryLanguage)
 			throws GraphANNISException {
 		if (instance != null) {
@@ -408,8 +616,33 @@ public class CorpusStorageManager {
 		return null;
 	}
 
-	public List<FrequencyTableEntry<String>> frequency(String corpusName, String query, String frequencyQueryDefinition,
-			QueryLanguage queryLanguage) throws GraphANNISException {
+	/**
+	 * Execute a frequency query.
+	 * 
+	 * @param corpusName               The name of the corpus to execute the query
+	 *                                 on.
+	 * @param query                    The query as string.
+	 * @param queryLanguage            The query language of the query (e.g. AQL).
+	 * @param frequencyQueryDefinition A comma seperated list of single frequency
+	 *                                 definition items as string. Each frequency
+	 *                                 definition must consist of two parts: the
+	 *                                 name of referenced node and the (possible
+	 *                                 qualified) annotation name or "tok" separated
+	 *                                 by ":". E.g. a frequency definition like
+	 * 
+	 *                                 <pre>
+	 *                                 1:tok,3:pos,4:tiger::pos
+	 *                                 </pre>
+	 * 
+	 *                                 would extract the token value for the node
+	 *                                 #1, the pos annotation for node #3 and the
+	 *                                 pos annotation in the tiger namespace for
+	 *                                 node #4.
+	 * @return A list of frequency table entries.
+	 * @throws GraphANNISException
+	 */
+	public List<FrequencyTableEntry<String>> frequency(String corpusName, String query, QueryLanguage queryLanguage,
+			String frequencyQueryDefinition) throws GraphANNISException {
 		if (instance != null) {
 			AnnisErrorListRef err = new AnnisErrorListRef();
 			CAPI.AnnisFrequencyTable_AnnisCString orig = CAPI.annis_cs_frequency(instance, corpusName, query,
@@ -435,6 +668,17 @@ public class CorpusStorageManager {
 		return null;
 	}
 
+	/**
+	 * Import a corpus from an external location on the file system into this corpus
+	 * storage.
+	 * 
+	 * @param path       The location on the file system where the corpus data is
+	 *                   located.
+	 * @param format     The format in which this corpus data is stored.
+	 * @param corpusName If not "null", override the name of the new corpus for file
+	 *                   formats that already provide a corpus name.
+	 * @throws GraphANNISException
+	 */
 	public void importFromFileSystem(String path, ImportFormat format, String corpusName) throws GraphANNISException {
 		if (instance != null) {
 			AnnisErrorListRef err = new AnnisErrorListRef();
@@ -443,6 +687,14 @@ public class CorpusStorageManager {
 		}
 	}
 
+	/**
+	 * Delete a corpus from this corpus storage.
+	 * 
+	 * @param corpusName The name of the corpus to delete.
+	 * @return "true" if the corpus was successfully deleted and "false" if no such
+	 *         corpus existed.
+	 * @throws GraphANNISException
+	 */
 	public boolean deleteCorpus(String corpusName) throws GraphANNISException {
 		boolean result = false;
 		if (instance != null) {
@@ -452,7 +704,13 @@ public class CorpusStorageManager {
 		}
 		return result;
 	}
-	
+
+	/**
+	 * Unloads a corpus from the cache.
+	 * 
+	 * @param corpusName The name of the corpus to unload.
+	 * @throws GraphANNISException
+	 */
 	public void unloadCorpus(String corpusName) throws GraphANNISException {
 		if (instance != null) {
 			AnnisErrorListRef err = new AnnisErrorListRef();
@@ -461,6 +719,15 @@ public class CorpusStorageManager {
 		}
 	}
 
+	/**
+	 * Apply a sequence of updates to this graph for a corpus.
+	 *
+	 * It is ensured that the update process is atomic and that the changes are persisted to disk if the result no exception was thrown.
+	 * 
+	 * @param corpusName The name of the corpus to apply the updates on
+	 * @param update     The sequence of updates.
+	 * @throws GraphANNISException
+	 */
 	public void applyUpdate(String corpusName, GraphUpdate update) throws GraphANNISException {
 		AnnisErrorListRef err = new AnnisErrorListRef();
 		CAPI.annis_cs_apply_update(instance, corpusName, update.getInstance(), err);
