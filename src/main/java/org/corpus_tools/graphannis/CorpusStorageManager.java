@@ -247,15 +247,14 @@ public class CorpusStorageManager {
 	}
 
 	/**
-	 * Checks if a query is valid
+	 * Parses a query and checks if it is valid.
 	 * 
-	 * @param corpusName    The name of the corpus to check the query against. For
-	 *                      some queries, it is a semantic error if an annotation
-	 *                      does not exists and thus the corpus name needs to be
-	 *                      known.
-	 * @param query			Query to check
-	 * @param queryLanguage	Query language variant
-	 * @return				True if this a valid query, false otherwise.
+	 * @param corpusName    The name of the corpus the query would be executed on
+	 *                      (needed because missing annotation names can be a
+	 *                      semantic parser error).
+	 * @param query         The query as string.
+	 * @param queryLanguage The query language of the query (e.g. AQL).
+	 * @return True if this a valid query, false otherwise.
 	 * @throws GraphANNISException
 	 */
 	public boolean validateQuery(String corpusName, String query, QueryLanguage queryLanguage)
@@ -277,34 +276,48 @@ public class CorpusStorageManager {
 
 	}
 
-	public long count(List<String> corpora, String query) throws GraphANNISException {
-		return count(corpora, query, QueryLanguage.AQL);
-	}
 
-	public long count(List<String> corpora, String query, QueryLanguage queryLanguage) throws GraphANNISException {
+	/**
+	 * Count the number of results for a query.
+	 * 
+	 * @param corpusName    The name of the corpus to execute the query on.
+	 * @param query         The query as string.
+	 * @param queryLanguage The query language of the query (e.g. AQL).
+	 * @return Returns the count as number.
+	 * @throws GraphANNISException
+	 */
+	public long count(String corpusName, String query, QueryLanguage queryLanguage) throws GraphANNISException {
 		long result = 0l;
-		for (String corpusName : corpora) {
-			AnnisErrorListRef err = new AnnisErrorListRef();
-			result += CAPI.annis_cs_count(instance, corpusName, query, queryLanguage.capiVal, err);
-			err.checkErrors();
-		}
+		AnnisErrorListRef err = new AnnisErrorListRef();
+		result += CAPI.annis_cs_count(instance, corpusName, query, queryLanguage.capiVal, err);
+		err.checkErrors();
+
 		return result;
 	}
 
-	public CountResult countExtra(List<String> corpora, String query, QueryLanguage queryLanguage)
+	/**
+	 * Count the number of results for a query and return both the total number of
+	 * matches and also the number of documents in the result set.
+	 * 
+	 * @param corpusName The name of the corpus to execute the query on.
+	 * @param query The query as string.
+	 * @param queryLanguage The query language of the query (e.g. AQL).
+	 * @return
+	 * @throws GraphANNISException
+	 */
+	public CountResult countExtra(String corpusName, String query, QueryLanguage queryLanguage)
 			throws GraphANNISException {
 		CountResult result = new CountResult();
 		result.documentCount = 0;
 		result.matchCount = 0;
-		for (String corpusName : corpora) {
-			AnnisErrorListRef err = new AnnisErrorListRef();
-			AnnisCountExtra resultForCorpus = CAPI.annis_cs_count_extra(instance, corpusName, query,
-					queryLanguage.capiVal, err);
-			err.checkErrors();
+		AnnisErrorListRef err = new AnnisErrorListRef();
+		AnnisCountExtra resultForCorpus = CAPI.annis_cs_count_extra(instance, corpusName, query, queryLanguage.capiVal,
+				err);
+		err.checkErrors();
 
-			result.matchCount += resultForCorpus.matchCount;
-			result.documentCount += resultForCorpus.documentCount;
-		}
+		result.matchCount += resultForCorpus.matchCount;
+		result.documentCount += resultForCorpus.documentCount;
+
 		return result;
 	}
 
