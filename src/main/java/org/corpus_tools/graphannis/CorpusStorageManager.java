@@ -391,7 +391,7 @@ public class CorpusStorageManager {
 	 * @param corpusName    The name of the corpus to execute the query on.
 	 * @param query         The query as string.
 	 * @param queryLanguage The query language of the query (e.g. AQL).
-	 * @return
+	 * @return An object containing both the match and document counts
 	 * @throws GraphANNISException
 	 */
 	public CountResult countExtra(String corpusName, String query, QueryLanguage queryLanguage)
@@ -421,7 +421,7 @@ public class CorpusStorageManager {
 	 * @param queryLanguage The query language of the query (e.g. AQL).
 	 * @param offset        Skip the `n` first results, where `n` is the offset.
 	 * @param limit         Return at most `n` matches, where `n` is the limit.
-	 * @return
+	 * @return An array of node identifiers
 	 * @throws GraphANNISException
 	 */
 	public String[] find(String corpusName, QueryLanguage queryLanguage, String query, long offset, long limit)
@@ -440,7 +440,7 @@ public class CorpusStorageManager {
 	 * @param offset        Skip the `n` first results, where `n` is the offset.
 	 * @param limit         Return at most `n` matches, where `n` is the limit.
 	 * @param order         Specify the order of the matches.
-	 * @return
+	 * @return An array of node identifiers
 	 * @throws GraphANNISException
 	 */
 	public String[] find(String corpusName, String query, QueryLanguage queryLanguage, long offset, long limit,
@@ -475,7 +475,7 @@ public class CorpusStorageManager {
 	 *                   subgraph.
 	 * @param ctxRight   Right context in token distance to be included in the
 	 *                   subgraph.
-	 * @return
+	 * @return The subgraph.
 	 * @throws GraphANNISException
 	 */
 	public Graph subgraph(String corpusName, List<String> nodeIDs, long ctxLeft, long ctxRight)
@@ -503,7 +503,7 @@ public class CorpusStorageManager {
 	 *                    generated from.
 	 * @param documentIDs A set of sub-corpus/document identifiers describing the
 	 *                    subgraph.
-	 * @return
+	 * @return The subgraph.
 	 * @throws GraphANNISException
 	 */
 	public Graph subcorpusGraph(String corpusName, List<String> documentIDs) throws GraphANNISException {
@@ -529,7 +529,7 @@ public class CorpusStorageManager {
 	 * Return the copy of the graph of the corpus structure given by its name.
 	 * 
 	 * @param corpusName The name of the corpus.
-	 * @return
+	 * @return The corpus graph
 	 * @throws GraphANNISException
 	 */
 	public Graph corpusGraph(String corpusName) throws GraphANNISException {
@@ -550,7 +550,7 @@ public class CorpusStorageManager {
 	 * @param corpusName    The name of the corpus.
 	 * @param query         The query as string.
 	 * @param queryLanguage The query language of the query (e.g. AQL).
-	 * @return
+	 * @return The corpus graph
 	 * @throws GraphANNISException
 	 */
 	public Graph corpusGraphForQuery(String corpusName, String query, QueryLanguage queryLanguage)
@@ -573,7 +573,7 @@ public class CorpusStorageManager {
 	 * @param corpusName    The name of the corpus.
 	 * @param query         The query as string.
 	 * @param queryLanguage The query language of the query (e.g. AQL).
-	 * @return
+	 * @return The subgraph
 	 * @throws GraphANNISException
 	 */
 	public Graph subGraphForQuery(String corpusName, String query, QueryLanguage queryLanguage)
