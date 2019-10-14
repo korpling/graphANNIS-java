@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Allow to specify the segmentation when getting the subgraph with a context
+
 ## [0.23.0] - 2019-08-16
 
 
