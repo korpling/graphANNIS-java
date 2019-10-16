@@ -25,7 +25,7 @@ To compile graphANNIS on your own (e.g. for using a non-released version)
 
 - Clone the graphANNIS library  from https://github.com/korpling/graphANNIS/
 - Follow the [graphANNIS compile instructions](https://github.com/korpling/graphANNIS#how-to-compile)
-- Copy the resulting shared library file `<graphANNIS-repo>/target/release/libgraphannis.so` (`libgraphannis.dylib` under MacOS X and `graphannis.dll` under Windows) into the `src/main/resources/<platform>` folder.
+- Copy the resulting shared library file `<graphANNIS-repo>/target/release/libgraphannis.so` (`libgraphannis.dylib` under MacOS X and `graphannis.dll` under Windows) into the `target/native/<platform>` folder.
 
 ### Creating a P2 repository
 
