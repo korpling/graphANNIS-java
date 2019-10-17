@@ -170,7 +170,7 @@ public class CAPI implements Library {
 			int query_language, long offset, long limit, int order, AnnisErrorListRef err);
 
 	public static native AnnisGraph annis_cs_subgraph(AnnisCorpusStorage cs, String corpusName,
-			AnnisVec_AnnisCString node_ids, NativeLong ctx_left, NativeLong ctx_right, AnnisErrorListRef err);
+			AnnisVec_AnnisCString node_ids, NativeLong ctx_left, NativeLong ctx_right, String segmentation, AnnisErrorListRef err);
 
 	public static native AnnisGraph annis_cs_subcorpus_graph(AnnisCorpusStorage cs, String corpusName,
 			AnnisVec_AnnisCString corpus_ids, AnnisErrorListRef err);

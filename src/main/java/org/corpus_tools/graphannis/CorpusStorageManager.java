@@ -19,6 +19,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import org.corpus_tools.graphannis.capi.AnnisCountExtra;
 import org.corpus_tools.graphannis.capi.AnnisErrorListRef;
@@ -502,10 +503,12 @@ public class CorpusStorageManager {
 	 *                   subgraph.
 	 * @param ctxRight   Right context in token distance to be included in the
 	 *                   subgraph.
+	 * @param segmentation The name of the segmentation which should be used to as base for the context. 
+	 * 					   Use {@link Optional.empty()} to define the context in the default token layer.
 	 * @return The subgraph.
 	 * @throws GraphANNISException
 	 */
-	public Graph subgraph(String corpusName, List<String> nodeIDs, long ctxLeft, long ctxRight)
+	public Graph subgraph(String corpusName, List<String> nodeIDs, long ctxLeft, long ctxRight, Optional<String> segmentation)
 			throws GraphANNISException {
 		CAPI.AnnisVec_AnnisCString c_node_ids = CAPI.annis_vec_str_new();
 		for (String id : nodeIDs) {
@@ -514,7 +517,7 @@ public class CorpusStorageManager {
 
 		AnnisErrorListRef err = new AnnisErrorListRef();
 		CAPI.AnnisGraph graph = CAPI.annis_cs_subgraph(instance, corpusName, c_node_ids, new NativeLong(ctxLeft),
-				new NativeLong(ctxRight), err);
+				new NativeLong(ctxRight), segmentation.orElse(null), err);
 		err.checkErrors();
 
 		c_node_ids.dispose();

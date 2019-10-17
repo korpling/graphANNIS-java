@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+
 import javax.xml.stream.XMLStreamException;
 
 import org.corpus_tools.graphannis.CorpusStorageManager.QueryLanguage;
@@ -99,7 +101,7 @@ public class SaltExportTest {
 
 		// get a subgraph for the complete document
 		SDocumentGraph exportedGraph = SaltExport
-				.map(storage.subgraph("testCorpus", Arrays.asList(sampleTok.getId()), 100, 100));
+				.map(storage.subgraph("testCorpus", Arrays.asList(sampleTok.getId()), 100, 100, Optional.empty()));
 
 		ValidationResult validResult = SaltUtil.validate(exportedGraph).andFindInvalidities();
 		assertTrue("Invalid graph detected:\n" + validResult.toString(), validResult.isValid());
