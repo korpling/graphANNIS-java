@@ -2,7 +2,7 @@
 
 # graphANNIS Java Bindings
 
-GraphANNIS is a library for corpus linguistic queries and these are the Java bindings to **graphANNIS core library version 0.22.0**.
+GraphANNIS is a library for corpus linguistic queries and these are the Java bindings to **graphANNIS core library version 0.23.1**.
 
 ## How to compile
 
