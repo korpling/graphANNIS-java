@@ -65,7 +65,7 @@
 			osname=MacOSX;processor=x86-64
 		</native-libs-macosx>
 		<!-- The version of graphANNIS to wrap -->
-		<core.version>0.22.0</core.version>
+		<core.version>0.23.1</core.version>
 	</properties>
 	<profiles>
 		<profile>
