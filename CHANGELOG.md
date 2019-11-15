@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Allow to specify the segmentation when getting the subgraph with a context
+- Updated to graphANNIS 0.24.0
+
+### Fixed
+
+- Bump jackson-databind from 2.9.10 to 2.9.10.1 for multiple CVEs
 
 ## [0.23.0] - 2019-08-16
 
