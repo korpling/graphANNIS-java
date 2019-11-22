@@ -21,6 +21,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.corpus_tools.graphannis.CorpusStorageManager.QueryLanguage;
@@ -95,62 +96,62 @@ public class SaltImportTest {
 
 		String corpus = "testCorpus";
 
-		assertEquals(26, storage.count(corpus, "node", QueryLanguage.AQL));
+		assertEquals(26, storage.count("node", QueryLanguage.AQL, corpus));
 
 		// test that the token are present and have the correct span values
-		assertEquals(11, storage.count(corpus, "tok", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "tok=\"Is\"", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "tok=\"this\"", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "tok=\"example\"", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "tok=\"more\"", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "tok=\"complicated\"", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "tok=\"than\"", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "tok=\"it\"", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "tok=\"appears\"", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "tok=\"to\"", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "tok=\"be\"", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "tok=\"?\"", QueryLanguage.AQL));
+		assertEquals(11, storage.count("tok", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("tok=\"Is\"", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("tok=\"this\"", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("tok=\"example\"", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("tok=\"more\"", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("tok=\"complicated\"", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("tok=\"than\"", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("tok=\"it\"", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("tok=\"appears\"", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("tok=\"to\"", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("tok=\"be\"", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("tok=\"?\"", QueryLanguage.AQL, corpus));
 
 		// test that the token annotations have been added
-		assertEquals(1, storage.count(corpus, "pos=\"VBZ\" _=_ \"Is\"", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "pos=\"DT\" _=_ \"this\"", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "pos=\"NN\" _=_ \"example\"", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "pos=\"RBR\" _=_ \"more\"", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "pos=\"JJ\" _=_ \"complicated\"", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "pos=\"IN\" _=_ \"than\"", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "pos=\"PRP\" _=_ \"it\"", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "pos=\"VBZ\" _=_ \"appears\"", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "pos=\"TO\" _=_ \"to\"", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "pos=\"VB\" _=_ \"be\"", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "pos=\".\" _=_ \"?\"", QueryLanguage.AQL));
+		assertEquals(1, storage.count("pos=\"VBZ\" _=_ \"Is\"", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("pos=\"DT\" _=_ \"this\"", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("pos=\"NN\" _=_ \"example\"", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("pos=\"RBR\" _=_ \"more\"", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("pos=\"JJ\" _=_ \"complicated\"", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("pos=\"IN\" _=_ \"than\"", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("pos=\"PRP\" _=_ \"it\"", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("pos=\"VBZ\" _=_ \"appears\"", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("pos=\"TO\" _=_ \"to\"", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("pos=\"VB\" _=_ \"be\"", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("pos=\".\" _=_ \"?\"", QueryLanguage.AQL, corpus));
 
 		// test that the precedence works for the token
-		assertEquals(1, storage.count(corpus,
+		assertEquals(1, storage.count(
 				"\"Is\" . \"this\" . \"example\" . \"more\" . \"complicated\" . \"than\" . \"it\" . \"appears\" . "
 						+ "\"to\" . \"be\" . \"?\"",
-				QueryLanguage.AQL));
+				QueryLanguage.AQL, corpus));
 
 		// test that coverage works
-		assertEquals(1, storage.count(corpus, "Inf-Struct=\"contrast-focus\" _o_ \"Is\"", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "Inf-Struct=\"topic\" _o_ \"this\"", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "Inf-Struct=\"topic\" _o_ \"example\"", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "Inf-Struct=\"topic\" _o_ \"more\"", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "Inf-Struct=\"topic\" _o_ \"complicated\"", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "Inf-Struct=\"topic\" _o_ \"than\"", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "Inf-Struct=\"topic\" _o_ \"it\"", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "Inf-Struct=\"topic\" _o_ \"appears\"", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "Inf-Struct=\"topic\" _o_ \"to\"", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "Inf-Struct=\"topic\" _o_ \"be\"", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "Inf-Struct=\"topic\" _o_ \"?\"", QueryLanguage.AQL));
+		assertEquals(1, storage.count("Inf-Struct=\"contrast-focus\" _o_ \"Is\"", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("Inf-Struct=\"topic\" _o_ \"this\"", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("Inf-Struct=\"topic\" _o_ \"example\"", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("Inf-Struct=\"topic\" _o_ \"more\"", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("Inf-Struct=\"topic\" _o_ \"complicated\"", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("Inf-Struct=\"topic\" _o_ \"than\"", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("Inf-Struct=\"topic\" _o_ \"it\"", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("Inf-Struct=\"topic\" _o_ \"appears\"", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("Inf-Struct=\"topic\" _o_ \"to\"", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("Inf-Struct=\"topic\" _o_ \"be\"", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("Inf-Struct=\"topic\" _o_ \"?\"", QueryLanguage.AQL, corpus));
 
 		// test some of the dominance edges
-		assertEquals(1, storage.count(corpus, "const=\"ROOT\" > const=\"SQ\" > \"Is\"", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "const=\"SQ\" >* \"this\"", QueryLanguage.AQL));
+		assertEquals(1, storage.count("const=\"ROOT\" > const=\"SQ\" > \"Is\"", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("const=\"SQ\" >* \"this\"", QueryLanguage.AQL, corpus));
 
 		// test some of the pointing relations
-		assertEquals(1, storage.count(corpus, "\"it\" ->anaphoric node _o_ \"example\"", QueryLanguage.AQL));
-		assertEquals(9, storage.count(corpus, "tok ->null tok", QueryLanguage.AQL));
-		assertEquals(1, storage.count(corpus, "\"complicated\" ->null[dependency=\"cop\"] \"Is\"", QueryLanguage.AQL));
+		assertEquals(1, storage.count("\"it\" ->anaphoric node _o_ \"example\"", QueryLanguage.AQL, corpus));
+		assertEquals(9, storage.count("tok ->null tok", QueryLanguage.AQL, corpus));
+		assertEquals(1, storage.count("\"complicated\" ->null[dependency=\"cop\"] \"Is\"", QueryLanguage.AQL, corpus));
 	}
 
 	@Test
@@ -202,7 +203,7 @@ public class SaltImportTest {
 
 		Set<String> matches = new HashSet<>();
 
-		String[] result = storage.find("root", "tok", QueryLanguage.AQL, 0, Long.MAX_VALUE, ResultOrder.Normal);
+		String[] result = storage.find("tok", QueryLanguage.AQL, 0, Optional.empty(), ResultOrder.Normal, "root");
 		assertEquals(2, result.length);
 		for (int i = 0; i < 2; i++) {
 			matches.add(result[i]);
