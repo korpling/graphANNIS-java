@@ -375,7 +375,7 @@ public class CorpusStorageManager {
 	 * @return True if this a valid query, false otherwise.
 	 * @throws GraphANNISException
 	 */
-	public boolean validateQuery(String query, QueryLanguage queryLanguage, String... corpusNames)
+	public boolean validateQuery(Iterable<String> corpusNames, String query, QueryLanguage queryLanguage)
 			throws GraphANNISException {
 
 		AnnisErrorListRef err = new AnnisErrorListRef();
@@ -408,7 +408,8 @@ public class CorpusStorageManager {
 	 * @return Returns the count as number.
 	 * @throws GraphANNISException
 	 */
-	public long count(String query, QueryLanguage queryLanguage, String... corpusNames) throws GraphANNISException {
+	public long count(Iterable<String> corpusNames, String query, QueryLanguage queryLanguage)
+			throws GraphANNISException {
 		AnnisErrorListRef err = new AnnisErrorListRef();
 		CAPI.AnnisVec_AnnisCString c_corpusNames = CAPI.annis_vec_str_new();
 		for (String cn : corpusNames) {
@@ -431,7 +432,7 @@ public class CorpusStorageManager {
 	 * @return An object containing both the match and document counts
 	 * @throws GraphANNISException
 	 */
-	public CountResult countExtra(String query, QueryLanguage queryLanguage, String... corpusNames)
+	public CountResult countExtra(Iterable<String> corpusNames, String query, QueryLanguage queryLanguage)
 			throws GraphANNISException {
 		CountResult result = new CountResult();
 		result.documentCount = 0;
@@ -468,9 +469,9 @@ public class CorpusStorageManager {
 	 * @return An array of node identifiers
 	 * @throws GraphANNISException
 	 */
-	public String[] find(QueryLanguage queryLanguage, String query, long offset, Optional<Long> limit, String... corpusNames)
-			throws GraphANNISException {
-		return find(query, queryLanguage, offset, limit, ResultOrder.Normal, corpusNames);
+	public String[] find(Iterable<String> corpusNames, String query, QueryLanguage queryLanguage, long offset,
+			Optional<Long> limit) throws GraphANNISException {
+		return find(corpusNames, query, queryLanguage, offset, limit, ResultOrder.Normal);
 	}
 
 	/**
@@ -487,8 +488,8 @@ public class CorpusStorageManager {
 	 * @return An array of node identifiers
 	 * @throws GraphANNISException
 	 */
-	public String[] find(String query, QueryLanguage queryLanguage, long offset, Optional<Long> limit, ResultOrder order,
-			String... corpusNames) throws GraphANNISException {
+	public String[] find(Iterable<String> corpusNames, String query, QueryLanguage queryLanguage, long offset,
+			Optional<Long> limit, ResultOrder order) throws GraphANNISException {
 
 		ArrayList<String> result = new ArrayList<>();
 		CAPI.AnnisVec_AnnisCString c_corpusNames = CAPI.annis_vec_str_new();
@@ -496,7 +497,7 @@ public class CorpusStorageManager {
 			CAPI.annis_vec_str_push(c_corpusNames, cn);
 		}
 		AnnisErrorListRef err = new AnnisErrorListRef();
-		LongByReference limit_ref = limit.isPresent() ? new LongByReference(limit.get()) : null; 
+		LongByReference limit_ref = limit.isPresent() ? new LongByReference(limit.get()) : null;
 		CAPI.AnnisVec_AnnisCString vec = CAPI.annis_cs_find(instance, c_corpusNames, query, queryLanguage.capiVal,
 				offset, limit_ref, order.capiVal, err);
 		c_corpusNames.dispose();
@@ -667,8 +668,8 @@ public class CorpusStorageManager {
 	 * @return A list of frequency table entries.
 	 * @throws GraphANNISException
 	 */
-	public List<FrequencyTableEntry<String>> frequency(String query, QueryLanguage queryLanguage,
-			String frequencyQueryDefinition, String... corpusNames) throws GraphANNISException {
+	public List<FrequencyTableEntry<String>> frequency(Iterable<String> corpusNames, String query,
+			QueryLanguage queryLanguage, String frequencyQueryDefinition) throws GraphANNISException {
 		if (instance != null) {
 			AnnisErrorListRef err = new AnnisErrorListRef();
 			CAPI.AnnisVec_AnnisCString c_corpusNames = CAPI.annis_vec_str_new();
