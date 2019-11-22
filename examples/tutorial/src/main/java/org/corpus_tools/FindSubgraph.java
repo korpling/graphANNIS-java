@@ -14,7 +14,7 @@ import org.corpus_tools.graphannis.model.Node;
 public class FindSubgraph {
     public static void main(String[] args) throws GraphANNISException {
         CorpusStorageManager cs = new CorpusStorageManager("data");
-        String[] matches = cs.find(Arrays.asList("tutorial"), "tok . tok", QueryLanguage.AQL, 0, Optional.of(100));
+        String[] matches = cs.find(Arrays.asList("tutorial"), "tok . tok", QueryLanguage.AQL, 0, Optional.of(100l));
         for (String m : matches) {
             System.out.println(m);
             // convert the match string to a list of node IDs
