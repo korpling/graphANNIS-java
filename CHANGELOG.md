@@ -5,14 +5,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.26.0] - 2019-11-25
+
 ### Changed
 
-- Allow to specify the segmentation when getting the subgraph with a context
+- Support multiple corpora in find, count, count_extra and frequency
+
+
+## [0.25.0] - 2019-11-15
+
+### Changed
+
 - Updated to graphANNIS 0.24.0
 
 ### Fixed
 
 - Bump jackson-databind from 2.9.10 to 2.9.10.1 for multiple CVEs
+
+## [0.24.0] - 2019-10-15
+
+### Changed
+
+- Allow to specify the segmentation when getting the subgraph with a context
+- Using released core version 0.23.1
 
 ## [0.23.0] - 2019-08-16
 
