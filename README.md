@@ -1,4 +1,4 @@
-[![Javadocs](http://www.javadoc.io/badge/org.corpus-tools/graphannis-api.svg)](http://www.javadoc.io/doc/org.corpus-tools/graphannis)
+[![Javadocs](http://www.javadoc.io/badge/org.corpus-tools/graphannis.svg)](http://www.javadoc.io/doc/org.corpus-tools/graphannis)
 
 # graphANNIS Java Bindings
 
