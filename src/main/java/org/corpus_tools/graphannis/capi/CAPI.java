@@ -21,6 +21,7 @@ import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
+import com.sun.jna.ptr.LongByReference;
 
 public class CAPI implements Library {
 
@@ -160,14 +161,14 @@ public class CAPI implements Library {
 
 	public static native AnnisVec_AnnisCString annis_cs_list(AnnisCorpusStorage cs, AnnisErrorListRef err);
 
-	public static native long annis_cs_count(AnnisCorpusStorage cs, String corpusName, String query, int queryLanguage,
+	public static native long annis_cs_count(AnnisCorpusStorage cs, AnnisVec_AnnisCString corpusNames, String query, int queryLanguage,
 			AnnisErrorListRef err);
 
-	public static native AnnisCountExtra.ByValue annis_cs_count_extra(AnnisCorpusStorage cs, String corpusName,
+	public static native AnnisCountExtra.ByValue annis_cs_count_extra(AnnisCorpusStorage cs, AnnisVec_AnnisCString corpusNames,
 			String query, int queryLanguage, AnnisErrorListRef err);
 
-	public static native AnnisVec_AnnisCString annis_cs_find(AnnisCorpusStorage cs, String corpusName, String query,
-			int query_language, long offset, long limit, int order, AnnisErrorListRef err);
+	public static native AnnisVec_AnnisCString annis_cs_find(AnnisCorpusStorage cs, AnnisVec_AnnisCString corpusNames, String query,
+			int query_language, long offset, LongByReference limit, int order, AnnisErrorListRef err);
 
 	public static native AnnisGraph annis_cs_subgraph(AnnisCorpusStorage cs, String corpusName,
 			AnnisVec_AnnisCString node_ids, NativeLong ctx_left, NativeLong ctx_right, String segmentation, AnnisErrorListRef err);
@@ -184,7 +185,7 @@ public class CAPI implements Library {
 	public static native AnnisGraph annis_cs_subgraph_for_query_with_ctype(AnnisCorpusStorage cs, String corpusName,
 			String query, int queryLanguage, int ctype, AnnisErrorListRef err);
 
-	public static native AnnisFrequencyTable_AnnisCString annis_cs_frequency(AnnisCorpusStorage cs, String corpusName,
+	public static native AnnisFrequencyTable_AnnisCString annis_cs_frequency(AnnisCorpusStorage cs, AnnisVec_AnnisCString corpusNames,
 			String query, int queryLanguage, String frequencyQueryDefinition, AnnisErrorListRef err);
 
 	public static native AnnisVec_AnnisComponent annis_cs_list_components_by_type(AnnisCorpusStorage cs,
@@ -203,7 +204,7 @@ public class CAPI implements Library {
 	public static native void annis_cs_import_from_fs(AnnisCorpusStorage cs, String path, int format, String corpusName,
 			AnnisErrorListRef err);
 
-	public static native boolean annis_cs_validate_query(AnnisCorpusStorage cs, String corpusName, String query,
+	public static native boolean annis_cs_validate_query(AnnisCorpusStorage cs, AnnisVec_AnnisCString corpusNames, String query,
 			int queryLanguage, AnnisErrorListRef err);
 
 	public static native QueryAttributeDescription annis_cs_node_descriptions(AnnisCorpusStorage cs, String query,

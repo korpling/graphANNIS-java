@@ -21,6 +21,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+import com.sun.jna.NativeLong;
+import com.sun.jna.Pointer;
+import com.sun.jna.ptr.LongByReference;
+
 import org.corpus_tools.graphannis.capi.AnnisCountExtra;
 import org.corpus_tools.graphannis.capi.AnnisErrorListRef;
 import org.corpus_tools.graphannis.capi.AnnisImportFormat;
@@ -41,8 +45,6 @@ import org.corpus_tools.graphannis.model.Graph;
 import org.corpus_tools.graphannis.model.NodeDesc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.sun.jna.NativeLong;
 
 /**
  * An API for managing corpora stored in a common location on the file system.
@@ -365,19 +367,24 @@ public class CorpusStorageManager {
 	/**
 	 * Parses a query and checks if it is valid.
 	 * 
-	 * @param corpusName    The name of the corpus the query would be executed on
-	 *                      (needed because missing annotation names can be a
-	 *                      semantic parser error).
+	 * @param corpusNames   The name of the corpora the query would be executed on
+	 *                      (needed to catch certain corpus-specific semantic
+	 *                      errors).
 	 * @param query         The query as string.
 	 * @param queryLanguage The query language of the query (e.g. AQL).
 	 * @return True if this a valid query, false otherwise.
 	 * @throws GraphANNISException
 	 */
-	public boolean validateQuery(String corpusName, String query, QueryLanguage queryLanguage)
+	public boolean validateQuery(Iterable<String> corpusNames, String query, QueryLanguage queryLanguage)
 			throws GraphANNISException {
 
 		AnnisErrorListRef err = new AnnisErrorListRef();
-		boolean result = CAPI.annis_cs_validate_query(instance, corpusName, query, queryLanguage.capiVal, err);
+		CAPI.AnnisVec_AnnisCString c_corpusNames = CAPI.annis_vec_str_new();
+		for (String cn : corpusNames) {
+			CAPI.annis_vec_str_push(c_corpusNames, cn);
+		}
+		boolean result = CAPI.annis_cs_validate_query(instance, c_corpusNames, query, queryLanguage.capiVal, err);
+		c_corpusNames.dispose();
 		err.checkErrors();
 
 		return result;
@@ -395,16 +402,21 @@ public class CorpusStorageManager {
 	/**
 	 * Count the number of results for a query.
 	 * 
-	 * @param corpusName    The name of the corpus to execute the query on.
+	 * @param corpusNames   The name of the corpora to execute the query on.
 	 * @param query         The query as string.
 	 * @param queryLanguage The query language of the query (e.g. AQL).
 	 * @return Returns the count as number.
 	 * @throws GraphANNISException
 	 */
-	public long count(String corpusName, String query, QueryLanguage queryLanguage) throws GraphANNISException {
-		long result = 0l;
+	public long count(Iterable<String> corpusNames, String query, QueryLanguage queryLanguage)
+			throws GraphANNISException {
 		AnnisErrorListRef err = new AnnisErrorListRef();
-		result += CAPI.annis_cs_count(instance, corpusName, query, queryLanguage.capiVal, err);
+		CAPI.AnnisVec_AnnisCString c_corpusNames = CAPI.annis_vec_str_new();
+		for (String cn : corpusNames) {
+			CAPI.annis_vec_str_push(c_corpusNames, cn);
+		}
+		long result = CAPI.annis_cs_count(instance, c_corpusNames, query, queryLanguage.capiVal, err);
+		c_corpusNames.dispose();
 		err.checkErrors();
 
 		return result;
@@ -414,20 +426,25 @@ public class CorpusStorageManager {
 	 * Count the number of results for a query and return both the total number of
 	 * matches and also the number of documents in the result set.
 	 * 
-	 * @param corpusName    The name of the corpus to execute the query on.
+	 * @param corpusNames   The name of the corpora to execute the query on.
 	 * @param query         The query as string.
 	 * @param queryLanguage The query language of the query (e.g. AQL).
 	 * @return An object containing both the match and document counts
 	 * @throws GraphANNISException
 	 */
-	public CountResult countExtra(String corpusName, String query, QueryLanguage queryLanguage)
+	public CountResult countExtra(Iterable<String> corpusNames, String query, QueryLanguage queryLanguage)
 			throws GraphANNISException {
 		CountResult result = new CountResult();
 		result.documentCount = 0;
 		result.matchCount = 0;
+		CAPI.AnnisVec_AnnisCString c_corpusNames = CAPI.annis_vec_str_new();
+		for (String cn : corpusNames) {
+			CAPI.annis_vec_str_push(c_corpusNames, cn);
+		}
 		AnnisErrorListRef err = new AnnisErrorListRef();
-		AnnisCountExtra resultForCorpus = CAPI.annis_cs_count_extra(instance, corpusName, query, queryLanguage.capiVal,
-				err);
+		AnnisCountExtra resultForCorpus = CAPI.annis_cs_count_extra(instance, c_corpusNames, query,
+				queryLanguage.capiVal, err);
+		c_corpusNames.dispose();
 		err.checkErrors();
 
 		result.matchCount += resultForCorpus.matchCount;
@@ -442,7 +459,7 @@ public class CorpusStorageManager {
 	 * 
 	 * The query is paginated and an offset and limit can be specified.
 	 * 
-	 * @param corpusName    The name of the corpus to execute the query on.
+	 * @param corpusNames   The name of the corpora to execute the query on.
 	 * @param query         The query as string.
 	 * @param queryLanguage The query language of the query (e.g. AQL).
 	 * @param offset        Skip the <em>n</em> first results, where <em>n</em> is
@@ -452,9 +469,9 @@ public class CorpusStorageManager {
 	 * @return An array of node identifiers
 	 * @throws GraphANNISException
 	 */
-	public String[] find(String corpusName, QueryLanguage queryLanguage, String query, long offset, long limit)
-			throws GraphANNISException {
-		return find(corpusName, query, queryLanguage, offset, limit, ResultOrder.Normal);
+	public String[] find(Iterable<String> corpusNames, String query, QueryLanguage queryLanguage, long offset,
+			Optional<Long> limit) throws GraphANNISException {
+		return find(corpusNames, query, queryLanguage, offset, limit, ResultOrder.Normal);
 	}
 
 	/**
@@ -462,7 +479,7 @@ public class CorpusStorageManager {
 	 * 
 	 * The query is paginated and an offset and limit can be specified.
 	 * 
-	 * @param corpusName    The name of the corpus to execute the query on.
+	 * @param corpusNames   The name of the corpora to execute the query on.
 	 * @param query         The query as string.
 	 * @param queryLanguage The query language of the query (e.g. AQL).
 	 * @param offset        Skip the `n` first results, where `n` is the offset.
@@ -471,13 +488,19 @@ public class CorpusStorageManager {
 	 * @return An array of node identifiers
 	 * @throws GraphANNISException
 	 */
-	public String[] find(String corpusName, String query, QueryLanguage queryLanguage, long offset, long limit,
-			ResultOrder order) throws GraphANNISException {
+	public String[] find(Iterable<String> corpusNames, String query, QueryLanguage queryLanguage, long offset,
+			Optional<Long> limit, ResultOrder order) throws GraphANNISException {
 
 		ArrayList<String> result = new ArrayList<>();
+		CAPI.AnnisVec_AnnisCString c_corpusNames = CAPI.annis_vec_str_new();
+		for (String cn : corpusNames) {
+			CAPI.annis_vec_str_push(c_corpusNames, cn);
+		}
 		AnnisErrorListRef err = new AnnisErrorListRef();
-		CAPI.AnnisVec_AnnisCString vec = CAPI.annis_cs_find(instance, corpusName, query, queryLanguage.capiVal, offset,
-				limit, order.capiVal, err);
+		LongByReference limit_ref = limit.isPresent() ? new LongByReference(limit.get()) : null;
+		CAPI.AnnisVec_AnnisCString vec = CAPI.annis_cs_find(instance, c_corpusNames, query, queryLanguage.capiVal,
+				offset, limit_ref, order.capiVal, err);
+		c_corpusNames.dispose();
 		err.checkErrors();
 
 		final int vecSize = CAPI.annis_vec_str_size(vec).intValue();
@@ -495,21 +518,22 @@ public class CorpusStorageManager {
 	 * nodes and all nodes that cover the token which are part of the defined
 	 * context.
 	 * 
-	 * @param corpusName The name of the corpus for which the subgraph should be
-	 *                   generated from.
-	 * @param nodeIDs    A set of node annotation identifiers describing the
-	 *                   subgraph.
-	 * @param ctxLeft    Left context in token distance to be included in the
-	 *                   subgraph.
-	 * @param ctxRight   Right context in token distance to be included in the
-	 *                   subgraph.
-	 * @param segmentation The name of the segmentation which should be used to as base for the context. 
-	 * 					   Use {@link Optional.empty()} to define the context in the default token layer.
+	 * @param corpusName   The name of the corpus for which the subgraph should be
+	 *                     generated from.
+	 * @param nodeIDs      A set of node annotation identifiers describing the
+	 *                     subgraph.
+	 * @param ctxLeft      Left context in token distance to be included in the
+	 *                     subgraph.
+	 * @param ctxRight     Right context in token distance to be included in the
+	 *                     subgraph.
+	 * @param segmentation The name of the segmentation which should be used to as
+	 *                     base for the context. Use {@link Optional.empty()} to
+	 *                     define the context in the default token layer.
 	 * @return The subgraph.
 	 * @throws GraphANNISException
 	 */
-	public Graph subgraph(String corpusName, List<String> nodeIDs, long ctxLeft, long ctxRight, Optional<String> segmentation)
-			throws GraphANNISException {
+	public Graph subgraph(String corpusName, List<String> nodeIDs, long ctxLeft, long ctxRight,
+			Optional<String> segmentation) throws GraphANNISException {
 		CAPI.AnnisVec_AnnisCString c_node_ids = CAPI.annis_vec_str_new();
 		for (String id : nodeIDs) {
 			CAPI.annis_vec_str_push(c_node_ids, id);
@@ -622,7 +646,7 @@ public class CorpusStorageManager {
 	/**
 	 * Execute a frequency query.
 	 * 
-	 * @param corpusName               The name of the corpus to execute the query
+	 * @param corpusNames              The name of the corpora to execute the query
 	 *                                 on.
 	 * @param query                    The query as string.
 	 * @param queryLanguage            The query language of the query (e.g. AQL).
@@ -637,19 +661,24 @@ public class CorpusStorageManager {
 	 *                                 1:tok,3:pos,4:tiger::pos
 	 *                                 </pre>
 	 * 
-	 *                                 would extract the token value for the node
+	 *                                 would extract the token value for the nodes
 	 *                                 #1, the pos annotation for node #3 and the
 	 *                                 pos annotation in the tiger namespace for
 	 *                                 node #4.
 	 * @return A list of frequency table entries.
 	 * @throws GraphANNISException
 	 */
-	public List<FrequencyTableEntry<String>> frequency(String corpusName, String query, QueryLanguage queryLanguage,
-			String frequencyQueryDefinition) throws GraphANNISException {
+	public List<FrequencyTableEntry<String>> frequency(Iterable<String> corpusNames, String query,
+			QueryLanguage queryLanguage, String frequencyQueryDefinition) throws GraphANNISException {
 		if (instance != null) {
 			AnnisErrorListRef err = new AnnisErrorListRef();
-			CAPI.AnnisFrequencyTable_AnnisCString orig = CAPI.annis_cs_frequency(instance, corpusName, query,
+			CAPI.AnnisVec_AnnisCString c_corpusNames = CAPI.annis_vec_str_new();
+			for (String cn : corpusNames) {
+				CAPI.annis_vec_str_push(c_corpusNames, cn);
+			}
+			CAPI.AnnisFrequencyTable_AnnisCString orig = CAPI.annis_cs_frequency(instance, c_corpusNames, query,
 					queryLanguage.capiVal, frequencyQueryDefinition, err);
+			c_corpusNames.dispose();
 			err.checkErrors();
 
 			if (orig != null) {
@@ -725,7 +754,8 @@ public class CorpusStorageManager {
 	/**
 	 * Apply a sequence of updates to this graph for a corpus.
 	 *
-	 * It is ensured that the update process is atomic and that the changes are persisted to disk if the result no exception was thrown.
+	 * It is ensured that the update process is atomic and that the changes are
+	 * persisted to disk if the result no exception was thrown.
 	 * 
 	 * @param corpusName The name of the corpus to apply the updates on
 	 * @param update     The sequence of updates.
