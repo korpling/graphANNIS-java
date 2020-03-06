@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Optional;
 
 import com.sun.jna.NativeLong;
-import com.sun.jna.Pointer;
 import com.sun.jna.ptr.LongByReference;
 
 import org.corpus_tools.graphannis.capi.AnnisCountExtra;
@@ -527,7 +526,7 @@ public class CorpusStorageManager {
 	 * @param ctxRight     Right context in token distance to be included in the
 	 *                     subgraph.
 	 * @param segmentation The name of the segmentation which should be used to as
-	 *                     base for the context. Use {@link Optional.empty()} to
+	 *                     base for the context. Use {@link Optional#empty()} to
 	 *                     define the context in the default token layer.
 	 * @return The subgraph.
 	 * @throws GraphANNISException

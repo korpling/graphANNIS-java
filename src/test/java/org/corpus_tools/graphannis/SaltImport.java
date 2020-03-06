@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.corpus_tools.graphannis.GraphUpdate;
+import org.corpus_tools.graphannis.errors.GraphANNISException;
 import org.corpus_tools.salt.SALT_TYPE;
 import org.corpus_tools.salt.common.SDocumentGraph;
 import org.corpus_tools.salt.common.SDominanceRelation;
@@ -57,25 +58,25 @@ public class SaltImport {
     return updateList;
   }
 
-  public SaltImport map(SDocumentGraph g) {
-    
+  public SaltImport map(SDocumentGraph g) throws GraphANNISException {
+
     // create the (sub-) corpus and the document nodes
     URI docPath = g.getPath();
     String documentNodeName = null;
-    if(docPath != null) {
+    if (docPath != null) {
       String[] segments = docPath.segments();
-      if(segments != null) {
-        for(int i=0; i < segments.length; i++) {
-          String nodeName = Joiner.on('/').join(Arrays.copyOfRange(segments, 0, i+1));
+      if (segments != null) {
+        for (int i = 0; i < segments.length; i++) {
+          String nodeName = Joiner.on('/').join(Arrays.copyOfRange(segments, 0, i + 1));
           updateList.addNode(nodeName, "corpus");
           updateList.addNodeLabel(nodeName, "annis", "doc", segments[i]);
-          if(i == segments.length-1) {
+          if (i == segments.length - 1) {
             documentNodeName = nodeName;
           }
         }
-      }      
+      }
     }
-    
+
     // add all nodes and their annotations
     for (SNode n : g.getNodes()) {
       addNode(n, documentNodeName);
@@ -116,7 +117,7 @@ public class SaltImport {
     return this;
   }
 
-  private void addTokenInformation(SDocumentGraph g) {
+  private void addTokenInformation(SDocumentGraph g) throws GraphANNISException {
 
     SToken lastToken = null;
     STextualDS lastTextDS = null;
@@ -142,14 +143,15 @@ public class SaltImport {
   }
 
   /**
-  * Add edges related to coverage.
-  *
-  * This will add the LEFT_TOKEN, RIGHT_TOKEN, COVERAGE and INVERSE_COVERAGE edges.
-  * 
-  * @param node
-  * @param graph
-  */
-  private void addCoverageInformation(SNode node, SDocumentGraph graph) {
+   * Add edges related to coverage.
+   *
+   * This will add the LEFT_TOKEN, RIGHT_TOKEN, COVERAGE and INVERSE_COVERAGE
+   * edges.
+   * 
+   * @param node
+   * @param graph
+   */
+  private void addCoverageInformation(SNode node, SDocumentGraph graph) throws GraphANNISException {
     List<SToken> overlappedToken;
     if (node instanceof SToken) {
       overlappedToken = Arrays.asList((SToken) node);
@@ -169,14 +171,12 @@ public class SaltImport {
 
     String name = nodeName(node);
 
-
     // add the COVERAGE edges
     for (SToken covered : overlappedToken) {
       updateList.addEdge(name, nodeName(covered), ANNIS_NS, "Coverage", "");
     }
 
   }
-
 
   private static String documentPath(SNode node) {
     if (node != null) {
@@ -225,7 +225,7 @@ public class SaltImport {
     return result;
   }
 
-  private void addNode(SNode n, String documentNodeName) {
+  private void addNode(SNode n, String documentNodeName) throws GraphANNISException {
     if (n instanceof SStructuredNode) {
       // use the unique name
       String name = nodeName(n);
@@ -234,15 +234,16 @@ public class SaltImport {
       for (SAnnotation anno : n.getAnnotations()) {
         updateList.addNodeLabel(name, anno.getNamespace(), anno.getName(), anno.getValue_STEXT());
       }
-      
+
       // add connection to document node if available
-      if(documentNodeName != null) {
+      if (documentNodeName != null) {
         updateList.addEdge(name, documentNodeName, "annis", "PartOf", "");
       }
     }
   }
 
-  private void addEdgeLabels(SRelation<?, ?> rel, String layer, String componentType, String componentName) {
+  private void addEdgeLabels(SRelation<?, ?> rel, String layer, String componentType, String componentName)
+      throws GraphANNISException {
     Set<SAnnotation> annos = rel.getAnnotations();
     if (annos != null) {
       for (SAnnotation anno : annos) {

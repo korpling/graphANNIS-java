@@ -152,26 +152,28 @@ public class CAPI implements Library {
 
 	// corpus storage class
 
-	public static native AnnisCorpusStorage annis_cs_with_auto_cache_size(String db_dir, boolean use_parallel, AnnisErrorListRef err);
+	public static native AnnisCorpusStorage annis_cs_with_auto_cache_size(String db_dir, boolean use_parallel_joins,
+			AnnisErrorListRef err);
 
 	public static native AnnisCorpusStorage annis_cs_with_max_cache_size(String db_dir, long max_cache_size,
-			boolean use_parallel, AnnisErrorListRef err);
+			boolean use_parallel_joins, AnnisErrorListRef err);
 
 	protected static native void annis_cs_free(Pointer ptr);
 
 	public static native AnnisVec_AnnisCString annis_cs_list(AnnisCorpusStorage cs, AnnisErrorListRef err);
 
-	public static native long annis_cs_count(AnnisCorpusStorage cs, AnnisVec_AnnisCString corpusNames, String query, int queryLanguage,
-			AnnisErrorListRef err);
+	public static native long annis_cs_count(AnnisCorpusStorage cs, AnnisVec_AnnisCString corpusNames, String query,
+			int queryLanguage, AnnisErrorListRef err);
 
-	public static native AnnisCountExtra.ByValue annis_cs_count_extra(AnnisCorpusStorage cs, AnnisVec_AnnisCString corpusNames,
-			String query, int queryLanguage, AnnisErrorListRef err);
+	public static native AnnisCountExtra.ByValue annis_cs_count_extra(AnnisCorpusStorage cs,
+			AnnisVec_AnnisCString corpusNames, String query, int queryLanguage, AnnisErrorListRef err);
 
-	public static native AnnisVec_AnnisCString annis_cs_find(AnnisCorpusStorage cs, AnnisVec_AnnisCString corpusNames, String query,
-			int query_language, long offset, LongByReference limit, int order, AnnisErrorListRef err);
+	public static native AnnisVec_AnnisCString annis_cs_find(AnnisCorpusStorage cs, AnnisVec_AnnisCString corpusNames,
+			String query, int query_language, long offset, LongByReference limit, int order, AnnisErrorListRef err);
 
 	public static native AnnisGraph annis_cs_subgraph(AnnisCorpusStorage cs, String corpusName,
-			AnnisVec_AnnisCString node_ids, NativeLong ctx_left, NativeLong ctx_right, String segmentation, AnnisErrorListRef err);
+			AnnisVec_AnnisCString node_ids, NativeLong ctx_left, NativeLong ctx_right, String segmentation,
+			AnnisErrorListRef err);
 
 	public static native AnnisGraph annis_cs_subcorpus_graph(AnnisCorpusStorage cs, String corpusName,
 			AnnisVec_AnnisCString corpus_ids, AnnisErrorListRef err);
@@ -185,8 +187,9 @@ public class CAPI implements Library {
 	public static native AnnisGraph annis_cs_subgraph_for_query_with_ctype(AnnisCorpusStorage cs, String corpusName,
 			String query, int queryLanguage, int ctype, AnnisErrorListRef err);
 
-	public static native AnnisFrequencyTable_AnnisCString annis_cs_frequency(AnnisCorpusStorage cs, AnnisVec_AnnisCString corpusNames,
-			String query, int queryLanguage, String frequencyQueryDefinition, AnnisErrorListRef err);
+	public static native AnnisFrequencyTable_AnnisCString annis_cs_frequency(AnnisCorpusStorage cs,
+			AnnisVec_AnnisCString corpusNames, String query, int queryLanguage, String frequencyQueryDefinition,
+			AnnisErrorListRef err);
 
 	public static native AnnisVec_AnnisComponent annis_cs_list_components_by_type(AnnisCorpusStorage cs,
 			String corpusName, int ctype);
@@ -201,46 +204,48 @@ public class CAPI implements Library {
 	public static native void annis_cs_apply_update(AnnisCorpusStorage cs, String corpusName, AnnisGraphUpdate update,
 			AnnisErrorListRef err);
 
-	public static native void annis_cs_import_from_fs(AnnisCorpusStorage cs, String path, int format, String corpusName,
-			AnnisErrorListRef err);
+	public static native CharPointer annis_cs_import_from_fs(AnnisCorpusStorage cs, String path, int format,
+			String corpusName, AnnisErrorListRef err);
 
-	public static native boolean annis_cs_validate_query(AnnisCorpusStorage cs, AnnisVec_AnnisCString corpusNames, String query,
-			int queryLanguage, AnnisErrorListRef err);
+	public static native boolean annis_cs_validate_query(AnnisCorpusStorage cs, AnnisVec_AnnisCString corpusNames,
+			String query, int queryLanguage, AnnisErrorListRef err);
 
 	public static native QueryAttributeDescription annis_cs_node_descriptions(AnnisCorpusStorage cs, String query,
 			int queryLanguage, AnnisErrorListRef err);
 
 	public static native boolean annis_cs_delete(AnnisCorpusStorage cs, String corpusName, AnnisErrorListRef err);
-	
+
 	public static native void annis_cs_unload(AnnisCorpusStorage cs, String corpusName, AnnisErrorListRef err);
 
 	// graph update class
 
 	public static native AnnisGraphUpdate annis_graphupdate_new();
 
-	public static native void annis_graphupdate_add_node(AnnisGraphUpdate ptr, String node_name, String node_type);
+	public static native void annis_graphupdate_add_node(AnnisGraphUpdate ptr, String node_name, String node_type,
+			AnnisErrorListRef err);
 
-	public static native void annis_graphupdate_delete_node(AnnisGraphUpdate ptr, String node_name);
+	public static native void annis_graphupdate_delete_node(AnnisGraphUpdate ptr, String node_name,
+			AnnisErrorListRef err);
 
 	public static native void annis_graphupdate_add_node_label(AnnisGraphUpdate ptr, String node_name, String anno_ns,
-			String anno_name, String anno_value);
+			String anno_name, String anno_value, AnnisErrorListRef err);
 
 	public static native void annis_graphupdate_delete_node_label(AnnisGraphUpdate ptr, String node_name,
-			String anno_ns, String anno_name);
+			String anno_ns, String anno_name, AnnisErrorListRef err);
 
 	public static native void annis_graphupdate_add_edge(AnnisGraphUpdate ptr, String source_node, String target_node,
-			String layer, String component_type, String component_name);
+			String layer, String component_type, String component_name, AnnisErrorListRef err);
 
 	public static native void annis_graphupdate_delete_edge(AnnisGraphUpdate ptr, String source_node,
-			String target_node, String layer, String component_type, String component_name);
+			String target_node, String layer, String component_type, String component_name, AnnisErrorListRef err);
 
 	public static native void annis_graphupdate_add_edge_label(AnnisGraphUpdate ptr, String source_node,
 			String target_node, String layer, String component_type, String component_name, String anno_ns,
-			String anno_name, String anno_value);
+			String anno_name, String anno_value, AnnisErrorListRef err);
 
 	public static native void annis_graphupdate_delete_edge_label(AnnisGraphUpdate ptr, String source_node,
 			String target_node, String layer, String component_type, String component_name, String anno_ns,
-			String anno_name);
+			String anno_name, AnnisErrorListRef err);
 
 	// GraphDB classes
 
