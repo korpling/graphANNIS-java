@@ -15,7 +15,9 @@
  */
 package org.corpus_tools.graphannis;
 
+import org.corpus_tools.graphannis.capi.AnnisErrorListRef;
 import org.corpus_tools.graphannis.capi.CAPI;
+import org.corpus_tools.graphannis.errors.GraphANNISException;
 
 /**
  * An API for applying atomic updates to a graph DB.
@@ -33,45 +35,64 @@ public class GraphUpdate {
 		return this.instance;
 	}
 
-	public void addNode(String node_name, String node_type) {
-		CAPI.annis_graphupdate_add_node(instance, node_name, node_type);
+	public void addNode(String node_name, String node_type) throws GraphANNISException {
+		AnnisErrorListRef err = new AnnisErrorListRef();
+		CAPI.annis_graphupdate_add_node(instance, node_name, node_type, err);
+		err.checkErrors();
 	}
 
-	public void addNode(String node_name) {
-		CAPI.annis_graphupdate_add_node(instance, node_name, "node");
+	public void addNode(String node_name) throws GraphANNISException {
+		AnnisErrorListRef err = new AnnisErrorListRef();
+		CAPI.annis_graphupdate_add_node(instance, node_name, "node", err);
+		err.checkErrors();
 	}
 
-	public void deleteNode(String node_name) {
-		CAPI.annis_graphupdate_delete_node(instance, node_name);
+	public void deleteNode(String node_name) throws GraphANNISException {
+		AnnisErrorListRef err = new AnnisErrorListRef();
+		CAPI.annis_graphupdate_delete_node(instance, node_name, err);
+		err.checkErrors();
 	}
 
-	public void addNodeLabel(String node_name, String anno_ns, String anno_name, String anno_value) {
-		CAPI.annis_graphupdate_add_node_label(instance, node_name, anno_ns, anno_name, anno_value);
+	public void addNodeLabel(String node_name, String anno_ns, String anno_name, String anno_value)
+			throws GraphANNISException {
+		AnnisErrorListRef err = new AnnisErrorListRef();
+		CAPI.annis_graphupdate_add_node_label(instance, node_name, anno_ns, anno_name, anno_value, err);
+		err.checkErrors();
 	}
 
-	public void deleteNodeLabel(String node_name, String anno_ns, String anno_name) {
-		CAPI.annis_graphupdate_delete_node_label(instance, node_name, anno_ns, anno_name);
+	public void deleteNodeLabel(String node_name, String anno_ns, String anno_name) throws GraphANNISException {
+		AnnisErrorListRef err = new AnnisErrorListRef();
+		CAPI.annis_graphupdate_delete_node_label(instance, node_name, anno_ns, anno_name, err);
+		err.checkErrors();
 	}
 
 	public void addEdge(String source_node, String target_node, String layer, String component_type,
-			String component_name) {
-		CAPI.annis_graphupdate_add_edge(instance, source_node, target_node, layer, component_type, component_name);
+			String component_name) throws GraphANNISException {
+		AnnisErrorListRef err = new AnnisErrorListRef();
+		CAPI.annis_graphupdate_add_edge(instance, source_node, target_node, layer, component_type, component_name, err);
+		err.checkErrors();
 	}
 
 	public void deleteEdge(String source_node, String target_node, String layer, String component_type,
-			String component_name) {
-		CAPI.annis_graphupdate_add_edge(instance, source_node, target_node, layer, component_type, component_name);
+			String component_name) throws GraphANNISException {
+		AnnisErrorListRef err = new AnnisErrorListRef();
+		CAPI.annis_graphupdate_add_edge(instance, source_node, target_node, layer, component_type, component_name, err);
+		err.checkErrors();
 	}
 
 	public void addEdgeLabel(String source_node, String target_node, String layer, String component_type,
-			String component_name, String anno_ns, String anno_name, String anno_value) {
+			String component_name, String anno_ns, String anno_name, String anno_value) throws GraphANNISException {
+		AnnisErrorListRef err = new AnnisErrorListRef();
 		CAPI.annis_graphupdate_add_edge_label(instance, source_node, target_node, layer, component_type, component_name,
-				anno_ns, anno_name, anno_value);
+				anno_ns, anno_name, anno_value, err);
+		err.checkErrors();
 	}
 
 	public void deleteEdgeLabel(String source_node, String target_node, String layer, String component_type,
-			String component_name, String anno_ns, String anno_name) {
+			String component_name, String anno_ns, String anno_name) throws GraphANNISException {
+		AnnisErrorListRef err = new AnnisErrorListRef();
 		CAPI.annis_graphupdate_delete_edge_label(instance, source_node, target_node, layer, component_type,
-				component_name, anno_ns, anno_name);
+				component_name, anno_ns, anno_name, err);
+		err.checkErrors();
 	}
 }

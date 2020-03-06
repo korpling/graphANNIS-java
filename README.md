@@ -2,7 +2,7 @@
 
 # graphANNIS Java Bindings
 
-GraphANNIS is a library for corpus linguistic queries and these are the Java bindings to **graphANNIS core library version 0.24.0**.
+GraphANNIS is a library for corpus linguistic queries and these are the Java bindings to **graphANNIS core library version 0.26.0**.
 
 ## How to compile
 
@@ -48,6 +48,7 @@ and access it at http://localhost:9999/site/. You can choose another port, e.g. 
 
 1. **Start** the release process with `mvn gitflow:release-start` or `mvn gitflow:hotfix-start`
 2. **Test** with `mvn test`
+3. Update **changelog** with `mvn -N keepachangelog:release`
 3. **Finish** the release process with `mvn gitflow:release-finish` or `mvn gitflow:hotfix-finish`
 4. **Release** the closed staging repository to Maven Central with the Nexus interface: [https://oss.sonatype.org/](https://oss.sonatype.org/)
 
