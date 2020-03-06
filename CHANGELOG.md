@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Add `diskBased` parameter to import function
+
 ## [0.27.0] - 2020-03-06
 
 ### Changed

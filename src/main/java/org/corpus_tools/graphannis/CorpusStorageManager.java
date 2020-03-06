@@ -708,12 +708,16 @@ public class CorpusStorageManager {
 	 * @param format     The format in which this corpus data is stored.
 	 * @param corpusName If not "null", override the name of the new corpus for file
 	 *                   formats that already provide a corpus name.
+	 * @param diskBased  If true, certain elements like the node annotation storage
+	 *                   will be be disk-based instead of using in-memory
+	 *                   representations.
 	 * @throws GraphANNISException
 	 */
-	public void importFromFileSystem(String path, ImportFormat format, String corpusName) throws GraphANNISException {
+	public void importFromFileSystem(String path, ImportFormat format, String corpusName, boolean diskBased)
+			throws GraphANNISException {
 		if (instance != null) {
 			AnnisErrorListRef err = new AnnisErrorListRef();
-			CAPI.annis_cs_import_from_fs(instance, path, format.capiVal, corpusName, err);
+			CAPI.annis_cs_import_from_fs(instance, path, format.capiVal, corpusName, diskBased, err);
 			err.checkErrors();
 		}
 	}
