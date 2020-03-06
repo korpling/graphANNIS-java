@@ -5,6 +5,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.27.0] - 2020-03-06
+
+### Changed
+
+- Update graphANNIS to 0.26.0
+
 ## [0.26.0] - 2019-11-25
 
 ### Changed
@@ -47,3 +53,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Create and deploy a P2 repository to GitHub pages to make using graphANNIS from Eclipse RCP projects like Hexatomic easier
 - Update to bugfix version 2.9.9.1 from jackson-databind (CVE-2019-14379 and CVE-2019-14439)
 
+[Unreleased]: https://github.com/korpling/graphANNIS/compare/v0.27.0...HEAD
+[0.27.0]: https://github.com/korpling/graphANNIS/compare/v0.26.0...v0.27.0
+[0.26.0]: https://github.com/korpling/graphANNIS/compare/v0.25.0...v0.26.0
+[0.25.0]: https://github.com/korpling/graphANNIS/compare/v0.24.0...v0.25.0
+[0.24.0]: https://github.com/korpling/graphANNIS/compare/v0.23.0...v0.24.0
