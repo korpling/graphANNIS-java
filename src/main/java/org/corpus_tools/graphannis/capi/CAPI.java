@@ -205,7 +205,7 @@ public class CAPI implements Library {
 			AnnisErrorListRef err);
 
 	public static native CharPointer annis_cs_import_from_fs(AnnisCorpusStorage cs, String path, int format,
-			String corpusName, AnnisErrorListRef err);
+			String corpusName, boolean diskBased, AnnisErrorListRef err);
 
 	public static native boolean annis_cs_validate_query(AnnisCorpusStorage cs, AnnisVec_AnnisCString corpusNames,
 			String query, int queryLanguage, AnnisErrorListRef err);
