@@ -17,7 +17,7 @@ package org.corpus_tools.graphannis.capi;
 
 /**
  *
- * @author Thomas Krause <thomaskrause@posteo.de>
+ * @author Thomas Krause {@literal <thomaskrause@posteo.de>}
  */
 public interface AnnisQueryLanguage {
 
