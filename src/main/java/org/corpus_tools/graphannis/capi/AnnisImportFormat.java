@@ -24,4 +24,10 @@ public interface AnnisImportFormat {
 	/** Legacy relANNIS import file format */
 	public static final int RelANNIS = 0;
 
+  /**
+   * [GraphML](http://graphml.graphdrawing.org/) based export-format, suitable to be imported from other graph databases.
+   * This format follows the extensions/conventions of the Neo4j [GraphML module](https://neo4j.com/docs/labs/apoc/current/import/graphml/).
+   */
+	public static final int GraphML = 1;
+
 }
