@@ -15,7 +15,7 @@ if [ -n "$GITHUB_API_KEY" ]; then
     # copy the P2 repository content from the maven build directory
     cp -R ${GITHUB_WORKSPACE}/target/repository/* .
     git add .
-    git -c user.name='travis' -c user.email='travis' commit -m "add p2 repository for version ${SHORT_VERSION}"
+    git -c user.name='gh-actions' -c user.email='gh-actions' commit -m "add p2 repository for version ${SHORT_VERSION}"
     echo "pushing to gh-pages to ${GITHUB_REPOSITORY}"
     git push -q https://$GITHUB_API_KEY@github.com/${GITHUB_REPOSITORY} gh-pages &>/dev/null
     cd "$GITHUB_WORKSPACE"
