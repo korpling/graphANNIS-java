@@ -2,11 +2,11 @@
 
 # Used by CI to deploy the existing target/repository/<version> directory to Github Pages
 
-if [ -n "$GITHUB_API_KEY" ]; then
+if [ -n "$GITHUB_TOKEN" ]; then
     cd "$GITHUB_WORKSPACE"
 
     echo "cloning gh-pages from ${GITHUB_REPOSITORY}"
-    git clone -q  -b gh-pages https://$GITHUB_API_KEY@github.com/${GITHUB_REPOSITORY} gh-pages &>/dev/null
+    git clone -q  -b gh-pages https://$GITHUB_TOKEN@github.com/${GITHUB_REPOSITORY} gh-pages &>/dev/null
     cd gh-pages
     mkdir -p p2/${SHORT_VERSION}
     cd p2/${SHORT_VERSION}
@@ -17,9 +17,9 @@ if [ -n "$GITHUB_API_KEY" ]; then
     git add .
     git -c user.name='gh-actions' -c user.email='gh-actions' commit -m "add p2 repository for version ${SHORT_VERSION}"
     echo "pushing to gh-pages to ${GITHUB_REPOSITORY}"
-    git push -q https://$GITHUB_API_KEY@github.com/${GITHUB_REPOSITORY} gh-pages &>/dev/null
+    git push -q https://$GITHUB_TOKEN@github.com/${GITHUB_REPOSITORY} gh-pages &>/dev/null
     cd "$GITHUB_WORKSPACE"
 else
-	>&2 echo "Cannot deploy P2 repository because GITHUB_API_KEY environment variable is not set"
+	>&2 echo "Cannot deploy P2 repository because GITHUB_TOKEN environment variable is not set"
 	exit 1
 fi
