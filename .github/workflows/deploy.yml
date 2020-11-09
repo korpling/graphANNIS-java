@@ -5,7 +5,7 @@ jobs:
   p2:
     name: Deploy as P2 repository
     # Only run Job on tagged commits that start with "v"
-    if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/head/feature/migrate-github-actions'
+    # if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-18.04
     steps:
       - run: 'mvn p2:site'
