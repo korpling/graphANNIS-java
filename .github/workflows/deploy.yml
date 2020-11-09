@@ -10,5 +10,5 @@ jobs:
     steps:
       - run: 'mvn p2:site'
       - run: 'misc/deploy-p2.sh'
-        with:
+        env:
             SHORT_VERSION: echo ${TRAVIS_TAG:-develop} | sed -E 's/(\.[0-9]+)$//'
