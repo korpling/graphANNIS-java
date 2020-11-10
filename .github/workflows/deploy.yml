@@ -5,7 +5,7 @@ jobs:
   p2:
     name: Deploy as P2 repository
     # Only run Job on tagged commits that start with "v"
-    # if: startsWith(github.ref, 'refs/tags/v')
+    if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-18.04
     steps:
       - name: Checkout
@@ -22,11 +22,8 @@ jobs:
       - name: Remove old files for this version
         run: rm -Rf gh-pages/p2/$SHORT_VERSION
       - run: mkdir --verbose -p gh-pages/p2/$SHORT_VERSION
-      - run: ls target/repository/
-      - run: ls gh-pages/p2/
       - name: copy the P2 repository content from the maven build directory
         run: cp -R target/repository/* gh-pages/p2/$SHORT_VERSION
-      - run: ls gh-pages/p2/$SHORT_VERSION
       - run: git add p2/$SHORT_VERSION
         working-directory: gh-pages
       - run: git -c user.name='gh-actions' -c user.email='gh-actions' commit -m "add p2 repository for version $SHORT_VERSION"
