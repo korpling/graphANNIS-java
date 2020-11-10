@@ -12,5 +12,5 @@ jobs:
       with:
           java-version: '8'
           java-package: jdk
-    - name: Run Maven test
-      run: mvn test
+    - name: Run Maven install (includes tests)
+      run: mvn install
