@@ -31,6 +31,10 @@ jobs:
         working-directory: gh-pages
       - run: git -c user.name='gh-actions' -c user.email='gh-actions' commit -m "add p2 repository for version $SHORT_VERSION"
         working-directory: gh-pages
-      - run: git push -q https://${{secrets.GITHUB_TOKEN}}@github.com/$GITHUB_REPOSITORY gh-pages
-        working-directory: gh-pages
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          directory: gh-pages
+          branch: gh-pages
       
