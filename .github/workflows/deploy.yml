@@ -21,6 +21,8 @@ jobs:
       - run: mkdir -p gh-pages/p2/$SHORT_VERSION
       - name: Remove old files for this version
         run: rm -Rf gh-pages/p2/$SHORT_VERSION
+      - run: ls target/repository/
+      - run: ls gh-pages/p2/
       - name: copy the P2 repository content from the maven build directory
         run: cp -R target/repository/* gh-pages/p2/$SHORT_VERSION
       - run: git add gh-pages/p2/$SHORT_VERSION
