@@ -296,7 +296,7 @@
 			<plugin>
 				<groupId>com.googlecode.maven-download-plugin</groupId>
 				<artifactId>download-maven-plugin</artifactId>
-				<version>1.4.2</version>
+				<version>1.6.0</version>
 				<executions>
 					<execution>
 						<id>download-linux-binaries</id>
@@ -307,6 +307,7 @@
 						<configuration>
 							<url>https://github.com/korpling/graphANNIS/releases/download/v${core.version}/libgraphannis.so</url>
 							<outputDirectory>${project.build.directory}/native/linux-x86-64/</outputDirectory>
+							<sha256>d9e78906a4693dbbcbb22241e7d1ce49927814d280cf31025ff69b93008a75d1</sha256>
 						</configuration>
 					</execution>
 					<execution>
@@ -318,6 +319,7 @@
 						<configuration>
 							<url>https://github.com/korpling/graphANNIS/releases/download/v${core.version}/graphannis.dll</url>
 							<outputDirectory>${project.build.directory}/native/win32-x86-64/</outputDirectory>
+							<sha256>21985f1e3d53aabd5d3080ec9c8d6212a458a4fb643fa1c2fac190b84f360c24</sha256>
 						</configuration>
 					</execution>
 					<execution>
@@ -329,6 +331,7 @@
 						<configuration>
 							<url>https://github.com/korpling/graphANNIS/releases/download/v${core.version}/libgraphannis.dylib</url>
 							<outputDirectory>${project.build.directory}/native/darwin/</outputDirectory>
+							<sha256>9e23288ef9884449a145c2bd749cb99069d9a188e82dfd37fd93aa32252f42fd</sha256>
 						</configuration>
 					</execution>
 				</executions>
