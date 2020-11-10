@@ -17,13 +17,13 @@ jobs:
       - name: Set SHORT_VERSION environment variable
         run: echo "SHORT_VERSION=$(echo ${GITHUB_REF:-refs/heads/develop} | sed -E 's/^(refs\/heads\/)(feature\/)?(.*)(\.[0-9]+)?$/\3/')" >> $GITHUB_ENV
       - run: 'mvn install p2:site'
-      - run: git clone -q  -b gh-pages https://github.com/${{GITHUB_REPOSITORY}} gh-pages
-      - run: mkdir -p gh-pages/p2/${{env.SHORT_VERSION}}
+      - run: git clone -q  -b gh-pages https://github.com/$GITHUB_REPOSITORY gh-pages
+      - run: mkdir -p gh-pages/p2/$SHORT_VERSION
       - name: Remove old files for this version
-        run: rm -Rf gh-pages/p2/${{env.SHORT_VERSION}}
+        run: rm -Rf gh-pages/p2/$SHORT_VERSION
       - name: copy the P2 repository content from the maven build directory
-        run: cp -R target/repository/* gh-pages/p2/${{env.SHORT_VERSION}}
-      - run: git add gh-pages/p2/${{env.SHORT_VERSION}}
-      - run: git -c user.name='gh-actions' -c user.email='gh-actions' commit -m "add p2 repository for version ${{SHORT_VERSION}}"
-      - run: git push -q https://${{secrets.GITHUB_TOKEN}}@github.com/${{GITHUB_REPOSITORY}} gh-pages &>/dev/null
+        run: cp -R target/repository/* gh-pages/p2/$SHORT_VERSION
+      - run: git add gh-pages/p2/$SHORT_VERSION
+      - run: git -c user.name='gh-actions' -c user.email='gh-actions' commit -m "add p2 repository for version $SHORT_VERSION"
+      - run: git push -q https://${{secrets.GITHUB_TOKEN}}@github.com/$GITHUB_REPOSITORY gh-pages &>/dev/null
       
