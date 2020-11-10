@@ -7,7 +7,7 @@
 	<artifactId>graphannis</artifactId>
 	<name>graphANNIS</name>
 	<description>A wrapper around the C API of graphANNIS (version ${core.version})</description>
-	<version>0.30.0</version>
+	<version>0.30.1-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 	<url>https://github.com/korpling/graphANNIS</url>
 	<scm>
