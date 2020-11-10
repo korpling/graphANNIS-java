@@ -1,4 +1,4 @@
-[![Javadocs](http://www.javadoc.io/badge/org.corpus-tools/graphannis.svg)](http://www.javadoc.io/doc/org.corpus-tools/graphannis)
+[![Javadocs](http://www.javadoc.io/badge/org.corpus-tools/graphannis.svg)](http://www.javadoc.io/doc/org.corpus-tools/graphannis) ![Automated tests](https://github.com/korpling/graphANNIS-java/workflows/Automated%20tests/badge.svg)
 
 # graphANNIS Java Bindings
 
