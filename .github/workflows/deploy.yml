@@ -27,7 +27,10 @@ jobs:
       - name: copy the P2 repository content from the maven build directory
         run: cp -R target/repository/* gh-pages/p2/$SHORT_VERSION
       - run: ls gh-pages/p2/$SHORT_VERSION
-      - run: git add gh-pages/p2/$SHORT_VERSION
+      - run: git add p2/$SHORT_VERSION
+        working-directory: gh-pages
       - run: git -c user.name='gh-actions' -c user.email='gh-actions' commit -m "add p2 repository for version $SHORT_VERSION"
+        working-directory: gh-pages
       - run: git push -q https://${{secrets.GITHUB_TOKEN}}@github.com/$GITHUB_REPOSITORY gh-pages &>/dev/null
+        working-directory: gh-pages
       
