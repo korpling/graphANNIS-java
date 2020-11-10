@@ -21,5 +21,3 @@ jobs:
             ${{ runner.os }}-maven-
       - name: Run Maven install (includes tests)
         run: mvn install
-      - name: Run Maven test
-        run: mvn install
