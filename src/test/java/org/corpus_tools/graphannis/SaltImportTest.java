@@ -217,8 +217,8 @@ public class SaltImportTest {
 			matches.add(result[i]);
 		}
 		assertEquals(2, matches.size());
-		Assert.assertTrue(matches.contains("salt:/root/doc1#MyToken"));
-		Assert.assertTrue(matches.contains("salt:/root/doc2#MyToken"));
+		Assert.assertTrue(matches.contains("root/doc1#MyToken"));
+		Assert.assertTrue(matches.contains("root/doc2#MyToken"));
 
 	}
 
