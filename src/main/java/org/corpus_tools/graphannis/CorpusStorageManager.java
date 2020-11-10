@@ -124,7 +124,12 @@ public class CorpusStorageManager {
 		 * "http://korpling.github.io/ANNIS/4.0/developer-guide/annisimportformat.html">relANNIS
 		 * import file format</a>
 		 */
-		RelANNIS(AnnisImportFormat.RelANNIS);
+		RelANNIS(AnnisImportFormat.RelANNIS),
+	  /**
+   		* [GraphML](http://graphml.graphdrawing.org/) based export-format, suitable to be imported from other graph databases.
+   		* This format follows the extensions/conventions of the Neo4j [GraphML module](https://neo4j.com/docs/labs/apoc/current/import/graphml/).
+   		*/
+		GraphML(AnnisImportFormat.GraphML);
 
 		protected final int capiVal;
 
