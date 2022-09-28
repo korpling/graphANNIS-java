@@ -55,10 +55,6 @@ This will update versions, the changelog, our citation file (`CITATION.cff`) and
 
 CI will automatically create a P2 repository in the gh-pages branch in under the sub-folder `p2/<short-version>`, e.g. https://korpling.github.io/graphannis-java/p2/v0.22/. 
 
-## 3rd party dependencies
-
-This software depends on several 3rd party libraries. These are documented in the THIRD-PARTY.txt file in this folder.
-
 ## Author(s)
 
 * Thomas Krause (thomas.krause@hu-berlin.de)
