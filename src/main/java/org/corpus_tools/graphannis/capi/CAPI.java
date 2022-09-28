@@ -209,6 +209,10 @@ public class CAPI implements Library {
 	public static native CharPointer annis_cs_import_from_fs(AnnisCorpusStorage cs, String path, int format,
 			String corpusName, boolean diskBased, AnnisErrorListRef err);
 
+    public static native void annis_cs_export_to_fs(AnnisCorpusStorage cs,
+        AnnisVec_AnnisCString corpusNames, String path, AnnisExportFormat format,
+        AnnisErrorListRef err);
+
 	public static native boolean annis_cs_validate_query(AnnisCorpusStorage cs, AnnisVec_AnnisCString corpusNames,
 			String query, int queryLanguage, AnnisErrorListRef err);
 
