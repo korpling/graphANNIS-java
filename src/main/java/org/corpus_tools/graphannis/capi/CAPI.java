@@ -45,7 +45,7 @@ public class CAPI implements Library {
     }
 
     public synchronized boolean isClosed() {
-      return this.getPointer() != Pointer.NULL;
+      return this.getPointer() == Pointer.NULL;
     }
   }
 
