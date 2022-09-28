@@ -9,9 +9,9 @@
 	<packaging>bundle</packaging>
 	<url>https://github.com/korpling/graphANNIS</url>
 	<scm>
-		<connection>scm:git:https://github.com/korpling/graphANNIS.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com/korpling/graphANNIS.git</developerConnection>
-		<url>https://github.com/korpling/graphANNIS</url>
+		<connection>scm:git:https://github.com/korpling/graphANNIS-java.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/korpling/graphANNIS-java.git</developerConnection>
+		<url>https://github.com/korpling/graphANNIS-java</url>
 	</scm>
 	<licenses>
 		<license>
