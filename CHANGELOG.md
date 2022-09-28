@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add export function to corpus storage manager
+- Implement `AutoCloseable` interface for `CorpusStorageManager`.
+  This allows to it in try-statements and automatically clean up the resources.
 
 ## [0.30.0] - 2020-11-10
 
