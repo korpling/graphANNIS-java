@@ -1,0 +1,12 @@
+# YAML 1.2
+# Metadata for citation of this software according to the CFF format (https://citation-file-format.github.io/)
+cff-version: 1.2.0
+message: If you use this software, please cite it using these metadata.
+title: 'graphANNIS Java Bindings'
+authors:
+- given-names: Thomas
+  family-names: Krause
+  affiliation: Humboldt-Universität zu Berlin
+  orcid: https://orcid.org/0000-0003-3731-2422
+repository-code: https://github.com/korpling/graphANNIS-java
+license:  Apache-2.0

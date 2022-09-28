@@ -1,0 +1,103 @@
+cff-version: 1.2.0
+type: software
+message: If you use this software, please cite it using these metadata.
+title: graphANNIS Java Bindings
+authors:
+- given-names: Thomas
+  family-names: Krause
+  affiliation: Humboldt-Universität zu Berlin
+  orcid: https://orcid.org/0000-0003-3731-2422
+repository-code: https://github.com/korpling/graphANNIS
+license: Apache-2.0
+version: 0.30.1-SNAPSHOT
+date-released: 2022-09-28
+references:
+- type: software
+  title: 'Jackson module: JAXB Annotations'
+  version: 2.9.9
+  abbreviation: com.fasterxml.jackson.module:jackson-module-jaxb-annotations
+  license: Apache-2.0
+  notes: More license information can be found in the THIRD-PARTY/Jackson_module_JAXB_Annotations
+    directory.
+  authors:
+  - name: Tatu Saloranta
+  - name: Christopher Currie
+  - name: Paul Brown
+  repository-code: http://github.com/FasterXML/jackson-modules-base/jackson-module-jaxb-annotations
+- type: software
+  title: Jackson-annotations
+  version: 2.11.1
+  abbreviation: com.fasterxml.jackson.core:jackson-annotations
+  license: Apache-2.0
+  notes: More license information can be found in the THIRD-PARTY/Jackson_annotations
+    directory.
+  authors:
+  - name: Tatu Saloranta
+  - name: Christopher Currie
+  - name: Paul Brown
+  repository-code: http://github.com/FasterXML/jackson-annotations
+- type: software
+  title: Jackson-core
+  version: 2.9.9
+  abbreviation: com.fasterxml.jackson.core:jackson-core
+  license: Apache-2.0
+  notes: More license information can be found in the THIRD-PARTY/Jackson_core directory.
+  authors:
+  - name: Tatu Saloranta
+  - name: Christopher Currie
+  - name: Paul Brown
+  repository-code: http://github.com/FasterXML/jackson-core
+- type: software
+  title: Java Native Access
+  version: 5.3.1
+  abbreviation: net.java.dev.jna:jna
+  license: Apache-2.0
+  notes: More license information can be found in the THIRD-PARTY/Java_Native_Access
+    directory.
+  authors:
+  - name: Timothy Wall
+  - name: Matthias Bläsing
+  repository-code: https://github.com/java-native-access/jna
+- type: software
+  title: JavaBeans Activation Framework API jar
+  version: 1.2.0
+  abbreviation: javax.activation:javax.activation-api
+  license: CDDL-1.1 OR GPL-2.0-only WITH Classpath-exception-2.0
+  notes: More license information can be found in the THIRD-PARTY/JavaBeans_Activation_Framework_API_jar
+    directory.
+  authors:
+  - name: Bill Shannon
+  repository-code: https://github.com/javaee/activation/javax.activation-api
+- type: software
+  title: SLF4J API Module
+  version: 1.7.25
+  abbreviation: org.slf4j:slf4j-api
+  license: MIT
+  notes: More license information can be found in the THIRD-PARTY/SLF4J_API_Module
+    directory.
+  authors:
+  - name: Ceki Gulcu
+  repository-code: https://github.com/qos-ch/slf4j/slf4j-api
+- type: software
+  title: jackson-databind
+  version: 2.11.1
+  abbreviation: com.fasterxml.jackson.core:jackson-databind
+  license: Apache-2.0
+  notes: More license information can be found in the THIRD-PARTY/jackson_databind
+    directory.
+  authors:
+  - name: Tatu Saloranta
+  - name: Christopher Currie
+  - name: Paul Brown
+  repository-code: http://github.com/FasterXML/jackson-databind
+- type: software
+  title: jaxb-api
+  version: 2.3.1
+  abbreviation: javax.xml.bind:jaxb-api
+  license: CDDL-1.1 OR GPL-2.0-only WITH Classpath-exception-2.0
+  notes: More license information can be found in the THIRD-PARTY/jaxb_api directory.
+  authors:
+  - name: Roman Grigoriadi
+  - name: Martin Grebac
+  - name: Iaroslav Savytskyi
+  repository-code: https://github.com/javaee/jaxb-spec.git/jaxb-api

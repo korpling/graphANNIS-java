@@ -46,11 +46,12 @@ and access it at http://localhost:9999/site/. You can choose another port, e.g. 
 
 ## Release process
 
-1. **Start** the release process with `mvn gitflow:release-start` or `mvn gitflow:hotfix-start`
-2. **Test** with `mvn test`
-3. Update **changelog** with `mvn -N keepachangelog:release`
-3. **Finish** the release process with `mvn gitflow:release-finish` or `mvn gitflow:hotfix-finish`
-4. **Release** the closed staging repository to Maven Central with the Nexus interface: [https://oss.sonatype.org/](https://oss.sonatype.org/)
+1. Check the changelog (`CHANGELOG.md`): note the last release version number and which kind of changes have been made since the last release. Determine if this is a major, minor or patch release according to [semantic versioning](https://semver.org/). 
+2. **Create a release** using Maven.  The command will ask you for the new version number use the most appropriate with respect to the previous version number and the changes made.
+```
+mvn release:clean release:prepare release:perform
+```
+This will update versions, the changelog, our citation file (`CITATION.cff`) and the contents of the `THIRD-PARTY` folder.
 
 CI will automatically create a P2 repository in the gh-pages branch in under the sub-folder `p2/<short-version>`, e.g. https://korpling.github.io/graphannis-java/p2/v0.22/. 
 
@@ -60,4 +61,4 @@ This software depends on several 3rd party libraries. These are documented in th
 
 ## Author(s)
 
-* Thomas Krause (thomaskrause@posteo.de)
+* Thomas Krause (thomas.krause@hu-berlin.de)
