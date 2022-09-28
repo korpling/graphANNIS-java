@@ -3,6 +3,7 @@ package org.corpus_tools.graphannis.model;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.corpus_tools.graphannis.errors.GraphANNISException;
 
 public class Edge {
 	private Node source;
@@ -30,7 +31,7 @@ public class Edge {
 		this.graph = graph;
 	}
 	
-	public Node getSource() {
+    public Node getSource() throws GraphANNISException {
 		if(source == null) {
 			source = graph.getNodeForID(sourceID);
 		}
@@ -41,7 +42,7 @@ public class Edge {
 		return sourceID;
 	}
 	
-	public Node getTarget() {
+    public Node getTarget() throws GraphANNISException {
 		if(target == null) {
 			target = graph.getNodeForID(targetID);
 		}

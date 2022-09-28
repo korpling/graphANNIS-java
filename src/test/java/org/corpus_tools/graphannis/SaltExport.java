@@ -15,15 +15,20 @@
  */
 package org.corpus_tools.graphannis;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Splitter;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Range;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
+import org.corpus_tools.graphannis.errors.GraphANNISException;
 import org.corpus_tools.graphannis.model.Component;
 import org.corpus_tools.graphannis.model.ComponentType;
 import org.corpus_tools.graphannis.model.Edge;
@@ -50,13 +55,6 @@ import org.corpus_tools.salt.core.SLayer;
 import org.corpus_tools.salt.core.SNode;
 import org.corpus_tools.salt.core.SRelation;
 import org.corpus_tools.salt.util.SaltUtil;
-
-import com.google.common.base.Objects;
-import com.google.common.base.Splitter;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Range;
 
 /**
  * Allows to extract a Salt-Graph from a database subgraph.
@@ -91,18 +89,18 @@ public class SaltExport {
 
 	}
 
-	private boolean hasDominanceEdge(Node node) {
+    private boolean hasDominanceEdge(Node node) throws GraphANNISException {
 
 		List<Edge> outEdges = orig.getOutgoingEdges(node, ComponentType.Dominance);
 		return !outEdges.isEmpty();
 	}
 
-	private boolean hasCoverageEdge(Node node) {
+    private boolean hasCoverageEdge(Node node) throws GraphANNISException {
 		List<Edge> outEdges = orig.getOutgoingEdges(node, ComponentType.Coverage);
 		return !outEdges.isEmpty();
 	}
 
-	private SNode mapNode(Node node) {
+    private SNode mapNode(Node node) throws GraphANNISException {
 		SNode newNode;
 
 		// get all annotations for the node into a map, also create the node itself
@@ -129,7 +127,7 @@ public class SaltExport {
 		return newNode;
 	}
 
-	private void mapAndAddEdge(Edge origEdge) {
+    private void mapAndAddEdge(Edge origEdge) throws GraphANNISException {
 		SNode source = nodesByID.get(origEdge.getSourceID());
 		SNode target = nodesByID.get(origEdge.getTargetID());
 
@@ -207,7 +205,7 @@ public class SaltExport {
 		}
 	}
 
-	private void recreateText(final String name, List<SNode> rootNodes) {
+    private void recreateText(final String name, List<SNode> rootNodes) throws GraphANNISException {
 		final StringBuilder text = new StringBuilder();
 		final STextualDS ds = docGraph.createTextualDS("");
 
@@ -341,7 +339,7 @@ public class SaltExport {
 				});
 	}
 
-	public static SDocumentGraph map(Graph orig) {
+    public static SDocumentGraph map(Graph orig) throws GraphANNISException {
 		if (orig == null) {
 			return null;
 		}
@@ -351,7 +349,7 @@ public class SaltExport {
 		return export.docGraph;
 	}
 
-	private void mapDocGraph() {
+    private void mapDocGraph() throws GraphANNISException {
 
 		// create all new nodes
 		List<Edge> edges = new LinkedList<>();
@@ -375,19 +373,19 @@ public class SaltExport {
 		// find all chains of SOrderRelations and reconstruct the texts belonging to
 		// them
 		Multimap<String, SNode> orderRoots = docGraph.getRootsByRelationType(SALT_TYPE.SORDER_RELATION);
-		orderRoots.keySet().forEach((name) -> {
-			ArrayList<SNode> roots = new ArrayList<>(orderRoots.get(name));
-			if (SaltUtil.SALT_NULL_VALUE.equals(name)) {
-				name = null;
-			}
-			if (name == null || "".equals(name)) {
-				// only re-create text if this is the default (possible virtual) tokenization
-				recreateText(name, roots);
-			} else {
-				// add the text as label to the spans
-				addTextToSegmentation(name, roots);
-			}
-		});
+        for (String name : orderRoots.keySet()) {
+          ArrayList<SNode> roots = new ArrayList<>(orderRoots.get(name));
+          if (SaltUtil.SALT_NULL_VALUE.equals(name)) {
+            name = null;
+          }
+          if (name == null || "".equals(name)) {
+            // only re-create text if this is the default (possible virtual) tokenization
+            recreateText(name, roots);
+          } else {
+            // add the text as label to the spans
+            addTextToSegmentation(name, roots);
+          }
+        }
 
 		addNodeLayers();
 	}
@@ -418,7 +416,7 @@ public class SaltExport {
 
 	}
 
-	public static SCorpusGraph mapCorpusGraph(Graph orig) {
+    public static SCorpusGraph mapCorpusGraph(Graph orig) throws GraphANNISException {
 		if (orig == null) {
 			return null;
 		}
