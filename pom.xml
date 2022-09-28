@@ -5,14 +5,14 @@
 	<artifactId>graphannis</artifactId>
 	<name>graphANNIS</name>
 	<description>A wrapper around the C API of graphANNIS (version ${core.version})</description>
-	<version>0.31.2</version>
+	<version>0.31.3-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 	<url>https://github.com/korpling/graphANNIS</url>
 	<scm>
 		<connection>scm:git:https://github.com/korpling/graphANNIS-java.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/korpling/graphANNIS-java.git</developerConnection>
 		<url>https://github.com/korpling/graphANNIS-java</url>
-	  <tag>v0.31.2</tag>
+	  <tag>HEAD</tag>
   </scm>
 	<licenses>
 		<license>
