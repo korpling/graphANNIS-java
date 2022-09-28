@@ -28,7 +28,6 @@ public interface AnnisExportFormat {
    * <a href="https://neo4j.com/docs/labs/apoc/current/import/graphml/">GraphML module</a>).
    * </p>
    **/
-
   public static final int GraphML = 0;
   /**
    * Like {@link #GraphML} but compressed as ZIP file. Linked files are also copied into the ZIP
