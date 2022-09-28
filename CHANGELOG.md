@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Call the default goal in release plugin
+
 ## [0.31.1] - 2022-09-28
 
 ### Fixed

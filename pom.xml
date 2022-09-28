@@ -402,8 +402,7 @@
 				<configuration>
 					<preparationGoals>clean verify keepachangelog:release cff:create cff:third-party-folder scm:add scm:checkin</preparationGoals>
 					<tagNameFormat>v@{project.version}</tagNameFormat>
-					<goals>install</goals>
-					 <releaseProfiles>releases</releaseProfiles>
+					<releaseProfiles>releases</releaseProfiles>
 				</configuration>
 			</plugin>
 			<plugin>
