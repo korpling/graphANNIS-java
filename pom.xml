@@ -101,13 +101,7 @@
 			</properties>
 		</profile>
 		<profile>
-			<id>release</id>
-			<activation>
-				<property>
-					<name>performRelease</name>
-					<value>true</value>
-				</property>
-			</activation>
+			<id>releases</id>
 			<properties>
 				<!-- all binaries must be present in release mode -->
 				<bundle-native-libs>${native-libs-linux},${native-libs-macosx},${native-libs-windows}</bundle-native-libs>
@@ -158,10 +152,19 @@
 						<artifactId>nexus-staging-maven-plugin</artifactId>
 						<version>1.6.5</version>
 						<extensions>true</extensions>
+						<executions>
+		                  <execution>
+		                     <id>default-deploy</id>
+		                     <phase>deploy</phase>
+		                     <goals>
+		                        <goal>deploy</goal>
+		                     </goals>
+		                  </execution>
+		               </executions>
 						<configuration>
 							<serverId>ossrh</serverId>
 							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-							<autoReleaseAfterClose>false</autoReleaseAfterClose>
+							<autoReleaseAfterClose>true</autoReleaseAfterClose>
 							<stagingProgressTimeoutMinutes>120</stagingProgressTimeoutMinutes>
 						</configuration>
 					</plugin>
@@ -400,6 +403,7 @@
 					<preparationGoals>clean verify keepachangelog:release cff:create cff:third-party-folder scm:add scm:checkin</preparationGoals>
 					<tagNameFormat>v@{project.version}</tagNameFormat>
 					<goals>install</goals>
+					 <releaseProfiles>releases</releaseProfiles>
 				</configuration>
 			</plugin>
 			<plugin>
