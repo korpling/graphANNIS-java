@@ -63,7 +63,7 @@
 			osname=MacOSX;processor=x86-64
 		</native-libs-macosx>
 		<!-- The version of graphANNIS to wrap -->
-		<core.version>0.30.0</core.version>
+		<core.version>2.4.0</core.version>
 	</properties>
 	<profiles>
 		<profile>
@@ -292,7 +292,7 @@
 						<configuration>
 							<url>https://github.com/korpling/graphANNIS/releases/download/v${core.version}/libgraphannis.so</url>
 							<outputDirectory>${project.build.directory}/native/linux-x86-64/</outputDirectory>
-							<sha256>d9e78906a4693dbbcbb22241e7d1ce49927814d280cf31025ff69b93008a75d1</sha256>
+							<sha256>24673941fd7962ccf419ddc4af953927b535d0a0c5b8ffc28e53e53fd7379af7</sha256>
 						</configuration>
 					</execution>
 					<execution>
@@ -304,7 +304,7 @@
 						<configuration>
 							<url>https://github.com/korpling/graphANNIS/releases/download/v${core.version}/graphannis.dll</url>
 							<outputDirectory>${project.build.directory}/native/win32-x86-64/</outputDirectory>
-							<sha256>21985f1e3d53aabd5d3080ec9c8d6212a458a4fb643fa1c2fac190b84f360c24</sha256>
+							<sha256>d8a1d74bd0e2f77a6f3fa5ac5249ae7d1ed4f2b1db1a6df071152f761cd49911</sha256>
 						</configuration>
 					</execution>
 					<execution>
@@ -316,7 +316,7 @@
 						<configuration>
 							<url>https://github.com/korpling/graphANNIS/releases/download/v${core.version}/libgraphannis.dylib</url>
 							<outputDirectory>${project.build.directory}/native/darwin/</outputDirectory>
-							<sha256>9e23288ef9884449a145c2bd749cb99069d9a188e82dfd37fd93aa32252f42fd</sha256>
+							<sha256>2e1c6eef1732f4c3e17eb58aac746b53b3d0a2a42026f158775b8b64d7affc60</sha256>
 						</configuration>
 					</execution>
 				</executions>
