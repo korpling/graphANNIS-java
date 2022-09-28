@@ -123,7 +123,8 @@ public class CAPI implements Library {
 
 	public static native AnnisEdge annis_vec_edge_get(AnnisVec_AnnisEdge ptr, NativeLong i);
 
-	public static native NodeIDByRef annis_iter_nodeid_next(AnnisIterPtr_AnnisNodeID ptr);
+    public static native NodeIDByRef annis_iter_nodeid_next(AnnisIterPtr_AnnisNodeID ptr,
+        AnnisErrorListRef err);
 
 	public static native String annis_matrix_str_get(AnnisMatrix_AnnisCString ptr, NativeLong row, NativeLong col);
 
@@ -192,14 +193,15 @@ public class CAPI implements Library {
 			AnnisErrorListRef err);
 
 	public static native AnnisVec_AnnisComponent annis_cs_list_components_by_type(AnnisCorpusStorage cs,
-			String corpusName, int ctype);
+        String corpusName, int ctype, AnnisErrorListRef err);
 
 	public static native AnnisMatrix_AnnisCString annis_cs_list_node_annotations(AnnisCorpusStorage cs,
-			String corpusName, boolean listValues, boolean onlyMostFrequentValues);
+        String corpusName, boolean listValues, boolean onlyMostFrequentValues,
+        AnnisErrorListRef err);
 
 	public static native AnnisMatrix_AnnisCString annis_cs_list_edge_annotations(AnnisCorpusStorage cs,
 			String corpusName, int component_type, String component_name, String component_layer, boolean listValues,
-			boolean onlyMostFrequentValues);
+        boolean onlyMostFrequentValues, AnnisErrorListRef err);
 
 	public static native void annis_cs_apply_update(AnnisCorpusStorage cs, String corpusName, AnnisGraphUpdate update,
 			AnnisErrorListRef err);
@@ -255,7 +257,8 @@ public class CAPI implements Library {
 
 	public static native int annis_component_type(AnnisComponentConst component);
 
-	public static native AnnisVec_AnnisAnnotation annis_graph_annotations_for_node(AnnisGraph g, NodeID nodeID);
+    public static native AnnisVec_AnnisAnnotation annis_graph_annotations_for_node(AnnisGraph g,
+        NodeID nodeID, AnnisErrorListRef err);
 
 	public static native AnnisIterPtr_AnnisNodeID annis_graph_nodes_by_type(AnnisGraph g, String node_type);
 
@@ -264,8 +267,8 @@ public class CAPI implements Library {
 	public static native AnnisVec_AnnisComponent annis_graph_all_components_by_type(AnnisGraph g, int ctype);
 
 	public static native AnnisVec_AnnisEdge annis_graph_outgoing_edges(AnnisGraph g, NodeID source,
-			AnnisComponentConst component);
+        AnnisComponentConst component, AnnisErrorListRef err);
 
 	public static native AnnisVec_AnnisAnnotation annis_graph_annotations_for_edge(AnnisGraph g, AnnisEdge.ByValue edge,
-			AnnisComponentConst component);
+        AnnisComponentConst component, AnnisErrorListRef err);
 }
