@@ -14,7 +14,7 @@
     <dependency>
       <groupId>org.corpus-tools</groupId>
       <artifactId>graphannis</artifactId>
-      <version>0.30.1-SNAPSHOT</version> <!-- change this to the graphANNIS version you want to use -->
+      <version>0.31.0</version> <!-- change this to the graphANNIS version you want to use -->
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
