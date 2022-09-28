@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import org.corpus_tools.graphannis.capi.AnnisCountExtra;
 import org.corpus_tools.graphannis.capi.AnnisErrorListRef;
+import org.corpus_tools.graphannis.capi.AnnisExportFormat;
 import org.corpus_tools.graphannis.capi.AnnisImportFormat;
 import org.corpus_tools.graphannis.capi.AnnisQueryLanguage;
 import org.corpus_tools.graphannis.capi.AnnisResultOrder;
@@ -130,6 +131,40 @@ public class CorpusStorageManager {
     protected final int capiVal;
 
     private ImportFormat(int capiVal) {
+      this.capiVal = capiVal;
+    }
+  }
+
+  /**
+   * An enum of all supported exort formats of graphANNIS.
+   * 
+   */
+  public static enum ExportFormat {
+
+    /**
+     * <a href="http://graphml.graphdrawing.org/">GraphML</a> based export-format, suitable to be
+     * imported into other graph databases.
+     * 
+     * <p>
+     * This format follows the extensions/conventions of the Neo4j
+     * <a href="https://neo4j.com/docs/labs/apoc/current/import/graphml/">GraphML module</a>).
+     * </p>
+     **/
+    GrapML(AnnisExportFormat.GraphML),
+    /**
+     * Like {@link ExportFormat#GrapML} but compressed as ZIP file. Linked files are also copied
+     * into the ZIP file.
+     */
+    GraphMLZip(AnnisExportFormat.GraphMLZip),
+    /**
+     * Like {@link ExportFormat#GrapML} but using a directory with multiple GraphML files, each for
+     * one corpus.
+     */
+    GraphMLDirectory(AnnisExportFormat.GraphMLDirectory);
+
+    protected final int capiVal;
+
+    private ExportFormat(int capiVal) {
       this.capiVal = capiVal;
     }
   }
@@ -710,6 +745,34 @@ public class CorpusStorageManager {
       AnnisErrorListRef err = new AnnisErrorListRef();
       CAPI.annis_cs_import_from_fs(instance, path, format.capiVal, corpusName, diskBased, err);
       err.checkErrors();
+    }
+  }
+
+  /**
+   * Export a corpus to an external location on the file system using the given format.
+   *
+   * * @param corpora The corpora to include in the exported file(s).
+   * 
+   * @param path The location on the file system where the corpus data should be written to.
+   * @param format The format in which this corpus data will be stored.
+   * @throws GraphANNISException
+   */
+  public void exportToFileSystem(String[] corpora, String path, ExportFormat format)
+      throws GraphANNISException {
+    if (instance != null) {
+      CAPI.AnnisVec_AnnisCString c_corpusNames = CAPI.annis_vec_str_new();
+      for (String cn : corpora) {
+        CAPI.annis_vec_str_push(c_corpusNames, cn);
+      }
+      
+      try {
+      AnnisErrorListRef err = new AnnisErrorListRef();
+      CAPI.annis_cs_export_to_fs(instance, c_corpusNames, path, format.capiVal, err);
+      
+      err.checkErrors();
+      } finally {
+        c_corpusNames.dispose();
+      }
     }
   }
 

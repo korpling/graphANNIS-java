@@ -210,7 +210,7 @@ public class CAPI implements Library {
 			String corpusName, boolean diskBased, AnnisErrorListRef err);
 
     public static native void annis_cs_export_to_fs(AnnisCorpusStorage cs,
-        AnnisVec_AnnisCString corpusNames, String path, AnnisExportFormat format,
+        AnnisVec_AnnisCString corpusNames, String path, int format,
         AnnisErrorListRef err);
 
 	public static native boolean annis_cs_validate_query(AnnisCorpusStorage cs, AnnisVec_AnnisCString corpusNames,

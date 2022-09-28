@@ -5,6 +5,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update graphANNIS core version to 2.4.0
+
+### Added
+
+- Add export function to corpus storage manager
+
 ## [0.30.0] - 2020-11-10
 
 ### Changed
