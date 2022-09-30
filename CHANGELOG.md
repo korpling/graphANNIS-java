@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.31.3] - 2022-09-30
+
 ### Fixed
 
 - `importFromFileSystem` was failing to to missing `overwrite_corpus` paramter.
@@ -93,7 +95,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Create and deploy a P2 repository to GitHub pages to make using graphANNIS from Eclipse RCP projects like Hexatomic easier
 - Update to bugfix version 2.9.9.1 from jackson-databind (CVE-2019-14379 and CVE-2019-14439)
 
-[Unreleased]: https://github.com/korpling/graphANNIS-java/compare/v0.31.2...HEAD
+[Unreleased]: https://github.com/korpling/graphANNIS-java/compare/v0.31.3...HEAD
+[0.31.3]: https://github.com/korpling/graphANNIS-java/compare/v0.31.2...v0.31.3
 [0.31.2]: https://github.com/korpling/graphANNIS-java/compare/v0.31.1...v0.31.2
 [0.31.1]: https://github.com/korpling/graphANNIS-java/compare/v0.31.0...v0.31.1
 [0.31.0]: https://github.com/korpling/graphANNIS-java/compare/v0.30.0...v0.31.0
