@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `importFromFileSystem` was failing to to missing `overwrite_corpus` paramter.
+
 ## [0.31.2] - 2022-09-28
 
 ### Fixed

@@ -220,7 +220,8 @@ public class CAPI implements Library {
       AnnisGraphUpdate update, AnnisErrorListRef err);
 
   public static native CharPointer annis_cs_import_from_fs(AnnisCorpusStorage cs, String path,
-      int format, String corpusName, boolean diskBased, AnnisErrorListRef err);
+      int format, String corpusName, boolean diskBased, boolean overwriteExisting,
+      AnnisErrorListRef err);
 
   public static native void annis_cs_export_to_fs(AnnisCorpusStorage cs,
       AnnisVec_AnnisCString corpusNames, String path, int format, AnnisErrorListRef err);
