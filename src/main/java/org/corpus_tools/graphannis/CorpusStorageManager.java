@@ -760,6 +760,8 @@ public class CorpusStorageManager implements AutoCloseable {
   /**
    * Import a corpus from an external location on the file system into this corpus storage.
    * 
+   * This will not overwrite an existing corpus.
+   * 
    * @param path The location on the file system where the corpus data is located.
    * @param format The format in which this corpus data is stored.
    * @param corpusName If not "null", override the name of the new corpus for file formats that
@@ -770,11 +772,29 @@ public class CorpusStorageManager implements AutoCloseable {
    */
   public void importFromFileSystem(String path, ImportFormat format, String corpusName,
       boolean diskBased) throws GraphANNISException {
+    importFromFileSystem(path, format, corpusName, diskBased, false);
+  }
+
+  /**
+   * Import a corpus from an external location on the file system into this corpus storage.
+   * 
+   * @param path The location on the file system where the corpus data is located.
+   * @param format The format in which this corpus data is stored.
+   * @param corpusName If not "null", override the name of the new corpus for file formats that
+   *        already provide a corpus name.
+   * @param diskBased If true, certain elements like the node annotation storage will be be
+   *        disk-based instead of using in-memory representations.
+   * @param overwriteExisting If true, overwrite a possible existing corpus.
+   * @throws GraphANNISException
+   */
+  public void importFromFileSystem(String path, ImportFormat format, String corpusName,
+      boolean diskBased, boolean overwriteExisting) throws GraphANNISException {
 
     checkNotClosed();
 
     AnnisErrorListRef err = new AnnisErrorListRef();
-    CAPI.annis_cs_import_from_fs(instance, path, format.capiVal, corpusName, diskBased, err);
+    CAPI.annis_cs_import_from_fs(instance, path, format.capiVal, corpusName, diskBased,
+        overwriteExisting, err);
     err.checkErrors();
 
   }
