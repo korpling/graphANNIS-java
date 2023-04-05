@@ -13,7 +13,7 @@
 		<developerConnection>scm:git:ssh://git@github.com/korpling/graphANNIS-java.git</developerConnection>
 		<url>https://github.com/korpling/graphANNIS-java</url>
 	  <tag>HEAD</tag>
-  </scm>
+	</scm>
 	<licenses>
 		<license>
 			<name>The Apache Software License, Version 2.0</name>
@@ -52,7 +52,8 @@
 		</repository>
 	</repositories>
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.build.sourceEncoding>
+			UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<native-libs-linux>linux-x86-64/libgraphannis.so;
@@ -75,7 +76,8 @@
 				</os>
 			</activation>
 			<properties>
-				<bundle-native-libs>${native-libs-linux}</bundle-native-libs>
+				<bundle-native-libs>
+					${native-libs-linux}</bundle-native-libs>
 			</properties>
 		</profile>
 		<profile>
@@ -86,7 +88,8 @@
 				</os>
 			</activation>
 			<properties>
-				<bundle-native-libs>${native-libs-macosx}</bundle-native-libs>
+				<bundle-native-libs>
+					${native-libs-macosx}</bundle-native-libs>
 			</properties>
 		</profile>
 		<profile>
@@ -97,14 +100,16 @@
 				</os>
 			</activation>
 			<properties>
-				<bundle-native-libs>${native-libs-windows}</bundle-native-libs>
+				<bundle-native-libs>
+					${native-libs-windows}</bundle-native-libs>
 			</properties>
 		</profile>
 		<profile>
 			<id>releases</id>
 			<properties>
 				<!-- all binaries must be present in release mode -->
-				<bundle-native-libs>${native-libs-linux},${native-libs-macosx},${native-libs-windows}</bundle-native-libs>
+				<bundle-native-libs>
+					${native-libs-linux},${native-libs-macosx},${native-libs-windows}</bundle-native-libs>
 			</properties>
 			<build>
 				<plugins>
@@ -158,14 +163,16 @@
 		                     <phase>deploy</phase>
 		                     <goals>
 		                        <goal>deploy</goal>
-		                     </goals>
-		                  </execution>
-		               </executions>
+								</goals>
+							</execution>
+						</executions>
 						<configuration>
-							<serverId>ossrh</serverId>
+							<serverId>
+								ossrh</serverId>
 							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
 							<autoReleaseAfterClose>true</autoReleaseAfterClose>
-							<stagingProgressTimeoutMinutes>120</stagingProgressTimeoutMinutes>
+							<stagingProgressTimeoutMinutes>
+								120</stagingProgressTimeoutMinutes>
 						</configuration>
 					</plugin>
 				</plugins>
@@ -177,7 +184,8 @@
 				<jdk>[1.8,)</jdk>
 			</activation>
 			<properties>
-				<additionalparam>-Xdoclint:none</additionalparam>
+				<additionalparam>
+					-Xdoclint:none</additionalparam>
 			</properties>
 		</profile>
 	</profiles>
@@ -200,17 +208,17 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
-			<version>2.9.9</version>
+			<version>2.14.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.12.6.1</version>
+			<version>2.14.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.module</groupId>
 			<artifactId>jackson-module-jaxb-annotations</artifactId>
-			<version>2.9.9</version>
+			<version>2.14.2</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -262,7 +270,8 @@
 					<artifactId>cff-maven-plugin</artifactId>
 					<version>0.5.0</version>
 					<configuration>
-						<input>${project.basedir}/misc/cff-templates/CITATION_input.yml</input>
+						<input>
+							${project.basedir}/misc/cff-templates/CITATION_input.yml</input>
 						<includeEmail>false</includeEmail>
 					</configuration>
 				</plugin>
@@ -294,9 +303,12 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>https://github.com/korpling/graphANNIS/releases/download/v${core.version}/libgraphannis.so</url>
-							<outputDirectory>${project.build.directory}/native/linux-x86-64/</outputDirectory>
-							<sha256>24673941fd7962ccf419ddc4af953927b535d0a0c5b8ffc28e53e53fd7379af7</sha256>
+							<url>
+								https://github.com/korpling/graphANNIS/releases/download/v${core.version}/libgraphannis.so</url>
+							<outputDirectory>
+								${project.build.directory}/native/linux-x86-64/</outputDirectory>
+							<sha256>
+								24673941fd7962ccf419ddc4af953927b535d0a0c5b8ffc28e53e53fd7379af7</sha256>
 						</configuration>
 					</execution>
 					<execution>
@@ -306,9 +318,12 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>https://github.com/korpling/graphANNIS/releases/download/v${core.version}/graphannis.dll</url>
-							<outputDirectory>${project.build.directory}/native/win32-x86-64/</outputDirectory>
-							<sha256>d8a1d74bd0e2f77a6f3fa5ac5249ae7d1ed4f2b1db1a6df071152f761cd49911</sha256>
+							<url>
+								https://github.com/korpling/graphANNIS/releases/download/v${core.version}/graphannis.dll</url>
+							<outputDirectory>
+								${project.build.directory}/native/win32-x86-64/</outputDirectory>
+							<sha256>
+								d8a1d74bd0e2f77a6f3fa5ac5249ae7d1ed4f2b1db1a6df071152f761cd49911</sha256>
 						</configuration>
 					</execution>
 					<execution>
@@ -318,9 +333,12 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>https://github.com/korpling/graphANNIS/releases/download/v${core.version}/libgraphannis.dylib</url>
-							<outputDirectory>${project.build.directory}/native/darwin/</outputDirectory>
-							<sha256>2e1c6eef1732f4c3e17eb58aac746b53b3d0a2a42026f158775b8b64d7affc60</sha256>
+							<url>
+								https://github.com/korpling/graphANNIS/releases/download/v${core.version}/libgraphannis.dylib</url>
+							<outputDirectory>
+								${project.build.directory}/native/darwin/</outputDirectory>
+							<sha256>
+								2e1c6eef1732f4c3e17eb58aac746b53b3d0a2a42026f158775b8b64d7affc60</sha256>
 						</configuration>
 					</execution>
 				</executions>
@@ -338,11 +356,13 @@
 					</execution>
 				</executions>
 				<configuration>
-					<file>README.md</file>
+					<file>
+						README.md</file>
 					<replacements>
 						<replacement>
 							<token>graphANNIS core library version ([0-9]+\.[0-9]+\.[0-9]+)</token>
-							<value>graphANNIS core library version ${core.version}</value>
+							<value>graphANNIS
+								core library version ${core.version}</value>
 						</replacement>
 					</replacements>
 				</configuration>
@@ -356,9 +376,11 @@
 				<configuration>
 					<instructions>
 						<!--<Import-Package>!org.apache.maven.*,*</Import-Package> -->
-						<Bundle-NativeCode>${bundle-native-libs}</Bundle-NativeCode>
+						<Bundle-NativeCode>
+							${bundle-native-libs}</Bundle-NativeCode>
 					</instructions>
-					<niceManifest>true</niceManifest>
+					<niceManifest>
+						true</niceManifest>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -371,7 +393,8 @@
 						<configuration>
 							<artifacts>
 								<artifact>
-									<id>org.corpus-tools:graphannis:${project.version}</id>
+									<id>
+										org.corpus-tools:graphannis:${project.version}</id>
 								</artifact>
 							</artifacts>
 						</configuration>
@@ -384,10 +407,12 @@
 				<artifactId>jetty-maven-plugin</artifactId>
 				<version>9.3.27.v20190418</version>
 				<configuration>
-					<scanIntervalSeconds>10</scanIntervalSeconds>
+					<scanIntervalSeconds>
+						10</scanIntervalSeconds>
 					<webAppSourceDirectory>${basedir}/target/repository/</webAppSourceDirectory>
 					<webApp>
-						<contextPath>/site</contextPath>
+						<contextPath>
+							/site</contextPath>
 					</webApp>
 				</configuration>
 			</plugin>
@@ -400,7 +425,9 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
 				<configuration>
-					<preparationGoals>clean verify keepachangelog:release cff:create cff:third-party-folder scm:add scm:checkin</preparationGoals>
+					<preparationGoals>clean
+						verify keepachangelog:release cff:create cff:third-party-folder scm:add
+						scm:checkin</preparationGoals>
 					<tagNameFormat>v@{project.version}</tagNameFormat>
 					<releaseProfiles>releases</releaseProfiles>
 				</configuration>
@@ -415,8 +442,10 @@
 				<artifactId>maven-scm-plugin</artifactId>
 				<version>1.11.3</version>
 				<configuration>
-					<includes>CHANGELOG.md,CITATION.cff,THIRD-PARTY/**</includes>
-					<message>Files updated in release process</message>
+					<includes>
+						CHANGELOG.md,CITATION.cff,THIRD-PARTY/**</includes>
+					<message>Files updated in release
+						process</message>
 				</configuration>
 			</plugin>
 		</plugins>
